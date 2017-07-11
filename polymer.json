@@ -11,13 +11,17 @@
     "autotrack.js",
     "bower_components/webcomponentsjs/*.js",
     "bower_components/app-storage/app-indexeddb-mirror/*.js",
-	  "google61bee3df118b250a.html"
+    "bower_components/firebase/*.js",
+    "google61bee3df118b250a.html",
+    "firebase-messaging-sw.js",
+    "__/**"
   ],
   "lint": {
     "rules": ["polymer-2"]
   },
   "builds": [{
     "name": "default",
-    "preset": "es6-unbundled"
+    "preset": "es6-unbundled",
+    "swPrecacheConfig": "sw-precache-config.js"
   }]
 }

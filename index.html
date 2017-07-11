@@ -91,23 +91,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <!-- Built with love using Polymer Starter Kit -->
     <!-- Google Analytics -->
     <script>
-      window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-      ga('create', 'UA-60277501-8', 'auto');
-      ga('require', 'cleanUrlTracker');
-      ga('require', 'eventTracker');
-   //   ga('require', 'maxScrollTracker');
-      ga('require', 'outboundLinkTracker');
-   //   ga('require', 'pageVisibilityTracker');
-      ga('require', 'urlChangeTracker');
+      if(document.location.hostname !== "localhost"){
+        window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+        ga('create', 'UA-60277501-8', 'auto');
+        ga('require', 'cleanUrlTracker');
+        ga('require', 'eventTracker');
+    //   ga('require', 'maxScrollTracker');
+        ga('require', 'outboundLinkTracker');
+    //   ga('require', 'pageVisibilityTracker');
+        ga('require', 'urlChangeTracker');
 
-      ga('set', 'anonymizeIp', true);
+        ga('set', 'anonymizeIp', true);
 
-      ga('send', 'pageview');
+        ga('send', 'pageview');
+      }
     </script>
     <script async src='https://www.google-analytics.com/analytics.js'></script>
     <script async src='autotrack.js'></script>
     <!-- End Google Analytics -->
-
-
   </body>
 </html>

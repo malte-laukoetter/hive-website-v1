@@ -47,14 +47,14 @@
 
     <firebase-query
       id="query"
-      path="hive/[[leaderboard]]/data"
+      path="[[leaderboard]]/data"
       order-by-child="[[property]]"
       limit-to-last=[[places]]
       data="{{liveData}}">
     </firebase-query>
 
     <app-indexeddb-mirror
-      key="hive/[[leaderboard]]/data"
+      key="[[leaderboard]]/data"
       data="[[liveData]]"
       persisted-data="{{data}}"
       online="{{online}}">
@@ -156,7 +156,7 @@
       }
 
       addNewName(){
-        firebase.database().ref('hive').child(this.leaderboard).child('newPlayers').child(this.convertNewName(this.newName)).set(true);
+        firebase.database().ref(this.leaderboard).child('newPlayers').child(this.convertNewName(this.newName)).set(true);
         this.newName = "";
       }
 

@@ -16,6 +16,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-app.html">
 <link rel="import" href="my-icons.html">
 
 <link rel="lazy-import" href="hive-leaderboards-medal.html">
@@ -60,10 +61,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         tail="{{subroute}}"></app-route>
 
     <firebase-app
-      auth-domain="dashboard-196e4.firebaseapp.com"
-      database-url="https://dashboard-196e4.firebaseio.com/"
-      api-key="AIzaSyBr2_BiRET53JK44D3WBDqGx6HKqmAVatg"
-      storage-bucket="dashboard-196e4.appspot.com">
+      auth-domain="hivewebsite-1da4d.firebaseapp.com"
+      database-url="https://hivewebsite-1da4d.firebaseio.com/"
+      api-key="AIzaSyBPl570AoqaHuCgX342wICImCJbz4c3vFs"
+      storage-bucket="hivewebsite-1da4d.appspot.com"
+      project-id="hivewebsite-1da4d",
+      messaging-sender-id="836246928386">
     </firebase-app>
 
     <app-drawer-layout fullbleed>

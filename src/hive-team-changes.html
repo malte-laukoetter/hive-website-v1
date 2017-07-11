@@ -75,13 +75,31 @@
         width: 200px;
         text-align: center;
       }
-    </style>
+  </style>
+  <app-indexeddb-mirror
+    key="teamChanges/data"
+    data="[[changeList]]"
+    persisted-data="{{persistendData}}"
+    online="{{online}}">
+  </app-indexeddb-mirror>
+
+  <firebase-messaging id="messaging" token="{{token}}" push-supported="{{pushSupported}}"></firebase-messaging>
+  <firebase-document disabled="[[!token]]" path="teamChanges/notificationTokens/[[token]]" data="{{pushActive}}"></firebase-document>
+
     <app-header-layout has-scrolling-region fullbleed>
       <app-header slot="header" condenses reveals effects="waterfall">
         <app-toolbar>
           <paper-icon-button icon="my-icons:menu" drawer-toggle on-tap="toggleDrawer"></paper-icon-button>
           <div main-title>Team Changes</div>
           <paper-icon-button icon="my-icons:info" on-tap="openInfoDialog"></paper-icon-button>
+          <template is="dom-if" if="[[and(pushSupported, online)]]">
+            <template is="dom-if" if="[[!exists(pushActive)]]">
+              <paper-icon-button icon="my-icons:add-alert" on-tap="subscribeToTeamChangeNotifications"></paper-icon-button>
+            </template>
+            <template is="dom-if" if="[[exists(pushActive)]]">
+              <paper-icon-button icon="my-icons:notifications-active" on-tap="unsubscribeFromTeamChangeNotifications"></paper-icon-button>              
+            </template>
+          </template>
         </app-toolbar>
       </app-header>
       <div class="content">
@@ -105,13 +123,7 @@
           </div>
 
         </div>-->
-        <app-indexeddb-mirror
-          key="hive/teamChanges/data"
-          data="[[changeList]]"
-          persisted-data="{{persistendData}}"
-          online="{{online}}">
-        </app-indexeddb-mirror>
-       
+
         <template is="dom-repeat" items="{{persistendData}}" as="dateChanges" sort="sortByDate" observe="date">
           <div class="paper-material" elevation="1">
             <h3>[[dateToDateString(dateChanges.date)]]</h3>
@@ -184,8 +196,20 @@
           online: {
             type: Boolean,
             value: false
+          },
+          pushActive: {
+            type: Boolean,
+            value: null
           }
         };
+      }
+
+      and(a,b){
+        return a && b;
+      }
+
+      exists(a){
+        return !(!a || (a instanceof Object && Object.keys(a).length == 0));
       }
 
       sortByDate(a,b){
@@ -343,7 +367,7 @@
       ready(){
         super.ready();
 
-        firebase.database().ref('hive').child('teamChanges').child("data").orderByKey().limitToLast(100).on("child_added", snap => {
+        firebase.database().ref('teamChanges').child("data").orderByKey().limitToLast(100).on("child_added", snap => {
           if(this.nextStartKey == ""){
             this.nextStartKey = snap.key;
           }
@@ -357,7 +381,7 @@
       loadNext100(){
         let nextStartKey = this.nextStartKey;
         
-        firebase.database().ref('hive').child('teamChanges').child("data").orderByKey().endAt(nextStartKey).limitToLast(100).on("child_added", snap => {
+        firebase.database().ref('teamChanges').child("data").orderByKey().endAt(nextStartKey).limitToLast(100).on("child_added", snap => {
           if(nextStartKey == this.nextStartKey){
             this.nextStartKey = snap.key;
           }
@@ -368,6 +392,24 @@
             this.push("data", snap.val());
           }
         });
+      }
+
+      subscribeToTeamChangeNotifications(){
+        if(!this.token){
+          this.$.messaging.requestPermission().then(() => {
+            this.pushActive = true;
+            console.log("Subscribed!");
+          }, function(err) {
+            console.log(err);
+          });
+        }else{
+          this.pushActive = true;          
+        }
+        
+      }
+
+      unsubscribeFromTeamChangeNotifications(){
+        this.pushActive = null;
       }
     }
 
