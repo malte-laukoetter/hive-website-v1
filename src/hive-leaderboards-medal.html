@@ -1,0 +1,28 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="hive-leaderboard.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="hive-leaderboards-medal">
+  <template>
+    <hive-leaderboard 
+      leaderboard="medalLeaderboard"
+      property="medals"
+      property-name="Gold Medals"
+      places=200
+      name="Medal Leaderboard"
+    >
+      <span slot="info">
+        The 200 Players with the most gold medals.
+      </span>
+    </hive-leaderboard>
+  </template>
+
+  <script>
+    class HiveLeaderboardsMedal extends Polymer.Element {
+      static get is() { return 'hive-leaderboards-medal'; }
+    }
+
+    window.customElements.define(HiveLeaderboardsMedal.is, HiveLeaderboardsMedal);
+  </script>
+</dom-module>

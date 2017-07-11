@@ -1,0 +1,186 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../bower_components/paper-avatar/paper-avatar.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="hive-leaderboard">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        --paper-item-icon-width: 70px;
+      }
+
+      app-header {
+        color: #fff;
+        background-color: var(--app-primary-color);
+      }
+
+      app-header paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
+
+      .content{
+        padding: 10px;
+      }
+
+      @media (min-width: 640px) {
+        [drawer-toggle] {
+          display: none;
+        }
+      }
+      
+    </style>
+
+    <firebase-query
+      id="query"
+      path="hive/[[leaderboard]]/data"
+      order-by-child="[[property]]"
+      limit-to-last=[[places]]
+      data="{{liveData}}">
+    </firebase-query>
+
+    <app-indexeddb-mirror
+      key="hive/[[leaderboard]]/data"
+      data="[[liveData]]"
+      persisted-data="{{data}}"
+      online="{{online}}">
+    </app-indexeddb-mirror>
+
+    <app-header-layout has-scrolling-region fullbleed>
+      <app-header slot="header" condenses reveals effects="waterfall">
+        <app-toolbar>
+          <paper-icon-button icon="my-icons:menu" drawer-toggle on-tap="toggleDrawer"></paper-icon-button>
+          <div main-title>[[name]]</div>
+          <paper-icon-button icon="my-icons:info" on-tap="openInfoDialog"></paper-icon-button>
+        </app-toolbar>
+      </app-header>
+      <div class="content">
+        <div role="listbox">
+          <template is="dom-repeat" items="{{data}}" as="player" sort="sortByProperty" observe="[[property]]">
+            <paper-icon-item>
+              <a href="https://hivemc.com/player/[[player.$key]]" slot="item-icon">
+                <paper-avatar image-src="https://crafatar.com/avatars/[[player.$key]]?overlay"></paper-avatar>
+              </a>
+              <paper-item-body two-line>
+                <div>[[player.name]]</div>
+                <div secondary>[[_getProperty(player)]] [[_formatNumber(propertyName)]] ([[addOne(index)]]. place)</div>
+              </paper-item-body>
+            </paper-icon-item>
+          </template>
+        </div>
+
+        <div style="display: flex">
+          <paper-input style="flex-grow: 1" label="New Name / UUID" value="{{newName}}"></paper-input>
+          <paper-button style="flex-basis: 200px" raised on-tap="addNewName" disabled="[[!online]]">Add to List</paper-button>
+        </div>
+      </div>
+    </app-header-layout>
+
+    <paper-dialog id="infoDialog">
+      <h2>Information</h2>
+      <paper-dialog-scrollable>
+        <div>
+          <slot name="info"></slot>
+        </div>
+        <div>
+          You can test if you are one of those players through entering your name into the input at the bottom and it will check it and add you if you are one (this may take some minutes).
+        </div>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-confirm>OK</paper-button>
+      </div>
+    </paper-dialog>
+
+  </template>
+
+  <script>
+    class HiveLeaderboard extends Polymer.Element {
+      static get is() { return 'hive-leaderboard'; }
+      static get properties() {
+        return {
+          newName: {
+            type: String,
+            value: ""
+          },
+          leaderboard: {
+            type: String,
+            value: "medalLeaderboard"
+          },
+          property: {
+            type: String,
+            value: "medals"
+          },
+          propertyName: {
+            type: String,
+            value: "Gold Medals"
+          },
+          places: {
+            type: Number,
+            value: 100
+          },
+          name: {
+            type: String,
+            value: "NOTHING"
+          },
+          online: {
+            type: Boolean,
+            value: false
+          }
+        };
+      }
+
+      sortByProperty(a,b){
+        return b[this.property] - a[this.property];
+      }
+
+      addOne(a){
+        return a + 1;
+      }
+
+      convertNewName(name){
+        return name.replace(" ", "").replace("-", "");
+      }
+
+      addNewName(){
+        firebase.database().ref('hive').child(this.leaderboard).child('newPlayers').child(this.convertNewName(this.newName)).set(true);
+        this.newName = "";
+      }
+
+      _getProperty(data){
+        return this._formatNumber(data[this.property])
+      }
+
+      _computePath(leaderboard){
+        return `/hive/${leaderboard}/data`;
+      }
+
+      _formatNumber(num){
+        return num.toLocaleString()
+      }
+
+      openInfoDialog() {
+        this.$.infoDialog.toggle()
+      }
+
+      toggleDrawer(){
+        this.dispatchEvent(new CustomEvent('toggle-drawer', {bubbles: true, composed: true}))
+      }
+    }
+
+    window.customElements.define(HiveLeaderboard.is, HiveLeaderboard);
+  </script>
+</dom-module>

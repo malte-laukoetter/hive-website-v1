@@ -1,0 +1,23 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/my-app.html",
+  "sources": [
+    "src/**/*",
+    "images/**/*",
+    "bower.json"
+  ],
+  "extraDependencies": [
+    "manifest.json",
+    "autotrack.js",
+    "bower_components/webcomponentsjs/*.js",
+    "bower_components/app-storage/app-indexeddb-mirror/*.js",
+	  "google61bee3df118b250a.html"
+  ],
+  "lint": {
+    "rules": ["polymer-2"]
+  },
+  "builds": [{
+    "name": "default",
+    "preset": "es6-unbundled"
+  }]
+}

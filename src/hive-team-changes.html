@@ -1,0 +1,376 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-chip/paper-chip.html">
+<link rel="import" href="../bower_components/paper-styles/element-styles/paper-material-styles.html">">
+<link rel="import" href="../bower_components/paper-styles/color.html">">
+<link rel="import" href="../bower_components/paper-styles/typography.html">">
+<!--<link rel="import" href="../bower_components/paper-input/paper-input.html">">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">-->
+<link rel="import" href="../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="hive-team-changes">
+  <template>
+    <style include="shared-styles paper-material-styles">
+      :host {
+        display: block;
+
+        --paper-item-icon-width: 70px;
+      }
+
+      app-header {
+        color: #fff;
+        background-color: var(--app-primary-color);
+      }
+
+      app-header paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
+
+      .content{
+        padding: 10px;
+      }
+
+      @media (min-width: 640px) {
+        [drawer-toggle] {
+          display: none;
+        }
+      }
+      
+      a {
+        text-decoration: none;
+      }
+
+      .paper-material {
+        padding: 16px;
+        margin: 0 16px 16px 16px;
+        background-color: #fff;
+      }
+
+      h3 {
+        @apply --paper-font-title;
+      }
+
+      h4 {
+        @apply --paper-font-subhead;
+      }
+
+      .overscroll {
+        height: 50vh;
+      }
+
+      .overscroll paper-button {
+        margin: auto;
+        display: block;
+        width: 200px;
+        text-align: center;
+      }
+    </style>
+    <app-header-layout has-scrolling-region fullbleed>
+      <app-header slot="header" condenses reveals effects="waterfall">
+        <app-toolbar>
+          <paper-icon-button icon="my-icons:menu" drawer-toggle on-tap="toggleDrawer"></paper-icon-button>
+          <div main-title>Team Changes</div>
+          <paper-icon-button icon="my-icons:info" on-tap="openInfoDialog"></paper-icon-button>
+        </app-toolbar>
+      </app-header>
+      <div class="content">
+        <!--<div class="paper-material" elevation="1">
+          <div style="display: flex">
+            <paper-input style="flex-grow: 1" label="Name / UUID" value="{{newName}}"></paper-input>
+            <paper-input style="flex-grow: 1" label="Date" value="{{date}}"></paper-input>
+            <paper-dropdown-menu label="Action">
+              <paper-listbox slot="dropdown-content" selected="{{action}}" attr-for-selected="textContent">
+                <paper-item>MODERATOR_ADD</paper-item>
+                <paper-item>MODERATOR_REMOVE</paper-item>
+                <paper-item>SENIOR_MODERATOR_ADD</paper-item>
+                <paper-item>SENIOR_MODERATOR_REMOVE</paper-item>
+                <paper-item>DEVELOPER_ADD</paper-item>
+                <paper-item>DEVELOPER_REMOVE</paper-item>
+                <paper-item>OWNER_ADD</paper-item>
+                <paper-item>OWNER_REMOVE</paper-item>
+              </paper-listbox>
+            </paper-dropdown-menu>
+            <paper-button style="flex-basis: 200px" raised on-tap="addNewName">Add to List</paper-button>
+          </div>
+
+        </div>-->
+        <app-indexeddb-mirror
+          key="hive/teamChanges/data"
+          data="[[changeList]]"
+          persisted-data="{{persistendData}}"
+          online="{{online}}">
+        </app-indexeddb-mirror>
+       
+        <template is="dom-repeat" items="{{persistendData}}" as="dateChanges" sort="sortByDate" observe="date">
+          <div class="paper-material" elevation="1">
+            <h3>[[dateToDateString(dateChanges.date)]]</h3>
+
+            <template is="dom-repeat" items="{{dateChanges.changetypes}}" as="type">
+              <h4>[[changeTypeToTitle(type)]]</h4>
+
+              <template is="dom-repeat" items="{{dateChanges.data}}" as="change" sort="sortByDate" filter="[[filterByDateAndType(dateChanges.date, type)]]" observe="date">
+                <a href="https://hivemc.com/player/[[uuidIfThere(change)]]">
+                  <paper-chip label="[[change.name]]">
+                    <img class="chip-image" slot="avatar" src="https://crafatar.com/avatars/[[change.uuid]]?overlay" alt="[[change.name]]">
+                  </paper-chip>
+                </a>
+              </template>
+            </template>
+          </div>
+        </template>
+
+        <template is="dom-if" if="[[viewLoadButton(nextStartKey, latestKey, online)]]">
+          <div class="overscroll">
+            <paper-button on-tap="loadNext100">Load More...</paper-button>
+          </div>
+        </template>
+      </div>
+    </app-header-layout>
+
+    <paper-dialog id="infoDialog">
+      <h2>Information</h2>
+      <paper-dialog-scrollable>
+        <div>
+          An automated list of the changes of the team of the hive.
+        </div>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-confirm>OK</paper-button>
+      </div>
+    </paper-dialog>
+
+  </template>
+
+  <script>
+    class HiveTeamChanges extends Polymer.Element {
+      static get is() { return 'hive-team-changes'; }
+      static get properties() {
+        return {
+          data: {
+            type: Array,
+            value: []
+          },
+          changeList: {
+            type: Array,
+            computed: 'convertData(data.*)'
+          },
+          groupType: {
+            type: String,
+            value: "DAY"
+          },
+          loadAmount: {
+            type: Number,
+            value: 100
+          },
+          nextStartKey: {
+            type: String,
+            value: ""
+          },
+          latestKey: {
+            type: String,
+            value: ""
+          },
+          online: {
+            type: Boolean,
+            value: false
+          }
+        };
+      }
+
+      sortByDate(a,b){
+        return b.date - a.date;
+      }
+      
+      viewLoadButton(nextStartKey, latestKey, online){
+        return online && nextStartKey !== latestKey;
+      }
+
+      filterByDateAndType(date, type){
+        return (a) => {
+          let aDate = new Date(a.date);
+          aDate.setHours(0);
+          aDate.setMinutes(0);
+          aDate.setSeconds(0);
+          aDate.setMilliseconds(0);
+
+          switch(this.groupType){
+            case "YEAR":
+              aDate.setMonth(0);            
+            case "MONTH":
+              aDate.setDate(1);
+          }
+
+          return aDate.getTime() == date && a.type == type;
+        }
+      }
+
+      dateToDateString(date){
+        switch(this.groupType){
+          case "YEAR":
+            return new Date(date).toLocaleDateString(undefined, {
+              localeMatcher: "best fit",
+              year: "numeric"
+            });            
+          case "MONTH":
+            return new Date(date).toLocaleDateString(undefined, {
+              year: "numeric",
+              month: "long"
+            });            
+        }
+
+        return new Date(date).toDateString();
+      }
+
+      openInfoDialog() {
+        this.$.infoDialog.toggle()
+      }
+
+      toggleDrawer(){
+        this.dispatchEvent(new CustomEvent('toggle-drawer', {bubbles: true, composed: true}))
+      }
+
+      changeTypeToTitle(type){
+        switch (type){
+          case "MODERATOR_ADD": return "New Moderators";
+          case "MODERATOR_REMOVE": return "Removed Moderators";
+          case "SENIOR_MODERATOR_ADD": return "New Senior Moderators";
+          case "SENIOR_MODERATOR_REMOVE": return "Removed Senior Moderators";
+          case "DEVELOPER_ADD": return "New Developers";
+          case "DEVELOPER_REMOVE": return "Removed Developers";
+          case "OWNER_ADD": return "New Owners";
+          case "OWNER_REMOVE": return "Removed Owners";
+          default: return "unknown change type"
+        }
+      }
+
+      /*addNewName(){
+        function toDate(dateStr) {
+            const [day, month, year] = dateStr.split("-")
+            let date = new Date();
+            date.setUTCFullYear(year)
+            date.setUTCMonth(month-1)
+            date.setUTCDate(day)
+            date.setUTCHours(0);
+
+
+            return date;
+        }
+
+        let name = this.newName;
+
+        fetch(`https://cors-anywhere.herokuapp.com/https://minecraft-api.com/api/uuid/uuid.php?pseudo=${this.newName}`).then(res => res.text()).then(
+          (uuid)=> {
+            if(!uuid){
+            alert(name);
+            return;
+            } 
+            firebase.database().ref('hive').child('teamChanges').push().set({
+              name: name,
+              uuid: uuid,
+              date: toDate(this.date).getTime(),
+              type: this.action
+            });
+          }
+        );
+
+        this.newName = "";
+      }*/
+
+      sortTypes(type1, type2){
+        function typeToSortRank(type){
+          switch (type){
+            case "MODERATOR_ADD": return 4;
+            case "MODERATOR_REMOVE": return 8;
+            case "SENIOR_MODERATOR_ADD": return 3;
+            case "SENIOR_MODERATOR_REMOVE": return 7;
+            case "DEVELOPER_ADD": return 2;
+            case "DEVELOPER_REMOVE": return 6;
+            case "OWNER_ADD": return 1;
+            case "OWNER_REMOVE": return 5;
+            default: return 9
+          }
+        }
+
+        return typeToSortRank(type1) - typeToSortRank(type2)
+      }
+
+      convertData(data){
+        let convertedData = new Map();
+
+        for(let change of data.base){
+          let date = new Date(change.date);
+          date.setHours(0);
+          date.setMinutes(0);
+          date.setSeconds(0);
+          date.setMilliseconds(0);
+
+          switch(this.groupType){
+            case "YEAR":
+              date.setMonth(0);            
+            case "MONTH":
+              date.setDate(1);
+          }
+
+
+          if(convertedData.has(date.getTime())){
+            convertedData.get(date.getTime()).types.add(change.type);
+            convertedData.get(date.getTime()).data.push(change);
+          }else{
+            convertedData.set(date.getTime(), {types: new Set([change.type]), data: [change]});
+          }
+        }
+
+        return Array.from(convertedData).map(([date, data]) => {return {date:date, changetypes: [...data.types].sort(this.sortTypes), data: data.data}});
+      }
+
+      uuidIfThere(data){
+        if(data.uuid) return data.uuid;
+
+        return data.name;
+      }
+
+      ready(){
+        super.ready();
+
+        firebase.database().ref('hive').child('teamChanges').child("data").orderByKey().limitToLast(100).on("child_added", snap => {
+          if(this.nextStartKey == ""){
+            this.nextStartKey = snap.key;
+          }
+
+          this.latestKey = snap.key
+
+          this.push("data", snap.val());
+        });
+      }
+
+      loadNext100(){
+        let nextStartKey = this.nextStartKey;
+        
+        firebase.database().ref('hive').child('teamChanges').child("data").orderByKey().endAt(nextStartKey).limitToLast(100).on("child_added", snap => {
+          if(nextStartKey == this.nextStartKey){
+            this.nextStartKey = snap.key;
+          }
+
+          this.latestKey = snap.key
+
+          if(snap.key !=nextStartKey){
+            this.push("data", snap.val());
+          }
+        });
+      }
+    }
+
+    window.customElements.define(HiveTeamChanges.is, HiveTeamChanges);
+  </script>
+</dom-module>
