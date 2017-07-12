@@ -17,6 +17,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="my-icons.html">
 
 <link rel="lazy-import" href="hive-leaderboards-medal.html">
@@ -36,7 +37,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .drawer-list {
-        margin: 0 20px;
+        @apply --layout-vertical;
+        height: calc(100% - 64px);
+      }
+
+      .drawer-list span{
+        @apply --layout-flex;
       }
 
       .drawer-list a {
@@ -74,11 +80,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <app-drawer id="drawer" slot="drawer" swipe-open>
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+          <a name="team" href="team">Team Changes</a>
           <a name="medals" href="medals">Medal Leaderboard</a>
           <a name="points" href="points">Total Points Leaderboard</a>
           <a name="tokens" href="tokens">Token Leaderboard</a>
           <a name="achievements" href="achievements">Achievement Leaderboard</a>
-          <!--<a name="team" href="team">Team Changes</a>-->
+          <span></span>
           <a name="imprint" href="https://lergin.de/imprint">Imprint</a>
           <a name="privacy" href="https://lergin.de/privacy">Privacy</a>
         </iron-selector>
@@ -116,7 +123,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           subroute: String,
           defaultPage: {
             type: String,
-            value: "achievements"
+            value: "team"
           }
         };
       }
