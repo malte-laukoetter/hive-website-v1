@@ -6,6 +6,11 @@
     "images/**/*",
     "bower.json"
   ],
+  "fragments": [
+    "src/my-app.html",
+    "src/hive-leaderboard.html",
+    "src/hive-team-changes.html"
+  ],
   "extraDependencies": [
     "manifest.json",
     "autotrack.js",
@@ -22,6 +27,10 @@
   "builds": [{
     "name": "default",
     "preset": "es6-unbundled",
+    "swPrecacheConfig": "sw-precache-config.js"
+  },{
+    "name": "bundle",
+    "preset": "es6-bundled",
     "swPrecacheConfig": "sw-precache-config.js"
   }]
 }

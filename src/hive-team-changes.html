@@ -1,17 +1,18 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../bower_components/polymerfire/polymerfire.html">
+<link defer rel="import" href="../bower_components/polymerfire/polymerfire.html">
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
-<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link defer rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
-<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
-<link rel="import" href="../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../bower_components/paper-chip/paper-chip.html">
+<link defer rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link defer rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link defer rel="import" href="../bower_components/paper-button/paper-button.html">
+<link defer rel="import" href="../bower_components/paper-chip/paper-chip.html">
+<link defer rel="import" href="../bower_components/paper-tooltip/paper-tooltip.html">
 <link rel="import" href="../bower_components/paper-styles/element-styles/paper-material-styles.html">">
-<link rel="import" href="../bower_components/paper-styles/color.html">">
-<link rel="import" href="../bower_components/paper-styles/typography.html">">
-<link rel="import" href="../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link defer rel="import" href="../bower_components/paper-styles/color.html">">
+<link defer rel="import" href="../bower_components/paper-styles/typography.html">">
+<link defer rel="import" href="../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
 <!--<link rel="import" href="../bower_components/paper-input/paper-input.html">">
 <link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
@@ -96,10 +97,12 @@
           <template is="dom-if" if="[[notificationSystemActive]]">
             <template is="dom-if" if="[[and(pushSupported, online)]]">
               <template is="dom-if" if="[[!exists(pushActive)]]">
-                <paper-icon-button icon="my-icons:add-alert" on-tap="subscribeToTeamChangeNotifications"></paper-icon-button>
+                <paper-icon-button  id="notification-subscribe" icon="my-icons:add-alert" on-tap="subscribeToTeamChangeNotifications"></paper-icon-button>
+                <paper-tooltip for="notification-subscribe">get a notifications if there is a change to the team</paper-tooltip>
               </template>
               <template is="dom-if" if="[[exists(pushActive)]]">
-                <paper-icon-button icon="my-icons:notifications-active" on-tap="unsubscribeFromTeamChangeNotifications"></paper-icon-button>              
+                <paper-icon-button id="notification-unsubscribe" icon="my-icons:notifications-active" on-tap="unsubscribeFromTeamChangeNotifications"></paper-icon-button>              
+                <paper-tooltip for="notification-unsubscribe">deactivate the notifications</paper-tooltip>
               </template>
             </template>
           </template>
@@ -402,14 +405,13 @@
           this.$.messaging.requestPermission().then(() => {
             this.pushActive = true;
             console.log("Subscribed!");
-            setTimeout(()=>this.pushActive = true, 100)
+            setTimeout(()=>this.pushActive = true, 500)
           }, function(err) {
             console.log(err);
           });
         }else{
           this.pushActive = true;          
         }
-        
       }
 
       unsubscribeFromTeamChangeNotifications(){

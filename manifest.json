@@ -5,7 +5,7 @@
   "background_color": "#2196f3",
   "display": "standalone",
   "Scope": "/",
-  "start_url": "/?homescreen=1",
+  "start_url": "/?utm_source=homescreen",
   "gcm_sender_id": "103953800507",
   "icons": [
     {
