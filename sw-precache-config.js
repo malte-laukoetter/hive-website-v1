@@ -15,6 +15,11 @@ module.exports = {
     '/index.html',
     '/manifest.json',
     '/bower_components/webcomponentsjs/*',
+    '/images/*'
   ],
-  navigateFallback: 'index.html'
+  navigateFallback: 'index.html',
+  runtimeCaching: [{
+    urlPattern: /^https:\/\/api\.hivemc\.com/,
+    handler: 'networkFirst'
+  }]
 };
