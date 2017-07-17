@@ -25,6 +25,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="lazy-import" href="hive-leaderboards-tokens.html">
 <link rel="lazy-import" href="hive-leaderboards-achievements.html">
 <link rel="lazy-import" href="hive-team-changes.html">
+<link rel="lazy-import" href="hive-profile.html">
 
 <dom-module id="my-app">
   <template>
@@ -81,6 +82,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
           <a name="team" href="team">Team Changes</a>
+          <a name="player" href="player">Player Infos</a>
           <a name="medals" href="medals">Medal Leaderboard</a>
           <a name="points" href="points">Total Points Leaderboard</a>
           <a name="tokens" href="tokens">Token Leaderboard</a>
@@ -102,6 +104,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <hive-leaderboards-tokens name="tokens"></hive-leaderboards-tokens>
         <hive-leaderboards-achievements name="achievements"></hive-leaderboards-achievements>
         <hive-team-changes name="team"></hive-team-changes>
+        <hive-profile id="playerProfile" name="player" route="{{subroute}}"></hive-profile>
       </iron-pages>
     </app-drawer-layout>
   </template>
@@ -123,7 +126,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           subroute: String,
           defaultPage: {
             type: String,
-            value: "team"
+            value: "player"
           }
         };
       }
@@ -179,6 +182,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             break;
           case 'team':
             resolvedPageUrl = this.resolveUrl('hive-team-changes.html');
+            break;
+          case 'player':
+            resolvedPageUrl = this.resolveUrl('hive-profile.html');
             break;
           default:
             console.error(`Unknown Page ${page}`);

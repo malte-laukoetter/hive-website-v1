@@ -12,6 +12,7 @@
 <link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="../bower_components/page-title/page-title.html">
 
 <link rel="import" href="shared-styles.html">
 
@@ -60,6 +61,8 @@
       online="{{online}}">
     </app-indexeddb-mirror>
 
+    <page-title base-title="[[name]]"></page-title>
+
     <app-header-layout has-scrolling-region fullbleed>
       <app-header slot="header" condenses reveals effects="waterfall">
         <app-toolbar>
@@ -72,7 +75,7 @@
         <div role="listbox">
           <template is="dom-repeat" items="{{data}}" as="player" sort="sortByProperty" observe="[[property]]">
             <paper-icon-item>
-              <a href="https://hivemc.com/player/[[player.$key]]" slot="item-icon">
+              <a href="/player/[[player.$key]]" slot="item-icon">
                 <paper-avatar image-src="https://crafatar.com/avatars/[[player.$key]]?overlay"></paper-avatar>
               </a>
               <paper-item-body two-line>

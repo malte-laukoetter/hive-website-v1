@@ -13,6 +13,8 @@
 <link defer rel="import" href="../bower_components/paper-styles/color.html">">
 <link defer rel="import" href="../bower_components/paper-styles/typography.html">">
 <link defer rel="import" href="../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="../bower_components/page-title/page-title.html">
+<link rel="import" href="../bower_components/neon-animation/web-animations.html">
 <!--<link rel="import" href="../bower_components/paper-input/paper-input.html">">
 <link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
@@ -76,17 +78,18 @@
         width: 200px;
         text-align: center;
       }
-  </style>
-  <app-indexeddb-mirror
-    key="teamChanges/data"
-    data="[[changeList]]"
-    persisted-data="{{persistendData}}"
-    online="{{online}}">
-  </app-indexeddb-mirror>
+    </style>
+    <app-indexeddb-mirror
+      key="teamChanges/data"
+      data="[[changeList]]"
+      persisted-data="{{persistendData}}"
+      online="{{online}}">
+    </app-indexeddb-mirror>
 
-  <firebase-messaging id="messaging" token="{{token}}" push-supported="{{pushSupported}}"></firebase-messaging>
-  <firebase-document disabled="[[!token]]" path="teamChanges/notificationTokens/[[token]]" data="{{pushActive}}"></firebase-document>
-  <firebase-document path="teamChanges/notificationSystemActive" data="{{notificationSystemActive}}"></firebase-document>
+    <firebase-messaging id="messaging" token="{{token}}" push-supported="{{pushSupported}}"></firebase-messaging>
+    <firebase-document disabled="[[!token]]" path="teamChanges/notificationTokens/[[token]]" data="{{pushActive}}"></firebase-document>
+    <firebase-document path="teamChanges/notificationSystemActive" data="{{notificationSystemActive}}"></firebase-document>
+    <page-title base-title="Team Changes"></page-title>
 
     <app-header-layout has-scrolling-region fullbleed>
       <app-header slot="header" condenses reveals effects="waterfall">
@@ -109,7 +112,7 @@
         </app-toolbar>
       </app-header>
       <div class="content">
-        <!--<div class="paper-material" elevation="1">
+     <!--<div class="paper-material" elevation="1">
           <div style="display: flex">
             <paper-input style="flex-grow: 1" label="Name / UUID" value="{{newName}}"></paper-input>
             <paper-input style="flex-grow: 1" label="Date" value="{{date}}"></paper-input>
@@ -138,7 +141,7 @@
               <h4>[[changeTypeToTitle(type)]]</h4>
 
               <template is="dom-repeat" items="{{dateChanges.data}}" as="change" sort="sortByDate" filter="[[filterByDateAndType(dateChanges.date, type)]]" observe="date">
-                <a href="https://hivemc.com/player/[[uuidIfThere(change)]]">
+                <a href="/player/[[uuidIfThere(change)]]">
                   <paper-chip label="[[change.name]]">
                     <img class="chip-image" slot="avatar" src="https://crafatar.com/avatars/[[change.uuid]]?overlay" alt="[[change.name]]">
                   </paper-chip>
@@ -305,7 +308,7 @@
             alert(name);
             return;
             } 
-            firebase.database().ref('hive').child('teamChanges').push().set({
+            firebase.database().ref('teamChanges').child('data').push().set({
               name: name,
               uuid: uuid,
               date: toDate(this.date).getTime(),

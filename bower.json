@@ -16,7 +16,9 @@
     "paper-chip": "ThomasCybulski/paper-chip#^2.0.7",
     "paper-styles": "PolymerElements/paper-styles#^2.0.0",
     "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#^2.0.0",
-    "app-storage": "^2.0.2"
+    "app-storage": "^2.0.2",
+    "page-title": "^3.0.0",
+    "paper-card": "PolymerElements/paper-card#^2.0.0"
   },
   "resolutions": {
     "polymer": "^2.0.1"

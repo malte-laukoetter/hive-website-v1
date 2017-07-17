@@ -1,0 +1,102 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="hive-api.html">
+
+<dom-module id="hive-api-player">
+  <script>
+    class HiveApiPlayer extends Polymer.Element {
+      static get is() { return 'hive-api-player'; }
+      static get properties() {
+        return {
+          player: String,
+          games: {
+            type: Array,
+            value: []
+          },
+          apiPlayer: {
+            type: Object,
+            readonly: true,
+            computed: "getPlayerApi(player)"
+          },
+          apiPlayerGameInfos: {
+            type: Object,
+            readonly: true,
+            notify: true
+          },
+          name: {
+            type: String,
+            notify: true,
+            readonly: true,
+            value: ""
+          },
+          uuid: {
+            type: String,
+            notify: true,
+            readonly: true,
+            value: ""
+          },
+          info: {
+            type: Object,
+            notify: true,
+            readonly: true,
+            value: {}
+          },
+          latestTimeout: Object
+        };
+      }
+
+      static get observers() {
+        return [
+          'getPlayerGameInfosApi(games)'
+        ]
+      }
+
+      getPlayerApi(player){
+        if(player.length < 3 || !player.match(/([a-zA-Z0-9_]{1,16}|[0-9a-f]{32})/)){
+          return;
+        }
+
+        let apiPlayer = new hive.Player(player);
+
+        this.name = "";
+        this.uuid = "";
+        this.info = {};
+        this.apiPlayerGameInfos = {};
+
+        window.clearTimeout(this.latestTimeout);
+
+        this.latestTimeout = window.setTimeout(()=> {
+          apiPlayer.info().then(info => {
+            this.name = info.name;
+            this.uuid = info.uuid;
+            this.info = info;
+
+            this.getPlayerGameInfosApi(this.games)
+          });
+        }, 500);
+
+        return apiPlayer;
+      }
+
+      getPlayerGameInfosApi(games){
+        if(!games || !this.apiPlayer) return;
+
+        games.forEach(game => {
+          if(hive.GameTypes[game]){
+            this.apiPlayer.gameInfo(hive.GameTypes[game]).then(gameInfo => {
+              if(!this.apiPlayerGameInfos){
+                this.apiPlayerGameInfos = {}
+              }
+
+              this.set(`apiPlayerGameInfos.${game}`, gameInfo);
+            });
+
+            return;
+          }
+          throw new Error(`Unknown GameType: ${game}`);
+        });
+      }
+    }
+
+    window.customElements.define(HiveApiPlayer.is, HiveApiPlayer);
+  </script>
+</dom-module>

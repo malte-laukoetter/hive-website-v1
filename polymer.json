@@ -9,7 +9,8 @@
   "fragments": [
     "src/my-app.html",
     "src/hive-leaderboard.html",
-    "src/hive-team-changes.html"
+    "src/hive-team-changes.html",
+    "src/hive-profile.html"
   ],
   "extraDependencies": [
     "manifest.json",
