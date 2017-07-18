@@ -156,7 +156,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         // If no page was found in the route data, page will be an empty string.
         // Deault to 'view1' in that case.
-        this.page = page || this.defaultPage;
+
+        if(page == ""){
+          this.set("routeData.page", this.defaultPage);
+          return;
+        }
+
+        this.page = page;        
 
         // Close a non-persistent drawer when the page & route are changed.
         if (!this.$.drawer.persistent) {
