@@ -1,0 +1,110 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-styles/element-styles/paper-material-styles.html">">
+
+<link rel="import" href="line-chart.html">
+
+<dom-module id="hive-line-chart">
+  <template>
+    <style include="paper-material-styles">
+      :host {
+        display: inline-block;
+
+      }
+
+      line-chart {
+        min-height: 400px;
+        height: 100%;
+        width: 100%;
+      }
+
+      div {
+        padding: 5px;
+
+        background-color: #fff;
+      }
+
+      :host([hidden]), [hidden] {
+        display: none !important;
+      }
+    </style>
+
+    <div class="paper-material" elevation="1" >
+      <line-chart id="chart" title="{{title}}" subtitle="{{subtitle}}" rows="[[rows]]" cols="[[cols]]"></line-chart>
+
+    </div>
+
+  </template>
+
+  <script>
+    class HiveLineChart extends Polymer.Element {
+      static get is() { return 'hive-line-chart'; }
+      static get properties() {
+        return {
+          data: {
+            type: Object
+          },
+          title: String,
+          subtitle: String,
+          rows: Array,
+          cols: Array,
+          lines: {
+            type: Array
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          'updateRowsAndCols(data)'
+        ];
+      }
+
+      updateRowsAndCols(data){
+        if(!data || Object.entries(data).length < 1 || !this.lines) return;
+
+
+        let cols = [{label: 'Day', type: 'date', id: 'date'}]
+        let rows;
+
+        this.lines.forEach(([label, id]) => cols.push({label: label, type: 'number', id: id}));
+
+        if(this.lines.length === 1 && Number.isInteger(Object.entries(data)[0][1])){
+          rows = Object.entries(data).map(([datestamp, amount]) => [new Date(parseInt(datestamp)), amount]);
+        }else{
+          let convertedData = {};
+
+          Object.entries(data).map(([label, dat])=>{
+            Object.entries(dat).map(([datestamp, amount]) => {
+              datestamp = datestamp.slice(0, -3); // error magin if the update took a bit longer
+
+              if(!convertedData[datestamp]){
+                convertedData[datestamp] = {};
+              }
+
+              convertedData[datestamp][label] = amount;
+            });
+          });
+
+          rows = Object.entries(convertedData).map(([datestamp, data]) => {
+            // convert the data to an array sorted in the same way the cols are sorted
+            let arr = [new Date(parseInt(datestamp) * 1000)]; // we need to convert the second time stamp back to ms
+            this.lines.forEach(([,id]) => {
+              arr.push(data[id]);
+            })
+            return arr;
+          });
+        }
+
+        this.cols = cols;
+        this.rows = rows;
+        
+      }
+
+      redraw(){
+        this.$.chart.redraw()
+      }
+    }
+
+    window.customElements.define(HiveLineChart.is, HiveLineChart);
+  </script>
+</dom-module>

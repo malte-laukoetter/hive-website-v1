@@ -51,7 +51,7 @@
       }
 
       getPlayerApi(player){
-        if(player.length < 3 || !player.match(/([a-zA-Z0-9_]{1,16}|[0-9a-f]{32})/)){
+        if(!player || player.length < 3 || !player.match(/([a-zA-Z0-9_]{1,16}|[0-9a-f]{32})/)){
           return;
         }
 

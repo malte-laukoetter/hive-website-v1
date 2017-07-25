@@ -8,17 +8,18 @@
 <link defer rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/page-title/page-title.html">
-<link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/neon-animation/web-animations.html">
 
 
-<link rel="import" href="picture-paper-card.html">
 <link rel="import" href="hive-api-player.html">
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="hive-api.html">
+<link rel="lazy-import" href="hive-profile-stats.html">
+<link rel="lazy-import" href="hive-profile-graphs.html">
 
 <dom-module id="hive-profile">
   <template>
@@ -47,52 +48,6 @@
           display: none;
         }
       }
-      
-      a {
-        text-decoration: none;
-      }
-
-      paper-card {
-        margin: 5px 0;        
-        width: 100%;
-        --paper-card-header-color: #fff;
-
-        --paper-tooltip: {
-          font-size: 10pt;
-        }
-      }
-
-      picture-paper-card {
-        margin: 5px 0;        
-        width: 100%;
-        --paper-card-header-color: #fff;
-
-        --paper-tooltip: {
-          font-size: 10pt;
-        }
-      }
-
-      @media (min-width: 950px) {
-        paper-card {
-          margin: 5px;
-          width: calc(50% - 12px);
-        }
-        picture-paper-card {
-          margin: 5px;
-          width: calc(50% - 12px);
-        }
-      }
-
-      @media (min-width: 1350px) {
-        paper-card {
-          margin: 5px;
-          width: calc(33% - 10px);
-        }
-        picture-paper-card {
-          margin: 5px;
-          width: calc(33% - 10px);
-        }
-      }
     </style>
 
     <hive-api-player 
@@ -100,8 +55,6 @@
       name="{{username}}" 
       uuid="{{uuid}}" 
       info="{{info}}" 
-      games='["BED", "BP", "CAI", "DRAW", "HB", "HERO", "HIDE", "MIMV"]' 
-      api-player-game-infos="{{gameInfos}}"
     ></hive-api-player>
     
     <page-title base-title="Hive Players" page-title="[[username]]"></page-title>
@@ -111,6 +64,12 @@
         pattern="[[rootPattern]]:player"
         data="{{routeData}}"
         tail="{{subroute}}"></app-route>
+
+    <app-route
+        route="{{subroute}}"
+        pattern="[[rootPattern]]:page"
+        data="{{routeData2}}"
+        tail="{{subroute2}}"></app-route>
 
     <app-header-layout has-scrolling-region fullbleed>
       <app-header slot="header" condenses reveals effects="waterfall">
@@ -135,162 +94,14 @@
           LOADING...
         </template>
         <template is="dom-if" if="[[uuid]]">
-          <picture-paper-card image="/images/hub" heading="General">
-            <div class="card-content">
-              <paper-item>Name:&nbsp;<span>[[username]]<paper-tooltip>[[uuid]]</paper-tooltip></span></paper-item>
-              <paper-item>Rank: [[info.rank]]</paper-item>
-              <paper-item>Tokens: [[info.tokens]]</paper-item>
-              <paper-item>Medals: [[info.medals]]</paper-item>
-              <paper-item>Crates: [[info.crates]]</paper-item>
-              <paper-item>Trophies: [[length(info.trophies)]]</paper-item>
-              <paper-item>First Login: [[toLocalDate(info.firstLogin)]]</paper-item>
-              <paper-item>Latest Login: [[toLocalDate(info.lastLogin)]]</paper-item>
-            </div>
-          </picture-paper-card>
-        </template>
-        <template is="dom-if" if="[[gameInfos.BED.points]]">
-          <picture-paper-card image="/images/bed" heading="Bed Wars">
-            <div class="card-content">
-              <paper-item>Points: [[gameInfos.BED.points]]</paper-item>
-              <paper-item>Victories: [[gameInfos.BED.victories]]</paper-item>
-              <paper-item>Games Played: [[gameInfos.BED.gamesPlayed]]</paper-item>
-              <paper-item>Kills / Deaths: [[gameInfos.BED.kills]] / [[gameInfos.BED.deaths]]</paper-item>
-              <paper-item>Beds Destroyed: [[gameInfos.BED.bedsDestroyed]]</paper-item>
-              <paper-item>Teams Eliminated: [[gameInfos.BED.teamsEliminated]]</paper-item>
-              <paper-item>First Login: [[toLocalDate(gameInfos.BED.firstLogin)]]</paper-item>
-              <paper-item>Latest Login: [[toLocalDate(gameInfos.BED.lastLogin)]]</paper-item>
-            </div>
-          </picture-paper-card>
-        </template>
-        <template is="dom-if" if="[[gameInfos.BP.points]]">
-          <picture-paper-card image="/images/bp" heading="Block Party">
-            <div class="card-content">
-              <paper-item>Title: [[gameInfos.BP.title]] ([[gameInfos.BP.points]] Points)</paper-item>
-              <paper-item>Victories: [[gameInfos.BP.victories]]</paper-item>
-              <paper-item><span>
-                Bling: [[orNo(gameInfos.BP.selectedBling)]] ([[length(gameInfos.BP.unlockedBling)]]/[[enumAmount("BpBling")]])
-                <paper-tooltip>[[arrFormat(gameInfos.BP.unlockedBling)]]</paper-tooltip>
-              </span></paper-item>
-              <paper-item><span>
-                Death Sound: [[orNo(gameInfos.BP.selectedDeathSound)]] ([[length(gameInfos.BP.unlockedDeathSounds)]]/[[enumAmount("BpDeathSound")]])
-                <paper-tooltip>[[arrFormat(gameInfos.BP.unlockedDeathSounds)]]</paper-tooltip>
-              </span></paper-item>
-              <paper-item><span>
-                Trail: [[orNo(gameInfos.BP.selectedTrail)]] ([[length(gameInfos.BP.unlockedTrails)]]/[[enumAmount("BpTrail")]])
-                <paper-tooltip>[[arrFormat(gameInfos.BP.unlockedTrails)]]</paper-tooltip>
-              </span></paper-item>
-              <paper-item>Eliminations: [[gameInfos.BP.gamesPlayed]]</paper-item>
-              <paper-item>Games Played: [[gameInfos.BP.totalPlacing]]</paper-item>
-              <paper-item>First Login: [[toLocalDate(gameInfos.BP.firstLogin)]]</paper-item>
-            </div>
-          </picture-paper-card>
-        </template>
-        <template is="dom-if" if="[[gameInfos.CAI.points]]">
-          <picture-paper-card image="/images/cai" heading="Cowboys and Indians">
-            <div class="card-content">
-              <paper-item>Title: [[gameInfos.CAI.title]] ([[gameInfos.CAI.points]] Points)</paper-item>
-              <paper-item>Victories: [[gameInfos.CAI.victories]]</paper-item>
-              <paper-item>Games Played: [[gameInfos.CAI.gamesPlayed]]</paper-item>
-              <paper-item>Captures / Captured: [[gameInfos.CAI.captures]] / [[gameInfos.CAI.captured]]</paper-item>
-              <paper-item>Catches: [[gameInfos.CAI.catches]]</paper-item>
-              <paper-item>Caught: [[gameInfos.CAI.caught]]</paper-item>
-              <paper-item>First Login: [[toLocalDate(gameInfos.CAI.firstLogin)]]</paper-item>
-              <paper-item>Latest Login: [[toLocalDate(gameInfos.CAI.lastLogin)]]</paper-item>
-            </div>
-          </picture-paper-card>
-        </template>
-        <template is="dom-if" if="[[gameInfos.CR.points]]">
-          <picture-paper-card image="/images/cr" heading="Cranked">
-            <div class="card-content">
-              <paper-item>Title: [[gameInfos.CR.title]] ([[gameInfos.CR.points]] Points)</paper-item>
-              <paper-item>Victories: [[gameInfos.CR.victories]]</paper-item>
-              <paper-item>Games Played: [[gameInfos.CR.gamesPlayed]]</paper-item>
-              <paper-item>Kills / Deaths: [[gameInfos.CR.kills]] / [[gameInfos.CR.deaths]]</paper-item>
-              <paper-item>RCCAT Count / Kills: [[gameInfos.CR.rccatCount]] / [[gameInfos.CR.rccatKills]]</paper-item>
-              <paper-item>Airstrice Count / Kills: [[gameInfos.CR.airstrikeCount]] / [[gameInfos.CR.airstrikeKills]]</paper-item>
-              <paper-item>First Login: [[toLocalDate(gameInfos.CR.firstLogin)]]</paper-item>
-              <paper-item>Latest Login: [[toLocalDate(gameInfos.CR.lastLogin)]]</paper-item>
-            </div>
-          </picture-paper-card>
-        </template>
-        <template is="dom-if" if="[[gameInfos.DRAW.points]]">
-          <picture-paper-card image="/images/draw" heading="Draw It">
-            <div class="card-content">
-              <paper-item>Title: [[gameInfos.DRAW.title]]</paper-item>
-              <paper-item>Points: [[gameInfos.DRAW.points]]</paper-item>
-              <paper-item>Victories: [[gameInfos.DRAW.victories]]</paper-item>
-              <paper-item>Games Played: [[gameInfos.DRAW.gamesPlayed]]</paper-item>
-              <paper-item>Correct Guesses: [[gameInfos.DRAW.correctGuesses]]</paper-item>
-              <paper-item>Incorrect Guesses: [[gameInfos.DRAW.incorrectGuesses]]</paper-item>
-              <paper-item>Skips: [[gameInfos.DRAW.skips]]</paper-item>
-              <paper-item>First Login: [[toLocalDate(gameInfos.DRAW.firstLogin)]]</paper-item>
-            </div>
-          </picture-paper-card>
-        </template>
-        <template is="dom-if" if="[[gameInfos.HB.points]]">
-          <picture-paper-card image="/images/hb" heading="The Herobrine">
-            <div class="card-content">
-              <paper-item>Title: [[gameInfos.HB.title]]</paper-item>
-              <paper-item>Points: [[gameInfos.HB.points]]</paper-item>
-              <paper-item>Captures: [[gameInfos.HB.captures]]</paper-item>
-              <paper-item>Kills: [[gameInfos.HB.kills]]</paper-item>
-              <paper-item>Deaths: [[gameInfos.HB.deaths]]</paper-item>
-              <paper-item>Active Class: [[gameInfos.HB.activeClass]]</paper-item>
-              <paper-item><span>
-                Classes: [[length(gameInfos.HB.unlockedClasses)]] / [[enumAmount("HbClass")]]
-                <paper-tooltip>[[arrFormat(gameInfos.HB.unlockedClasses)]]</paper-tooltip>
-              </span></paper-item>
-              <paper-item>First Login: [[toLocalDate(gameInfos.HB.firstLogin)]]</paper-item>
-            </div>
-          </picture-paper-card>
-        </template>
-        <template is="dom-if" if="[[gameInfos.HERO.points]]">
-          <picture-paper-card image="/images/hero" heading="SG Heroes">
-            <div class="card-content">
-              <paper-item>Points: [[gameInfos.HERO.points]]</paper-item>
-              <paper-item>Victories / Games Played: [[gameInfos.HERO.victories]] / [[gameInfos.HERO.gamesPlayed]]</paper-item>
-              <paper-item>Kills / Deaths: [[gameInfos.HERO.kills]] / [[gameInfos.HERO.deaths]]</paper-item>
-              <paper-item>One vs One wins: [[gameInfos.HERO.oneVsOnesWins]]</paper-item>
-              <paper-item>Deathmatches: [[gameInfos.HERO.deathmatches]]</paper-item>
-              <paper-item>TNT used: [[gameInfos.HERO.tntUsed]]</paper-item>
-              <paper-item>Food consumed: [[gameInfos.HERO.foodConsumed]]</paper-item>
-              <paper-item>Crates opened: [[gameInfos.HERO.cratesOpened]]</paper-item>
-              <paper-item>First Login: [[toLocalDate(gameInfos.HERO.firstLogin)]]</paper-item>
-              <paper-item>Last Login: [[toLocalDate(gameInfos.HERO.lastLogin)]]</paper-item>
-            </div>
-          </picture-paper-card>
-        </template>
-        <template is="dom-if" if="[[gameInfos.HIDE.points]]">
-          <picture-paper-card image="/images/hide" heading="Hide and Seek">
-            <div class="card-content">
-              <paper-item>Title: [[gameInfos.HIDE.title]] ([[gameInfos.HIDE.points]] Points)</paper-item>
-              <paper-item>Victories / Games Played: [[gameInfos.HIDE.victories]] / [[gameInfos.HIDE.gamesPlayed]]</paper-item>
-              <paper-item>Deaths: [[gameInfos.HIDE.deaths]]</paper-item>
-              <paper-item>Time Alive: [[niceTime(gameInfos.HIDE.timeAlive)]]</paper-item>
-              <paper-item><span>
-                Unlocked Blocks: [[length(gameInfos.HIDE.blocks)]]
-                <paper-tooltip>[[arrFormat(gameInfos.HIDE.blocks)]]</paper-tooltip>
-              </span></paper-item>
-              <paper-item>Hider Kills: [[gameInfos.HIDE.hiderKills]]</paper-item>
-              <paper-item>Seeker Kills: [[gameInfos.HIDE.seekerKills]]</paper-item>
-              <paper-item>First Login: [[toLocalDate(gameInfos.HIDE.firstLogin)]]</paper-item>
-              <paper-item>Last Login: [[toLocalDate(gameInfos.HIDE.lastLogin)]]</paper-item>
-            </div>
-          </picture-paper-card>
-        </template>
-        <template is="dom-if" if="[[gameInfos.MIMV.points]]">
-          <picture-paper-card image="/images/mimv" heading="Murder in Mineville">
-            <div class="card-content">
-              <paper-item>Title: [[gameInfos.MIMV.title]] ([[gameInfos.MIMV.points]] Points)</paper-item>
-              <paper-item>Victories: [[gameInfos.MIMV.victories]]</paper-item>
-              <paper-item>Games Played: [[gameInfos.MIMV.gamesPlayed]]</paper-item>
-              <paper-item>Kills / Deaths: [[gameInfos.MIMV.kills]] / [[gameInfos.MIMV.deaths]]</paper-item>
-              <paper-item>Latest Emote: [[gameInfos.MIMV.lastUsedEmote]]</paper-item>
-              <paper-item>Emote Selector: [[niceNameEmoteSelectorMenu(gameInfos.MIMV.preferredEmoteSelectorMenu)]]</paper-item>
-              <paper-item>First Login: [[toLocalDate(gameInfos.MIMV.firstLogin)]]</paper-item>
-              <paper-item>Latest Login: [[toLocalDate(gameInfos.MIMV.lastLogin)]]</paper-item>
-            </div>
-          </picture-paper-card>
+          <paper-tabs selected="{{routeData2.page}}" attr-for-selected="page">
+            <paper-tab page="stats">Stats</paper-tab>
+            <paper-tab page="graphs">Graphs</paper-tab>
+          </paper-tabs>
+          <iron-pages selected="[[routeData2.page]]" attr-for-selected="name">
+            <hive-profile-stats name="stats" player="[[player]]"></hive-profile-stats>
+            <hive-profile-graphs name="graphs" uuid="[[uuid]]" username="[[username]]"></hive-profile-graphs>
+          </iron-pages>
         </template>
       </div>
     </app-header-layout>
@@ -300,6 +111,7 @@
       <paper-dialog-scrollable>
         <div>
           Information about a Hive Player, loaded directly from the api.
+          And some graphs that are generated about the history of the points, medalls and achievements of a person if the profile was already looked at.
         </div>
       </paper-dialog-scrollable>
       <div class="buttons">
@@ -327,14 +139,31 @@
           rootPattern: {
             type: String,
             value: "/"
-          } 
+          }
         };
       }
 
       static get observers() {
         return [
           '_routePlayerChanged(routeData.player)',
+          '_routePageChanged(subroute.path)',
+          '_pageChanged(page)',
         ];
+      }
+
+      _routePageChanged(page) {
+        if (page === undefined) {
+          return;
+        }
+
+        console.log(page)
+
+        if(page == ""){
+          this.set("subroute.path", '/stats');
+        }
+
+        this._pageChanged(this.routeData2.page);
+        return;
       }
 
       _routePlayerChanged(player) {
@@ -347,13 +176,14 @@
         this.latestTimeout = window.setTimeout(() => {
           if(this.uuid){
             firebase.database().ref("latestPlayers").push().set(this.uuid);
+            firebase.database().ref("playerStats").child("daily").child(this.uuid).set(0);
           }
         }, 1000);
 
         this.player = player || undefined;
 
         if(this.route.path == ""){
-          this.set('route.path', `/${player}`);
+          this.set('route.path', `/${player}/stats`);
         }
       }
 
@@ -365,57 +195,30 @@
         this.dispatchEvent(new CustomEvent('toggle-drawer', {bubbles: true, composed: true}))
       }
 
-      toLocalDate(date){
-        if(date){
-          return date.toLocaleString();
-        }
-        return date;
-      }
-
-      niceNameEmoteSelectorMenu(str){
-        if(str){
-          return str.replace("EmoteSelectorMenu", "");
-        }
-        return str;
-      }
-
-      length(arr){
-        if(arr){
-          return arr.length;
-        }
-
-        return arr
-      }
-
-      enumAmount(enum_){
-        return Object.keys(hive[enum_]).length
-      }
-
-      orNo(a){
-        if(a) return a;
-
-        return "None"
-      }
-
-      arrFormat(arr){
-        let str = "";
-
-        for (let obj in arr) {
-          str += arr[obj];
-          str += ", "
-        }
-
-        str = str.slice(0, -2);
-
-        return str
-      }
-
-      niceTime(sec){
-        return `${Math.floor(sec / (60*60))}:${Math.floor(sec / 60) - Math.floor(sec / (60*60)) * 60}:${sec - Math.floor(sec / 60) * 60}`
-      }
-
       loading(uuid, player){
         return (!uuid) && player && player.length >= 3 && player.match(/([a-zA-Z0-9_]{1,16}|[0-9a-f]{32})/)
+      }
+
+      _pageChanged(page) {
+        var resolvedPageUrl
+
+        switch(page){
+          case 'stats':
+            resolvedPageUrl = this.resolveUrl('hive-profile-stats.html');
+            break;
+          case 'graphs':
+            resolvedPageUrl = this.resolveUrl('hive-profile-graphs.html');
+            break;
+          default:
+            console.error(`Unknown Page ${page}`);
+        }
+
+        // Load page import on demand. Show 404 page if fails
+        Polymer.importHref(
+            resolvedPageUrl,
+            null,
+            ()=>this.page = 'stats',
+            true);
       }
     }
 

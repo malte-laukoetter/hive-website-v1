@@ -118,3 +118,20 @@ exports.sendTeamChangeNotification = functions.database.ref('/teamChanges/data/{
     });
   });
 });
+
+/**
+ * Triggers when a new player is added to the daily stats update list
+ */
+exports.removeWeeklyAndMonthlyForNewAddsToDaily = functions.database.ref('/playerStats/daily/{uuid}').onCreate(event => {
+  // Get the list of device notification tokens.
+  const weeklyRefs = admin.database().ref('playerStats').child('weekly');
+  const monthlyRefs = admin.database().ref('playerStats').child('monthly');
+
+  for(let i = 0; i < 7; i++){
+    weeklyRefs.child(i).child(event.params.uuid).remove();
+  }
+
+  for(let i = 0; i < 30; i++){
+    monthlyRefs.child(i).child(event.params.uuid).remove();
+  }
+});

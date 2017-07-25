@@ -1,0 +1,96 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="google-charts-library.html">
+
+<dom-module id="line-chart">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      div {
+        min-height: 400px;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+
+    <div id="chart"></div>
+
+  </template>
+
+  <script>
+    class LineChart extends Polymer.Element {
+      static get is() { return 'line-chart'; }
+      static get properties() {
+        return {
+          rows: {
+            type: Array
+          },
+          cols: {
+            type: Array          
+          },
+          title: String,
+          subtitle: String,
+          loaded: {
+            type: Boolean,
+            value: false
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          'drawChart(rows, cols, title, subtitle)'
+        ];
+      }
+
+      ready(){
+        super.ready();
+
+        google.charts.load('current', {'packages':['line']});
+        google.charts.setOnLoadCallback(()=>{
+          this.loaded = true;
+          this.redraw()
+        });
+
+        window.addEventListener('resize', () => this.redraw());
+      }
+
+      redraw(){
+        this.drawChart(this.rows, this.cols, this.title, this.subtitle);
+      }
+
+      drawChart(rows, cols, title, subtitle) {
+        if(!this.loaded || !rows || !cols) return;
+
+        let dataArray = [...rows];
+
+        dataArray.unshift(cols);
+
+        let data;
+        try{
+          data = google.visualization.arrayToDataTable(dataArray, false)
+        }catch(err){
+          console.debug(err);
+          return;
+        }
+
+        var options = {
+          chart: {
+            title: title,
+            subtitle: subtitle,
+          
+          }
+        };
+
+        var chart = new google.charts.Line(this.$.chart);
+
+        chart.draw(data, google.charts.Line.convertOptions(options));
+      }
+    }
+
+    window.customElements.define(LineChart.is, LineChart);
+  </script>
+</dom-module>

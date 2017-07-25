@@ -1,0 +1,40 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-document.html">
+
+<link rel="import" href="shared-styles.html">
+
+<link rel="import" href="hive-line-chart.html">
+
+<dom-module id="hive-test-site">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      hive-line-chart {
+        height: 50vh;
+        width: 40%;
+      }
+    </style>
+    
+    <firebase-document
+      path="playerStats/data/e3de9ed28c2948e6aebb861235b58707/tokens"
+      data="{{tokens}}">
+    </firebase-document>
+
+    <hive-line-chart title="[[title]]" subtitle="in bugs per line of code" data="[[tokens]]" lines='[ ["Total", "total"] ]'></hive-line-chart>
+
+    <paper-input value="{{title}}"></paper-input>
+
+  </template>
+
+  <script>
+    class HiveTestSite extends Polymer.Element {
+      static get is() { return 'hive-test-site'; }
+    }
+
+    window.customElements.define(HiveTestSite.is, HiveTestSite);
+  </script>
+</dom-module>
