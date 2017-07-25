@@ -29,25 +29,6 @@
 
         --paper-item-icon-width: 70px;
       }
-
-      app-header {
-        color: #fff;
-        background-color: var(--app-primary-color);
-      }
-
-      app-header paper-icon-button {
-        --paper-icon-button-ink-color: white;
-      }
-
-      .content{
-        padding: 10px;
-      }
-
-      @media (min-width: 640px) {
-        [drawer-toggle] {
-          display: none;
-        }
-      }
     </style>
 
     <hive-api-player 
@@ -79,6 +60,9 @@
             <template is="dom-if" if="[[username]]">Profile - [[username]]</template>
             <template is="dom-if" if="[[!username]]">Player Search</template>
           </div>
+          <a target="_blank" rel="noopener" href="https://hivemc.com/player/[[uuid]]">
+            <paper-icon-button icon="my-icons:link"></paper-icon-button>
+          </a>
           <paper-icon-button icon="my-icons:info" on-tap="openInfoDialog"></paper-icon-button>
         </app-toolbar>
       </app-header>
@@ -155,8 +139,6 @@
         if (page === undefined) {
           return;
         }
-
-        console.log(page)
 
         if(page == ""){
           this.set("subroute.path", '/stats');
