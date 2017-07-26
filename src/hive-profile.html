@@ -84,7 +84,7 @@
           </paper-tabs>
           <iron-pages selected="[[routeData2.page]]" attr-for-selected="name">
             <hive-profile-stats name="stats" player="[[player]]"></hive-profile-stats>
-            <hive-profile-graphs name="graphs" uuid="[[uuid]]" username="[[username]]"></hive-profile-graphs>
+            <hive-profile-graphs id="graph" name="graphs" uuid="[[uuid]]" username="[[username]]"></hive-profile-graphs>
           </iron-pages>
         </template>
       </div>
@@ -189,6 +189,10 @@
             resolvedPageUrl = this.resolveUrl('hive-profile-stats.html');
             break;
           case 'graphs':
+            setTimeout(()=>{
+              this.shadowRoot.querySelector('#graph') ? this.shadowRoot.querySelector('#graph').redraw():0;
+            }, 50);
+
             resolvedPageUrl = this.resolveUrl('hive-profile-graphs.html');
             break;
           default:

@@ -114,6 +114,10 @@
             .map(type => [type.name, type.id])
         });
       }
+
+      redraw(){
+        this.shadowRoot.querySelectorAll('hive-line-chart').forEach((e)=>e.redraw())
+      }
     }
 
     window.customElements.define(HiveProfileGraphs.is, HiveProfileGraphs);
