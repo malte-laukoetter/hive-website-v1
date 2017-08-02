@@ -33,9 +33,9 @@
 
     <hive-api-player 
       player="[[player]]"
-      name="{{username}}" 
-      uuid="{{uuid}}" 
-      info="{{info}}" 
+      name="{{username}}"
+      uuid="{{uuid}}"
+      info="{{info}}"
     ></hive-api-player>
     
     <page-title base-title="Hive Players" page-title="[[username]]"></page-title>
@@ -189,6 +189,7 @@
             resolvedPageUrl = this.resolveUrl('hive-profile-stats.html');
             break;
           case 'graphs':
+            // redraw the charts after the load (its to complicated to wait for the dom-if to update so we just wait 50ms)
             setTimeout(()=>{
               this.shadowRoot.querySelector('#graph') ? this.shadowRoot.querySelector('#graph').redraw():0;
             }, 50);
@@ -199,12 +200,7 @@
             console.error(`Unknown Page ${page}`);
         }
 
-        // Load page import on demand. Show 404 page if fails
-        Polymer.importHref(
-            resolvedPageUrl,
-            null,
-            ()=>this.page = 'stats',
-            true);
+        Polymer.importHref(resolvedPageUrl, null, ()=>this.page = 'stats', true);
       }
     }
 
