@@ -16,6 +16,7 @@
 
 
 <link rel="import" href="hive-api-player.html">
+<link rel="import" href="my-icons.html">
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="hive-api.html">
 <link rel="lazy-import" href="hive-profile-stats.html">
@@ -64,6 +65,9 @@
             <paper-icon-button icon="my-icons:link"></paper-icon-button>
           </a>
           <paper-icon-button icon="my-icons:info" on-tap="openInfoDialog"></paper-icon-button>
+          <template is="dom-if" if="[[webShareEnabled]]">
+            <paper-icon-button icon="my-icons:share" on-tap="share"></paper-icon-button>
+          </template>
         </app-toolbar>
       </app-header>
       <div class="content">
@@ -123,6 +127,10 @@
           rootPattern: {
             type: String,
             value: "/"
+          },
+          webShareEnabled: {
+            type: Boolean,
+            value: navigator.share
           }
         };
       }
@@ -201,6 +209,13 @@
         }
 
         Polymer.importHref(resolvedPageUrl, null, ()=>this.page = 'stats', true);
+      }
+
+      share(){
+        navigator.share({
+          title: `${this.username}'s Hive Stats`,
+          url: window.location.href
+        })
       }
     }
 
