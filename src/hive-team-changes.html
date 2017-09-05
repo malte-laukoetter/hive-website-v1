@@ -1,0 +1,360 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-styles/element-styles/paper-material-styles.html">
+<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="my-icons.html">
+<link rel="import" href="../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../bower_components/page-title/page-title.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../bower_components/neon-animation/web-animations.html">
+<link rel="import" href="../bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="../bower_components/iron-iconset/iron-iconset.html">
+
+<dom-module id="hive-team-changes">
+  <template>
+    <style include="shared-styles paper-material-styles">
+      :host {
+        display: block;
+
+        --paper-item-icon-width: 70px;
+      }
+
+      .paper-material {
+        padding: 16px;
+        margin: 0 16px 16px 16px;
+        background-color: #fff;
+      }
+
+      h3 {
+        @apply --paper-font-title;
+      }
+
+      h4 {
+        @apply --paper-font-subhead;
+      }
+
+      .overscroll {
+        height: 50vh;
+      }
+
+      .overscroll paper-button {
+        margin: auto;
+        display: block;
+        width: 200px;
+        text-align: center;
+      }
+
+      .chip {
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .chip div{
+        margin: 4px;
+        height: 32px;
+        cursor: pointer;
+        border-radius: 16px;
+        background-color: var(--paper-grey-200);
+        @apply --layout-horizontal;
+        @apply --layout-center;
+      }
+
+      .icon {
+        margin-right: -4px;
+        width: 32px;
+        height: 32px;
+        border-radius: 100%;
+        vertical-align: bottom;
+      }
+
+      .label {
+        padding: 0 12px;
+        @apply --paper-font-body2;
+        color: var(--secondary-text-color);
+      }
+
+      [hidden] {
+        display: none;
+      }
+    </style>
+
+    <app-indexeddb-mirror
+      key="teamChanges/data"
+      data="[[changeList]]"
+      persisted-data="{{persistendData}}"
+      online="{{online}}">
+    </app-indexeddb-mirror>
+    <page-title base-title="Team Changes"></page-title>
+
+    <firebase-messaging id="messaging" token="{{token}}" push-supported="{{pushSupported}}"></firebase-messaging>
+    <firebase-document disabled="[[!token]]" path="teamChanges/notificationTokens/[[token]]" data="{{pushActive}}"></firebase-document>
+
+    <app-header-layout has-scrolling-region fullbleed>
+     <app-header slot="header" condenses reveals effects="waterfall">
+        <app-toolbar>
+          <paper-icon-button icon="my-icons:menu" drawer-toggle on-tap="toggleDrawer"></paper-icon-button>
+          <div main-title>Team Changes</div>
+          <paper-icon-button icon="my-icons:info" on-tap="openInfoDialog"></paper-icon-button>
+          <template is="dom-if" if="[[and(pushSupported, online)]]">
+            <template is="dom-if" if="[[!exists(pushActive)]]">
+              <paper-icon-button id="notification-subscribe" icon="my-icons:add-alert" on-tap="subscribeToTeamChangeNotifications"></paper-icon-button>
+              <paper-tooltip for="notification-subscribe">get a notifications if there is a change to the team</paper-tooltip>
+            </template>
+            <template is="dom-if" if="[[exists(pushActive)]]">
+              <paper-icon-button id="notification-unsubscribe" icon="my-icons:notifications-active" on-tap="unsubscribeFromTeamChangeNotifications"></paper-icon-button>
+              <paper-tooltip for="notification-unsubscribe">deactivate the notifications</paper-tooltip>
+            </template>
+          </template>
+        </app-header>
+      </app-toolbar>
+      <div class="content">
+        <template is="dom-repeat" items="{{persistendData}}" as="dateChanges" sort="sortByDate" observe="date">
+          <div class="paper-material" elevation="1">
+            <h3>[[dateToDateString(dateChanges.date)]]</h3>
+
+            <template is="dom-repeat" items="{{dateChanges.changetypes}}" as="type">
+              <h4>[[changeTypeToTitle(type)]]</h4>
+
+              <template is="dom-repeat" items="{{dateChanges.data}}" as="change" sort="sortByDate" observe="date">
+                <a class="chip" href="/player/[[uuidIfThere(change)]]" hidden$="[[!same(change.type, type)]]">
+                  <div>
+                    <img class="icon"  src="https://crafatar.com/avatars/[[change.uuid]]?overlay" alt="[[change.name]]">
+                    <span class="label">[[change.name]]</span>
+                  </div>
+                </a>
+              </template>
+            </template>
+          </div>
+        </template>
+
+        <template is="dom-if" if="[[viewLoadButton(nextStartKey, latestKey, online)]]">
+          <div class="overscroll">
+            <paper-button on-tap="loadNext100">Load More...</paper-button>
+          </div>
+        </template>
+      </div>
+    </app-header-layout>
+
+    <paper-dialog id="infoDialog">
+      <h2>Information</h2>
+      <paper-dialog-scrollable>
+        <div>
+          An automated list of the changes to the team of the hive. (it will update once every hour)
+        </div>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-confirm>OK</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+
+  <script>
+
+
+    class HiveTeamChanges extends Polymer.Element {
+      static get is() { return 'hive-team-changes'; }
+
+      static get properties() {
+        return {
+           data: {
+            type: Array,
+            value: []
+          },
+          changeList: {
+            type: Array,
+            computed: 'convertData(data.*)'
+          },
+          loadAmount: {
+            type: Number,
+            value: 100
+          },
+          nextStartKey: {
+            type: String,
+            value: ""
+          },
+          latestKey: {
+            type: String,
+            value: ""
+          },
+          online: {
+            type: Boolean,
+            value: false
+          },
+          pushActive: {
+            type: Boolean,
+            value: null
+          }
+        }
+      }
+
+      and(a, b) {
+        return a && b;
+      }
+
+      exists(a) {
+        return !(!a || (a instanceof Object && Object.keys(a).length == 0));
+      }
+
+      sortByDate(a, b) {
+          return b.date - a.date;
+      }
+
+      viewLoadButton(nextStartKey, latestKey, online) {
+        return online && nextStartKey !== latestKey;
+      }
+
+      filterByDateAndType(date, type) {
+        return function (a) {
+          let aDate = new Date(a.date);
+          aDate.setHours(0);
+          aDate.setMinutes(0);
+          aDate.setSeconds(0);
+          aDate.setMilliseconds(0);
+
+          switch (this.groupType) {
+            case "YEAR":
+              aDate.setMonth(0);
+            case "MONTH":
+              aDate.setDate(1);
+          }
+
+          return aDate.getTime() == date && a.type == type;
+        }
+      }
+
+      dateToDateString(date) {
+        return new Date(parseInt(date)).toDateString();
+      }
+
+      toggleDrawer() {
+        this.dispatchEvent(new CustomEvent('toggle-drawer', { bubbles: true, composed: true }))
+      }
+
+      openInfoDialog() {
+        this.$.infoDialog.toggle()
+      }
+
+      changeTypeToTitle(type) {
+        switch (type) {
+          case "MODERATOR_ADD": return "New Moderators";
+          case "MODERATOR_REMOVE": return "Removed Moderators";
+          case "SENIOR_MODERATOR_ADD": return "New Senior Moderators";
+          case "SENIOR_MODERATOR_REMOVE": return "Removed Senior Moderators";
+          case "DEVELOPER_ADD": return "New Developers";
+          case "DEVELOPER_REMOVE": return "Removed Developers";
+          case "OWNER_ADD": return "New Owners";
+          case "OWNER_REMOVE": return "Removed Owners";
+          default: return "unknown change type"
+        }
+      }
+
+      convertData(data) {
+        let convertedData = {};
+
+        for (let change in data.base) {
+          change = data.base[change];
+          let date = new Date(change.date);
+          date.setHours(0);
+          date.setMinutes(0);
+          date.setSeconds(0);
+          date.setMilliseconds(0);
+
+          if (convertedData[date.getTime()]) {
+            if(convertedData[date.getTime()].types.indexOf(change.type) == -1){
+              convertedData[date.getTime()].types.push(change.type);
+            }
+            convertedData[date.getTime()].data.push(change);
+          } else {
+            convertedData[date.getTime()] = { types: [change.type], data: [change] };
+          }
+        }
+
+        let readyData = []
+
+        for (let date in convertedData){
+          data = convertedData[date];
+
+          readyData.push({
+            date: date,
+            changetypes: data.types, 
+            data: data.data 
+          });
+        }
+
+        return readyData;
+      }
+
+      ready() {
+        super.ready();
+
+        firebase.database().ref('teamChanges').child("data").orderByKey().limitToLast(100).on("child_added", snap => {
+          if (this.nextStartKey == "") {
+            this.nextStartKey = snap.key;
+          }
+
+          this.latestKey = snap.key
+
+          this.push("data", snap.val());
+        });
+      }
+
+      loadNext100() {
+        let nextStartKey = this.nextStartKey;
+
+        firebase.database().ref('teamChanges').child("data").orderByKey().endAt(nextStartKey).limitToLast(100).on("child_added", snap => {
+          if (nextStartKey == this.nextStartKey) {
+            this.nextStartKey = snap.key;
+          }
+
+          this.latestKey = snap.key
+
+          if (snap.key != nextStartKey) {
+            this.push("data", snap.val());
+          }
+        });
+      }
+
+      uuidIfThere(data) {
+        if (data.uuid) return data.uuid;
+
+        return data.name;
+      }
+
+      same(a,b){
+        return a == b;
+      }
+
+      subscribeToTeamChangeNotifications() {
+        if (!this.token) {
+          this.$.messaging.requestPermission().then(() => firebase.messaging().getToken()).then((token) => {
+
+            firebase.database().ref(`teamChanges/notificationTokens/${token}`).set(true);
+
+            this.pushActive = true;
+
+            console.log(`Subscribed: ${token}`);
+          }, function (err) {
+            console.log(err);
+          });
+        } else {
+          this.pushActive = true;
+        }
+      }
+
+      unsubscribeFromTeamChangeNotifications() {
+        this.pushActive = null;
+      }
+    }
+
+    
+
+    window.customElements.define(HiveTeamChanges.is, HiveTeamChanges);
+  </script>
+</dom-module>

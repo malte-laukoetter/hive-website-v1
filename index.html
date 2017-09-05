@@ -1,0 +1,157 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>Hive Leaderboards</title>
+    <meta name="description" content="My App description">
+
+    <base href="/">
+
+    <!--
+      The `<base>` tag below is present to support two advanced deployment options:
+      1) Differential serving. 2) Serving from a non-root path.
+
+      Instead of manually editing the `<base>` tag yourself, you should generally either:
+      a) Add a `basePath` property to the build configuration in your `polymer.json`.
+      b) Use the `--base-path` command-line option for `polymer build`.
+
+      Note: If you intend to serve from a non-root path, see [polymer-root-path] below.
+    -->
+    <link rel="icon" href="images/favicon.ico">
+
+    <!-- See https://goo.gl/OOhYW5 -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- See https://goo.gl/qRE0vM -->
+    <meta name="theme-color" content="#2196f3">
+
+    <!-- Add to homescreen for Chrome on Android. Fallback for manifest.json -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Hive Leaderboards">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Hive Leaderboards">
+
+    <!-- Homescreen icons -->
+    <link rel="apple-touch-icon" href="images/icons/icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="96x96" href="images/icons/icon-96x96.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="images/icons/icon-128x128.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="images/icons/icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="images/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="images/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="384x284" href="images/icons/icon-384x284.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="images/icons/icon-512x512.png">
+
+    <!-- Tile icon for Windows 8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="images/manifest/icon-144x144.png">
+    <meta name="msapplication-TileColor" content="#2196f3">
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <script>
+      /**
+      * [polymer-root-path]
+      *
+      * By default, we set `Polymer.rootPath` to the server root path (`/`).
+      * Leave this line unchanged if you intend to serve your app from the root
+      * path (e.g., with URLs like `my.domain/` and `my.domain/view1`).
+      *
+      * If you intend to serve your app from a non-root path (e.g., with URLs
+      * like `my.domain/my-app/` and `my.domain/my-app/view1`), edit this line
+      * to indicate the path from which you'll be serving, including leading
+      * and trailing slashes (e.g., `/my-app/`).
+      */
+      window.Polymer = {rootPath: '/'};
+
+      // Load and register pre-caching Service Worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('service-worker.js', {
+            scope: Polymer.rootPath,
+          }).then(reg => {
+              setInterval(() => reg.update(), 1000 * 60 * 60);
+              reg.update();
+          });
+        });
+      }
+    </script>
+
+    <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
+    <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+
+    <!-- Load your application shell -->
+    <link rel="import" href="/src/my-app.html">
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css"
+    />
+
+    <!-- Add any global styles for body, document, etc. -->
+    <style>
+      body {
+        margin: 0;
+        font-family: 'Roboto', 'Noto', sans-serif;
+        line-height: 1.5;
+        min-height: 100vh;
+        background-color: #eeeeee;
+      }
+    </style>
+  </head>
+  <body>
+    <my-app></my-app>
+    <noscript>
+      Please enable JavaScript to view this website.
+    </noscript>
+    <!-- Built with love using Polymer Starter Kit -->
+
+    <!-- error logging -->
+   <!-- <script src="https://cdn.ravenjs.com/3.17.0/raven.min.js" crossorigin="anonymous"></script>
+   --> <!-- cookie -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
+    <script>
+      window.addEventListener("load", function () {
+        window.cookieconsent.initialise({
+          "palette": {
+            "popup": {
+              "background": "#000"
+            },
+            "button": {
+              "background": "#f1d600"
+            }
+          }
+        })
+      });
+    </script>
+    <!-- analytics -->
+    <script>
+      if (document.location.hostname !== "localhost") {
+      //  Raven.config('https://2663b2bbf239418caba33546714412fb@sentry.io/200285').install()
+        window.ga = window.ga || function () { (ga.q = ga.q || []).push(arguments) }; ga.l = +new Date;
+        ga('create', 'UA-60277501-8', 'auto');
+        ga('require', 'cleanUrlTracker');
+        ga('require', 'eventTracker');
+        //   ga('require', 'maxScrollTracker');
+        ga('require', 'outboundLinkTracker');
+        //   ga('require', 'pageVisibilityTracker');
+        ga('require', 'urlChangeTracker');
+
+        ga('set', 'anonymizeIp', true);
+
+        ga('send', 'pageview');
+      }
+    </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+    <script async src='autotrack.js'></script>
+  </body>
+</html>

@@ -1,0 +1,28 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="hive-leaderboard.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="hive-leaderboards-achievements">
+  <template>
+    <hive-leaderboard 
+      leaderboard="achievementLeaderboard"
+      property="achievements"
+      property-name="Achievements"
+      places=100
+      name="Achievement Leaderboard"
+    >
+      <span slot="info">
+        The 100 Players who have collected the most achievements over the whole network (all game achievements and the global once).
+      </span>
+    </hive-leaderboard>
+  </template>
+
+  <script>
+    class HiveLeaderboardsAchievements extends Polymer.Element {
+      static get is() { return 'hive-leaderboards-achievements'; }
+    }
+
+    window.customElements.define(HiveLeaderboardsAchievements.is, HiveLeaderboardsAchievements);
+  </script>
+</dom-module>

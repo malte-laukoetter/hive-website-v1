@@ -1,0 +1,30 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="hive-leaderboard.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="hive-leaderboards-tokens">
+  <template>
+    <hive-leaderboard 
+      leaderboard="tokenLeaderboard"
+      property="tokens"
+      property-name="Tokens"
+      places=100
+      name="Token Leaderboard"
+    >
+      <span slot="info">
+        The 100 Players with the most Tokens.
+        <br>
+        It ignores Vips, Owners and Developers.
+      </span>
+    </hive-leaderboard>
+  </template>
+
+  <script>
+    class HiveLeaderboardsTokens extends Polymer.Element {
+      static get is() { return 'hive-leaderboards-tokens'; }
+    }
+
+    window.customElements.define(HiveLeaderboardsTokens.is, HiveLeaderboardsTokens);
+  </script>
+</dom-module>

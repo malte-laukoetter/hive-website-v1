@@ -1,0 +1,28 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="hive-leaderboard.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="hive-leaderboards-kills">
+  <template>
+    <hive-leaderboard 
+      leaderboard="totalKillsLeaderboard"
+      property="kills"
+      property-name="Kills"
+      places=100
+      name="Kill Leaderboard"
+    >
+      <span slot="info">
+        The 100 Players with the most kills.
+      </span>
+    </hive-leaderboard>
+  </template>
+
+  <script>
+    class HiveLeaderboardsKills extends Polymer.Element {
+      static get is() { return 'hive-leaderboards-kills'; }
+    }
+
+    window.customElements.define(HiveLeaderboardsKills.is, HiveLeaderboardsKills);
+  </script>
+</dom-module>

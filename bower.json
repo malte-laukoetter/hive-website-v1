@@ -1,0 +1,41 @@
+{
+  "name": "polymer-starter-kit",
+  "authors": [
+    "The Polymer Authors"
+  ],
+  "license": "https://polymer.github.io/LICENSE.txt",
+  "dependencies": {
+    "app-layout": "^2.0.1",
+    "app-route": "PolymerElements/app-route#^2.0.0",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#^2.0.0",
+    "iron-iconset-svg": "PolymerElements/iron-iconset-svg#^2.0.0",
+    "iron-media-query": "PolymerElements/iron-media-query#^2.0.0",
+    "iron-pages": "^2.0.0",
+    "iron-selector": "^2.0.0",
+    "paper-icon-button": "PolymerElements/paper-icon-button#^2.0.0",
+    "polymer": "Polymer/polymer#^2.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0",
+    "paper-chip": "fabbricadigitale/paper-chip#^0.11.1",
+    "polymerfire": "^2.1.0",
+    "paper-dialog": "^2.0.0",
+    "page-title": "^3.0.0",
+    "neon-animation": "^2.0.1",
+    "paper-button": "^2.0.0",
+    "paper-dialog-scrollable": "^2.1.0",
+    "paper-tooltip": "^2.0.0",
+    "paper-toolbar": "PolymerElements/paper-toolbar#^2.0.0",
+    "iron-icon": "Hackception/iron-icon#fix/chrome-60",
+    "paper-avatar": "^2.0.1",
+    "paper-tabs": "^2.0.0",
+    "paper-card": "PolymerElements/paper-card#^2.0.0",
+    "vaadin-grid": "^3.0.1"
+  },
+  "resolutions": {
+    "polymer": "^2.0.0",
+    "iron-icon": "fix/chrome-60"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#^6.0.0"
+  },
+  "private": true
+}

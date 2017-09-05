@@ -1,0 +1,7 @@
+{
+  "name": "hive-web-functions",
+  "dependencies": {
+    "firebase-admin": "^5.0.0",
+    "firebase-functions": "^0.5.9"
+  }
+}

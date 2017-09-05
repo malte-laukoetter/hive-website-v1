@@ -1,0 +1,19 @@
+<script src="../bower_components/fetch/fetch.js"></script>
+<script>
+  if (!Object.values) {
+      (function (x) {
+        return Object.keys(x).reduce(function (y, z) {
+          return y.push(x[z]) && y;
+        }, []);
+      });
+    }
+
+    if (!Object.entries) {
+      Object.entries = function (x) {
+        return Object.keys(x).reduce(function (y, z) {
+          return y.push([z, x[z]]) && y;
+        }, []);
+      };
+    }
+</script>
+<script src="https://admin.lergin.de/hive.min.js"></script>

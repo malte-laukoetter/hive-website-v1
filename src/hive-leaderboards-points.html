@@ -1,0 +1,28 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="hive-leaderboard.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="hive-leaderboards-points">
+  <template>
+    <hive-leaderboard 
+      leaderboard="totalPointsLeaderboard"
+      property="points"
+      property-name="Points"
+      places=100
+      name="Total Points Leaderboard"
+    >
+      <span slot="info">
+        The 100 Players with the most points when all gamemodes are added together.
+      </span>
+    </hive-leaderboard>
+  </template>
+
+  <script>
+    class HiveLeaderboardsPoints extends Polymer.Element {
+      static get is() { return 'hive-leaderboards-points'; }
+    }
+
+    window.customElements.define(HiveLeaderboardsPoints.is, HiveLeaderboardsPoints);
+  </script>
+</dom-module>

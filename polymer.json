@@ -1,0 +1,40 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/my-app.html",
+  "fragments": [
+    "src/hive-team-changes.html",
+    "src/hive-leaderboard.html",
+    "src/hive-profile.html",
+    "src/hive-profile-stats.html",
+    "src/hive-profile-graphs.html"
+  ],
+  "sources": [
+    "src/**/*",
+    "images/**/*",
+    "bower.json"
+  ],
+  "extraDependencies": [
+    "manifest.json",
+    "autotrack.js",
+    "bower_components/webcomponentsjs/*.js",
+    "bower_components/app-storage/app-indexeddb-mirror/*.js",
+    "bower_components/firebase/*.js",
+    "google61bee3df118b250a.html",
+    "firebase-messaging-sw.js",
+    "__/**"
+  ],
+  "lint": {
+    "rules": ["polymer-2"]
+  },
+  "builds": [
+    {
+      "preset": "es5-bundled",
+      "bundle": {
+        "excludes": [
+          "hive.min.js"
+        ]
+      },
+      "swPrecacheConfig": "sw-precache-config.js"
+    }
+  ]
+}

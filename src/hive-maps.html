@@ -1,0 +1,344 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-styles/element-styles/paper-material-styles.html">
+<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="my-icons.html">
+<link rel="import" href="../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../bower_components/page-title/page-title.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../bower_components/neon-animation/web-animations.html">
+<link rel="import" href="../bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="../bower_components/iron-iconset/iron-iconset.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+
+<dom-module id="hive-maps">
+  <template>
+    <style include="shared-styles paper-material-styles">
+       :host {
+        display: block;
+      }
+
+      [hidden] {
+        display: none;
+      }
+
+      .content {
+        height: 100%;
+      }
+
+      vaadin-grid {
+        height: calc(100% - 20px);
+        font-family: Roboto, sans-serif;
+        --divider-color: rgba(0, 0, 0, var(--dark-divider-opacity));
+
+        --vaadin-grid-header-cell: {
+          height: 64px;
+          color: rgba(0, 0, 0, var(--dark-secondary-opacity));
+          font-size: 12px;
+        };
+
+        --vaadin-grid-body-cell: {
+          height: 48px;
+          color: rgba(0, 0, 0, var(--dark-primary-opacity));
+          font-size: 13px;
+        };
+
+        --vaadin-grid-body-row-hover-cell: {
+          background-color: var(--paper-grey-200);
+        };
+
+        --vaadin-grid-body-row-selected-cell: {
+          background-color: var(--paper-grey-100);
+        };
+
+        --vaadin-grid-focused-cell: {
+          box-shadow: none;
+          font-weight: bold;
+        };
+      }
+
+      vaadin-grid .cell {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-right: 56px;
+      }
+
+      vaadin-grid .cell.last {
+        padding-right: 24px;
+      }
+
+      vaadin-grid .cell.numeric {
+        text-align: right;
+      }
+
+      vaadin-grid vaadin-grid-sorter {
+        --vaadin-grid-sorter-arrow: {
+          display: none !important;
+        };
+      }
+
+      vaadin-grid vaadin-grid-sorter .cell {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      vaadin-grid vaadin-grid-sorter iron-icon {
+        transform: scale(0.8);
+      }
+
+      vaadin-grid vaadin-grid-sorter:not([direction]) iron-icon {
+        color: rgba(0, 0, 0, var(--dark-disabled-opacity));
+      }
+
+      vaadin-grid vaadin-grid-sorter[direction] {
+        color: rgba(0, 0, 0, var(--dark-primary-opacity));
+      }
+
+      vaadin-grid vaadin-grid-sorter[direction=desc] iron-icon {
+        transform: scale(0.8) rotate(180deg);
+      }
+    </style>
+
+    <firebase-query id="query" path="maps/data" order-by-child="sortdate" data="{{liveData}}"></firebase-query>
+    <app-indexeddb-mirror key="maps/data" data="[[liveData]]" persisted-data="{{persistendData}}" online="{{online}}">
+    </app-indexeddb-mirror>
+    <page-title base-title="The Hive Maps"></page-title>
+
+    <firebase-messaging id="messaging" token="{{token}}" push-supported="{{pushSupported}}"></firebase-messaging>
+    <firebase-document disabled="[[!token]]" path="maps/notificationTokens/[[token]]" data="{{pushActive}}"></firebase-document>
+
+    <app-header-layout has-scrolling-region fullbleed>
+      <app-header slot="header" condenses reveals effects="waterfall">
+        <app-toolbar>
+          <paper-icon-button icon="my-icons:menu" drawer-toggle on-tap="toggleDrawer"></paper-icon-button>
+          <div main-title>Maps</div>
+          <paper-icon-button icon="my-icons:info" on-tap="openInfoDialog"></paper-icon-button>
+          <template is="dom-if" if="[[and(pushSupported, online)]]">
+            <template is="dom-if" if="[[!exists(pushActive)]]">
+              <paper-icon-button id="notification-subscribe" icon="my-icons:add-alert" on-tap="subscribeToMapNotifications"></paper-icon-button>
+              <paper-tooltip for="notification-subscribe">get a notifications whenever a new map is added</paper-tooltip>
+            </template>
+            <template is="dom-if" if="[[exists(pushActive)]]">
+              <paper-icon-button id="notification-unsubscribe" icon="my-icons:notifications-active" on-tap="unsubscribeFromMapNotifications"></paper-icon-button>
+              <paper-tooltip for="notification-unsubscribe">deactivate the notifications</paper-tooltip>
+            </template>
+          </template>
+      </app-header>
+      </app-toolbar>
+      <div class="content">
+        <vaadin-grid items="[[persistendData]]">
+          <vaadin-grid-column width="200px" resizable>
+            <template class="header">
+              <vaadin-grid-sorter path="date" id="sorter">
+                <div class="cell">
+                  <span>Date Added</span>
+                  <iron-icon icon="my-icons:arrow-upward"></iron-icon>
+                </div>
+              </vaadin-grid-sorter>
+            </template>
+            <template>[[dateToDateString(item.date)]]</template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="calc(25% - 50px)" resizable>
+            <template class="header">
+              <vaadin-grid-filter aria-label="Game" path="gameType" value="[[_filterGameType]]">
+                <input slot="filter" placeholder="Game" value="{{_filterGameType::input}}" focus-target>
+              </vaadin-grid-filter>
+            </template>
+            <template>[[gameToName(item.gameType)]]</template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="calc(25% - 50px)" resizable>
+            <template class="header">
+              <vaadin-grid-sorter path="mapName">
+                <div class="cell">
+                  <vaadin-grid-filter aria-label="Map Name" path="mapName" value="[[_filterMapName]]">
+                    <input slot="filter" placeholder="Map Name" value="{{_filterMapName::input}}" focus-target>
+                  </vaadin-grid-filter>
+                  <iron-icon icon="my-icons:arrow-upward"></iron-icon>
+                </div>
+              </vaadin-grid-sorter>
+            </template>
+            <template>[[item.mapName]]</template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="calc(25% - 50px)" resizable>
+            <template class="header">
+              <vaadin-grid-sorter path="worldName">
+                <div class="cell">
+                  <vaadin-grid-filter aria-label="World Name" path="worldName" value="[[_filterWorldName]]">
+                    <input slot="filter" placeholder="World Name" value="{{_filterWorldName::input}}" focus-target>
+                  </vaadin-grid-filter>
+                  <iron-icon icon="my-icons:arrow-upward"></iron-icon>
+                </div>
+              </vaadin-grid-sorter>
+            </template>
+            <template>[[item.worldName]]</template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="calc(25% - 50px)">
+            <template class="header">
+              <vaadin-grid-sorter path="author">
+                <div class="cell">
+                  <vaadin-grid-filter aria-label="Author" path="author" value="[[_filterAuthor]]">
+                    <input slot="filter" placeholder="Author" value="{{_filterAuthor::input}}" focus-target>
+                  </vaadin-grid-filter>
+                  <iron-icon icon="my-icons:arrow-upward"></iron-icon>
+                </div>
+              </vaadin-grid-sorter>
+            </template>
+            <template>[[item.author]]</template>
+          </vaadin-grid-column>
+        </vaadin-grid>
+      </div>
+    </app-header-layout>
+
+    <paper-dialog id="infoDialog">
+      <h2>Information</h2>
+      <paper-dialog-scrollable>
+        <div>
+          An automated list of the maps of the hive. (it will update every few minutes)
+        </div>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-confirm>OK</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+
+  <script>
+    const gameModes = new Map([['SG', 'Survival Games'],
+      ['BP', 'BlockParty'],
+      ['CAI', 'Cowboys and Indians'],
+      ['CR', 'Cranked'],
+      ['DR', 'DeathRun'],
+      ['HB', 'The Herobrine'],
+      ['HERO', 'SG:Heroes'],
+      ['HIDE', 'Hide and Seek'],
+      ['OITC', 'One in the Chamber'],
+      ['SP', 'Splegg'],
+      ['TIMV', 'Trouble in Mineville'],
+      ['SKY', 'SkyWars'],
+      ['LAB', 'The Lab'],
+      ['DRAW', 'Draw It'],
+      ['SLAP', 'Slaparoo'],
+      ['EF', 'Electric Floor'],
+      ['MM', 'Music Masters'],
+      ['GRAV', 'Gravity'],
+      ['RR', 'Restaurant Rush'],
+      ['GNT', 'SkyGiants'],
+      ['GNTM', 'SkyGiants: Mini'],
+      ['PMK', 'Pumpkinfection'],
+      ['SGN', 'Survival Games 2'],
+      ['BD', 'BatteryDash'],
+      ['SPL', 'Sploop'],
+      ['MIMV', 'Murder in Mineville'],
+      ['BED', 'BedWars']]);
+
+    class HiveMaps extends Polymer.Element {
+      static get is() { return 'hive-maps'; }
+
+      static get properties() {
+        return {
+          data: {
+            type: Array,
+            value: []
+          },
+          online: {
+            type: Boolean,
+            value: false
+          },
+          pushActive: {
+            type: Boolean,
+            value: null
+          },
+          defSort: {
+            value: "asc"
+          }
+        }
+      }
+
+      ready(){
+        super.ready();
+      }
+
+      and(a, b) {
+        return a && b;
+      }
+
+      exists(a) {
+        return !(!a || (a instanceof Object && Object.keys(a).length == 0));
+      }
+
+      sortByDate(a, b) {
+        return b.date - a.date;
+      }
+
+      _reverse(a){
+        return a.sort((a,b) => b-a);
+      }
+
+      dateToDateString(date) {
+        if(date < 1504610000000){
+          return `before ${new Date(parseInt(date)).toDateString()}`
+        }
+
+        return new Date(parseInt(date)).toDateString();
+      }
+
+      toggleDrawer() {
+        this.dispatchEvent(new CustomEvent('toggle-drawer', { bubbles: true, composed: true }))
+      }
+
+      openInfoDialog() {
+        this.$.infoDialog.toggle()
+      }
+
+      same(a, b) {
+        return a == b;
+      }
+
+      gameToName(a) {
+        return gameModes.get(a)
+      }
+
+      subscribeToMapNotifications() {
+        if (!this.token) {
+          this.$.messaging.requestPermission().then(() => firebase.messaging().getToken()).then((token) => {
+
+            firebase.database().ref(`maps/notificationTokens/${token}`).set(true);
+
+            this.pushActive = true;
+
+            console.log(`Subscribed: ${token}`);
+          }, function (err) {
+            console.log(err);
+          });
+        } else {
+          this.pushActive = true;
+        }
+      }
+
+      unsubscribeFromMapNotifications() {
+        this.pushActive = null;
+      }
+    }
+
+
+
+    window.customElements.define(HiveMaps.is, HiveMaps);
+  </script>
+</dom-module>
