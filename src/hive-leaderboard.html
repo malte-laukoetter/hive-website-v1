@@ -2,6 +2,7 @@
 <link rel="import" href="../bower_components/polymerfire/polymerfire.html">
 <link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
 <link rel="import" href="../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/paper-avatar/paper-avatar.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
@@ -25,14 +26,13 @@
         --paper-item-icon-width: 70px;
       }
     </style>
-
-    <firebase-query
-      id="query"
-      path="[[leaderboard]]/data"
-      order-by-child="[[property]]"
-      limit-to-last=[[places]]
-      data="{{liveData}}">
-    </firebase-query>
+<!--?orderBy="[[property]]"&limitToLast=[[places]]-->
+    <!--<iron-ajax
+      auto
+      url='https://hivewebsite-1da4d.firebaseio.com/[[leaderboard]]/data.json'
+      handle-as="json"
+      last-response="{{liveData}}"
+    ></iron-ajax>-->
 
     <app-indexeddb-mirror
       key="[[leaderboard]]/data"
@@ -55,12 +55,12 @@
         <div role="listbox">
           <template is="dom-repeat" items="{{data}}" as="player" sort="sortByProperty" observe="[[property]]">
             <paper-icon-item>
-              <a href="/player/[[player.$key]]" slot="item-icon">
-                <paper-avatar image-src="https://crafatar.com/avatars/[[player.$key]]?overlay"></paper-avatar>
+              <a href="/player/[[player.uuid]]" slot="item-icon">
+                <paper-avatar image-src="https://crafatar.com/avatars/[[player.uuid]]?overlay"></paper-avatar>
               </a>
               <paper-item-body two-line>
                 <div>[[player.name]]</div>
-                <div secondary>[[_getProperty(player)]] [[_formatNumber(propertyName)]] ([[addOne(index)]]. place)</div>
+                <div secondary>[[_formatNumber(player.value)]] [[propertyName]] ([[player._place]]. place)</div>
               </paper-item-body>
             </paper-icon-item>
           </template>
@@ -126,6 +126,15 @@
         };
       }
 
+      ready(){
+        super.ready();
+        fetch(`https://lergin.de/api/hive/leaderboard/${this.leaderboard}`)
+        .then(res => res.json())
+        .then(res => {
+          this.liveData = res;
+        });
+      }
+
       sortByProperty(a,b){
         return b[this.property] - a[this.property];
       }
@@ -136,6 +145,14 @@
 
       convertNewName(name){
         return name.replace(" ", "").replace("-", "");
+      }
+
+      _conv(data){
+        return Object.keys(data).map(key => {
+          let d = data[key];
+          d.$key = key;
+          return d;
+        });
       }
 
       addNewName(){

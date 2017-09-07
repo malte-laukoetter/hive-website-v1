@@ -176,12 +176,12 @@
             value: 100
           },
           nextStartKey: {
-            type: String,
-            value: ""
+            type: Boolean,
+            value: false
           },
           latestKey: {
-            type: String,
-            value: ""
+            type: Number,
+            value: 0
           },
           online: {
             type: Boolean,
@@ -207,7 +207,7 @@
       }
 
       viewLoadButton(nextStartKey, latestKey, online) {
-        return online && nextStartKey !== latestKey;
+        return online && !nextStartKey;
       }
 
       filterByDateAndType(date, type) {
@@ -294,31 +294,26 @@
       ready() {
         super.ready();
 
-        firebase.database().ref('teamChanges').child("data").orderByKey().limitToLast(100).on("child_added", snap => {
-          if (this.nextStartKey == "") {
-            this.nextStartKey = snap.key;
-          }
-
-          this.latestKey = snap.key
-
-          this.push("data", snap.val());
-        });
+        fetch(`https://lergin.de/api/hive/team`)
+            .then(res => res.json())
+            .then(res => {
+              res.forEach(a => this.push("data", a));
+              this.latestKey = 1;
+            });
       }
 
       loadNext100() {
         let nextStartKey = this.nextStartKey;
 
-        firebase.database().ref('teamChanges').child("data").orderByKey().endAt(nextStartKey).limitToLast(100).on("child_added", snap => {
-          if (nextStartKey == this.nextStartKey) {
-            this.nextStartKey = snap.key;
-          }
-
-          this.latestKey = snap.key
-
-          if (snap.key != nextStartKey) {
-            this.push("data", snap.val());
-          }
-        });
+        fetch(`https://lergin.de/api/hive/team/${this.latestKey}`)
+            .then(res => res.json())
+            .then(res => {
+              if(res === []){
+                this.nextStartKey = true;
+              }
+              res.forEach(a => this.push("data", a));
+              this.latestKey++;
+            });
       }
 
       uuidIfThere(data) {
