@@ -112,8 +112,8 @@
       }
     </style>
 
-    <firebase-query id="query" path="maps/data" order-by-child="sortdate" data="{{liveData}}"></firebase-query>
-    <app-indexeddb-mirror key="maps/data" data="[[liveData]]" persisted-data="{{persistendData}}" online="{{online}}">
+  <!--  <firebase-query id="query" path="maps/data" order-by-child="sortdate" data="{{liveData}}"></firebase-query>
+  --> <app-indexeddb-mirror key="maps/data" data="[[liveData]]" persisted-data="{{persistendData}}" online="{{online}}">
     </app-indexeddb-mirror>
     <page-title base-title="The Hive Maps"></page-title>
 
@@ -267,12 +267,19 @@
           },
           defSort: {
             value: "asc"
-          }
+          },
+          liveData: Array
         }
       }
 
       ready(){
         super.ready();
+
+        fetch(`https://lergin.de/api/hive/maps`)
+            .then(res => res.json())
+            .then(res => {
+              this.liveData = res;
+            });
       }
 
       and(a, b) {
