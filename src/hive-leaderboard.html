@@ -53,7 +53,7 @@
       </app-header>
       <div class="content">
         <div role="listbox">
-          <template is="dom-repeat" items="{{data}}" as="player" sort="sortByProperty" observe="[[property]]">
+          <template is="dom-repeat" items="{{data}}" as="player" sort="sortByPlace">
             <paper-icon-item>
               <a href="/player/[[player.uuid]]" slot="item-icon">
                 <paper-avatar image-src="https://crafatar.com/avatars/[[player.uuid]]?overlay"></paper-avatar>
@@ -135,8 +135,8 @@
         });
       }
 
-      sortByProperty(a,b){
-        return b[this.property] - a[this.property];
+      sortByPlace(a,b){
+        return a._place - b._place;
       }
 
       addOne(a){

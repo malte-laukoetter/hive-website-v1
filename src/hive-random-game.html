@@ -1,0 +1,85 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link defer rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/page-title/page-title.html">
+
+<link rel="import" href="my-icons.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="hive-api.html">
+
+<dom-module id="hive-random-game">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        --paper-item-icon-width: 70px;
+      }
+    </style>
+    
+    <page-title base-title="Hive Random Game Generator" page-title="[[username]]"></page-title>
+
+    <app-header-layout has-scrolling-region fullbleed>
+      <app-header slot="header" condenses reveals effects="waterfall">
+        <app-toolbar>
+          <paper-icon-button icon="my-icons:menu" drawer-toggle on-tap="toggleDrawer"></paper-icon-button>
+          <div main-title>Random Game Generator</div>
+          <template is="dom-if" if="[[webShareEnabled]]">
+            <paper-icon-button icon="my-icons:share" on-tap="share"></paper-icon-button>
+          </template>
+        </app-toolbar>
+      </app-header>
+      <div class="content">
+        <paper-button on-tap="generateRandomGame">Random Game</paper-button>
+
+        <div>
+          [[randomGame]]
+        </div>
+      </div>
+    </app-header-layout>
+  </template>
+
+  <script>
+    class HiveRandomGame extends Polymer.Element {
+      static get is() { return 'hive-random-game'; }
+      static get properties() {
+        return {
+          randomGame: {
+            notify: true,
+            type: String
+          },
+          webShareEnabled: {
+            type: Boolean,
+            value: navigator.share
+          }
+        };
+      }
+
+      ready(){
+        super.ready();
+        hive.GameTypes.update();
+      }
+
+      generateRandomGame() {
+        let amount = hive.GameTypes.list.length;
+
+
+        this.randomGame = hive.GameTypes.list[Math.floor(Math.random() * amount)].name;
+        console.log(this.randomGame)
+      }
+
+      share(){
+        navigator.share({
+          title: `Random Hive Game Generator`,
+          url: window.location.href
+        })
+      }
+    }
+
+    window.customElements.define(HiveRandomGame.is, HiveRandomGame);
+  </script>
+</dom-module>

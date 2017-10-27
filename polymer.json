@@ -34,7 +34,8 @@
           "hive.min.js"
         ]
       },
-      "swPrecacheConfig": "sw-precache-config.js"
+      "swPrecacheConfig": "sw-precache-config.js",
+      "addPushManifest": true
     }
   ]
 }

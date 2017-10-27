@@ -7,16 +7,133 @@
         "destination": "/index.html"
       }
     ],
-    "headers": [
-      {
-        "source": "service-worker.js",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "max-age=300"
-          }
-        ]
-      }
-    ]
-  }
+      "headers": [
+        {
+          "source": "service-worker.js",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "max-age=300"
+            }
+          ]
+        },
+        {
+          "source": "/src/hive-leaderboards-medal.html",
+          "headers": [
+            {
+              "key": "Link",
+              "value": "</src/hive-leaderboard.html>;rel=preload;as=document"
+            }
+          ]
+        },
+        {
+          "source": "/src/hive-leaderboards-points.html",
+          "headers": [
+            {
+              "key": "Link",
+              "value": "</src/hive-leaderboard.html>;rel=preload;as=document"
+            }
+          ]
+        },
+        {
+          "source": "/src/hive-leaderboards-tokens.html",
+          "headers": [
+            {
+              "key": "Link",
+              "value": "</src/hive-leaderboard.html>;rel=preload;as=document"
+            }
+          ]
+        },
+        {
+          "source": "/src/hive-leaderboards-achievements.html",
+          "headers": [
+            {
+              "key": "Link",
+              "value": "</src/hive-leaderboard.html>;rel=preload;as=document"
+            }
+          ]
+        },
+        {
+          "source": "/src/hive-leaderboards-kills.html",
+          "headers": [
+            {
+              "key": "Link",
+              "value": "</src/hive-leaderboard.html>;rel=preload;as=document"
+            }
+          ]
+        },
+        {
+          "source": "/",
+          "headers": [
+            {
+              "key": "Link",
+              "value": "</src/my-app.html>;rel=preload;as=document,</bower_components/webcomponentsjs/custom-elements-es5-adapter.js>;rel=preload;as=script,</bower_components/webcomponentsjs/webcomponents-loader.js>;rel=preload;as=script"
+            }
+          ]
+        },
+        {
+          "source": "/maps",
+          "headers": [
+            {
+              "key": "Link",
+              "value": "</src/hive-maps.html>;rel=preload;as=document,</src/my-app.html>;rel=preload;as=document,</bower_components/webcomponentsjs/custom-elements-es5-adapter.js>;rel=preload;as=script,</bower_components/webcomponentsjs/webcomponents-loader.js>;rel=preload;as=script"
+            }
+          ]
+        },
+        {
+          "source": "/team",
+          "headers": [
+            {
+              "key": "Link",
+              "value": "</src/hive-team-changes.html>;rel=preload;as=document,</src/my-app.html>;rel=preload;as=document,</bower_components/webcomponentsjs/custom-elements-es5-adapter.js>;rel=preload;as=script,</bower_components/webcomponentsjs/webcomponents-loader.js>;rel=preload;as=script"
+            }
+          ]
+        },
+        {
+          "source": "/medals",
+          "headers": [
+            {
+              "key": "Link",
+              "value": "</src/hive-leaderboards-medal.html>;rel=preload;as=document,</src/hive-leaderboard.html>;rel=preload;as=document,</src/my-app.html>;rel=preload;as=document,</bower_components/webcomponentsjs/custom-elements-es5-adapter.js>;rel=preload;as=script,</bower_components/webcomponentsjs/webcomponents-loader.js>;rel=preload;as=script"
+            }
+          ]
+        },
+        {
+          "source": "/points",
+          "headers": [
+            {
+              "key": "Link",
+              "value": "</src/hive-leaderboards-points.html>;rel=preload;as=document,</src/hive-leaderboard.html>;rel=preload;as=document,</src/my-app.html>;rel=preload;as=document,</bower_components/webcomponentsjs/custom-elements-es5-adapter.js>;rel=preload;as=script,</bower_components/webcomponentsjs/webcomponents-loader.js>;rel=preload;as=script"
+            }
+          ]
+        },
+        {
+          "source": "/tokens",
+          "headers": [
+            {
+              "key": "Link",
+              "value": "</src/hive-leaderboards-tokens.html>;rel=preload;as=document,</src/hive-leaderboard.html>;rel=preload;as=document,</src/my-app.html>;rel=preload;as=document,</bower_components/webcomponentsjs/custom-elements-es5-adapter.js>;rel=preload;as=script,</bower_components/webcomponentsjs/webcomponents-loader.js>;rel=preload;as=script"
+            }
+          ]
+        },
+        {
+          "source": "/kills",
+          "headers": [
+            {
+              "key": "Link",
+              "value": "</src/hive-leaderboards-kills.html>;rel=preload;as=document,</src/hive-leaderboard.html>;rel=preload;as=document,</src/my-app.html>;rel=preload;as=document,</bower_components/webcomponentsjs/custom-elements-es5-adapter.js>;rel=preload;as=script,</bower_components/webcomponentsjs/webcomponents-loader.js>;rel=preload;as=script"
+            }
+          ]
+        },
+        {
+          "source": "/achievements",
+          "headers": [
+            {
+              "key": "Link",
+              "value": "</src/hive-leaderboards-achievements.html>;rel=preload;as=document,</src/hive-leaderboard.html>;rel=preload;as=document,</src/my-app.html>;rel=preload;as=document,</bower_components/webcomponentsjs/custom-elements-es5-adapter.js>;rel=preload;as=script,</bower_components/webcomponentsjs/webcomponents-loader.js>;rel=preload;as=script"
+            }
+          ]
+        }
+      ]
+    }
 }
