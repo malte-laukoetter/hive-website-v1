@@ -98,14 +98,21 @@ const gameModes = new Map([['SG', 'Survival Games'],
 ['BED', 'BedWars']]);
 
 function generateNewMapNotificationPayload(data){
-  return {
+  let notification = {
     notification: {
       icon: `https://hive.lergin.de/images/icons/icon-192x192.png`,
       clickAction: `https://hive.lergin.de/maps`,
-      title: `New ${gameModes.has(data.gameType) ? gameModes.get(data.gameType) : data.gameType} map: ${data.mapName}`,
-      body: `The map was created by: ${data.author}`,
+      title: `New ${gameModes.has(data.gameType) ? gameModes.get(data.gameType) : data.gameType} map: ${data.mapName || data.worldName}`
     }
   };
+
+  if(data.author){
+    notification.notification.body = `The map was created by: ${data.author}.\nIt may take some weeks till the map can be played...`;
+  }else{
+    notification.notification.body = `The map's author is still unknown...\nIt may take some weeks till the map can be played...`;
+  }
+
+  return notification;
 }
 
 /**

@@ -17,6 +17,7 @@
 <link rel="lazy-import" href="hive-team-changes.html">
 <link rel="lazy-import" href="hive-maps.html">
 <link rel="lazy-import" href="hive-profile.html">
+<link rel="lazy-import" href="hive-random-game.html">
 
 <link rel="import" href="shared-styles.html">
 
@@ -93,6 +94,7 @@
         <hive-team-changes name="team"></hive-team-changes>
         <hive-maps name="maps"></hive-maps>
         <hive-profile id="playerProfile" name="player" route="{{subroute}}"></hive-profile>
+        <hive-random-game name="random"></hive-random-game>
       </iron-pages>
     </app-drawer-layout>
   </template>
@@ -166,6 +168,9 @@
             break;
           case 'maps':
             resolvedPageUrl = this.resolveUrl('hive-maps.html');
+            break;
+          case 'random':
+            resolvedPageUrl = this.resolveUrl('hive-random-game.html');
             break;
           default:
             console.error(`Unknown Page ${page}`);
