@@ -1,0 +1,233 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="hive-profile-styles.html">
+<link rel="import" href="hive-achievements-card.html">
+
+<link rel="import" href="hive-api-player.html">
+
+<dom-module id="hive-profile-game-tab">
+  <template>
+    <style include="hive-profile-styles">
+      :host {
+        display: block;
+      }
+
+      .content {
+        max-height: 400px;
+        overflow-x: hidden;
+      }
+    </style>
+
+    <div class="row">
+      <div class="col-md-4">
+        <hive-api-player id="hiveApi" player="[[player]]" game="[[gamemode]]" api-player-game-info="{{gameInfo}}"></hive-api-player>
+        <hive-game-player-info-card gamemode="[[gamemode]]" player-title="[[gameInfo.title]]" title-min="2000" title-max="4000">
+          <div slot="stats" class="row">
+            <template is="dom-repeat" items="[[compStats]]">
+              <div class="col-md-4">
+                <h5>[[item.value]]
+                  <br />
+                  <small>[[item.title]]</small>
+                </h5>
+              </div>
+            </template>
+          </div>
+          <div class="row" slot="logins">
+            <template is="dom-repeat" items="[[compLogins]]">
+              <div class$="[[loginClass]]">
+                <h5>[[item.value]]
+                  <br />
+                  <small>[[item.title]]</small>
+                </h5>
+              </div>
+            </template>
+          </div>
+        </hive-game-player-info-card>
+
+        <hive-achievements-card achievements="[[preProcessAchievements]]"></hive-achievements-card>
+      </div>
+      <div class="col-md-8">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card ">
+              <div class="header">
+                <h4 class="title">Points</h4>
+              </div>
+              <div class="content">
+                <canvas id="gamePointChart" height="140"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="card ">
+              <div class="header">
+                <h4 class="title">Achievements</h4>
+              </div>
+              <div class="content">
+                <canvas id="gameAchievementChart" height="140"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+  </template>
+
+  <script>
+    const numFormat = a => new Number(a).toLocaleString();
+    const strFormat = a => a.charAt(0).toUpperCase() + a.slice(1).toLowerCase();
+    const dateFormat = a => new Date(a).toLocaleDateString();
+
+    const gameModeConfigs = {
+      HB: {
+        stats: [
+          {
+            title: "Points",
+            prop: "points",
+            func: numFormat
+          },
+          {
+            title: "Captures",
+            prop: "captures",
+            func: numFormat
+          },
+          {
+            title: "Kills",
+            prop: "kills",
+            func: numFormat
+          },
+          {
+            title: "Deaths",
+            prop: "deaths",
+            func: numFormat
+          },
+          {
+            title: "Active Class",
+            prop: "activeClass",
+            func: strFormat
+          },
+          {
+            title: "Classes Unlocked",
+            prop: "unlockedClasses",
+            func: a => `${a.length} / 7`
+          }
+        ],
+        logins: [
+          {
+            title: "First Login",
+            prop: "firstLogin",
+            func: dateFormat
+          }
+        ]
+      }
+    }
+
+
+    class HiveProfileGameTab extends Polymer.Element {
+      static get is() { return 'hive-profile-game-tab'; }
+      static get properties() {
+        return {
+          gamemode: String,
+          player: String,
+          preProcessAchievements: {
+            type: Array
+          },
+          compStats: {
+            computed: '_computeStats(gamemode, gameInfo)'
+          },
+          compLogins: {
+            computed: '_computeLogins(gamemode, gameInfo)'
+          },
+          loginClass: {
+            computed: '_computeLoginClass(logins)'
+          }
+        }
+      }
+
+      static get observers() {
+        return [
+          '_preProcessAchievements(gameInfo.achievements)'
+        ]
+      }
+
+      _computeStats(gamemode, gameInfo) {
+        if (!gameInfo) return;
+
+        return gameModeConfigs[gamemode].stats.map(a => {
+          return {
+            title: a.title,
+            value: a.func(gameInfo[a.prop])
+          }
+        })
+      }
+
+      _computeLogins(gamemode, gameInfo) {
+        if (!gameInfo) return;
+
+        return gameModeConfigs[gamemode].logins.map(a => {
+          return {
+            title: a.title,
+            value: a.func(gameInfo[a.prop])
+          }
+        })
+      }
+
+      _computeLoginClass(logins){
+        return `col-md-${Math.floor(12 / logins.length)}`;
+      }
+
+      _dateFormat(date) {
+        return new Date(date).toLocaleDateString()
+      }
+
+      _numFormat(num) {
+        return new Number(num).toLocaleString();
+      }
+
+      _textFormat(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+      }
+
+      async _preProcessAchievements() {
+        if (!this.gameInfo.achievements) return;
+
+        let achievements = await hive.GameTypes.list.find(a => a.id == "HB").achievements();
+
+        console.log(achievements)
+
+
+        this.gameInfo.achievements.forEach(achie => {
+          let a = achievements.find(a => a.id == achie.id);
+
+          if (a == undefined) {
+            achie.name = achie.id;
+            achievements.push(achie)
+            console.error("unknown achievmenet:", achie)
+            return;
+          }
+
+          a.progress = achie.progress;
+          a.unlockedAt = achie.unlockedAt;
+          a.unlocked = achie.unlocked;
+        });
+
+        this.preProcessAchievements = achievements;
+        return achievements;
+
+        console.log("A")
+
+        this.preProcessAchievements = await Promise.all(this.gameInfo.achievements.map(async a => {
+          console.log(a)
+          let info = await a.info();
+          a.id = info.id;
+          a.name = info.name;
+          a.description = info.description;
+          a.stages = info.stages;
+          return a;
+        }));
+      }
+    }
+
+    window.customElements.define(HiveProfileGameTab.is, HiveProfileGameTab);
+
+  </script>
+</dom-module>

@@ -1,0 +1,69 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="hive-profile-styles.html">
+
+<link rel="import" href="hive-api-player.html">
+
+<dom-module id="hive-game-player-info-card">
+  <template>
+    <style include="hive-profile-styles">
+      :host {
+        display: block;
+      }
+    </style>
+
+    <div class="card card-user card-game-info">
+      <div class="image">
+        <img src="https://hive.lergin.de/images/[[_lowerCase(gamemode)]].png" alt="Title Image for [[_gamemodeName(gamemode)]]" />
+        <h4>[[_gamemodeName(gamemode)]]</h4>
+      </div>
+      <template is="dom-if" if="[[playerTitle]]">
+        <div class="content">
+          <div class="author">
+            <h4 class="title">[[playerTitle]]
+              <br />
+              <a href="#">
+                <small>[[titleMin]] - [[titleMax]] Points</small>
+              </a>
+            </h4>
+          </div>
+        </div>
+        <hr>
+      </template>
+      <div class="text-center">
+        <slot name="stats"></slot>
+      </div>
+      <hr>
+      <div class="text-center">
+        <slot name="logins"></slot>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    class HiveGamePlayerInfoCard extends Polymer.Element {
+      static get is() { return 'hive-game-player-info-card'; }
+      static get properties() {
+        return {
+          gamemode: String,
+          playerTitle: String,
+          titleMax: Number,
+          titleMin: Number
+        }
+      }
+
+      _gamemodeName(mode) {
+        switch(mode) {
+          case "HB": return "The Herobrine";
+          default: return "Unknown";
+        }
+      }
+
+      _lowerCase(str){
+        return str.toLowerCase();
+      }
+    }
+
+    window.customElements.define(HiveGamePlayerInfoCard.is, HiveGamePlayerInfoCard);
+
+  </script>
+</dom-module>

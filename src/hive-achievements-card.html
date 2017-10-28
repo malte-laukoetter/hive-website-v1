@@ -1,0 +1,108 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="hive-profile-styles.html">
+
+<link rel="import" href="hive-api-player.html">
+
+<dom-module id="hive-achievements-card">
+  <template>
+    <style include="hive-profile-styles">
+      :host {
+        display: block;
+      }
+
+      .content {
+        max-height: 400px;
+        overflow-x: hidden;
+      }
+    </style>
+
+  <div class="card">
+    <div class="header">
+      <h4 class="title">Achievements
+        <small>( [[unlockedAchivements]] / [[achievements.length]] )</small>
+      </h4>
+    </div>
+    <div class="content">
+      <ul class="list-unstyled team-members">
+        <template is="dom-repeat" items="[[achievements]]">
+
+          <li>
+            <div class="row">
+              <div class="col-xs-9">
+                [[item.name]]
+                <br />
+                <span class="text-info">
+                  <small>[[item.description]]</small>
+                </span>
+              </div>
+              
+              <template is="dom-if" if="[[item.unlocked]]">
+                <div class="col-xs-3 text-right text-success">
+                  [[_dateFormat(item.unlockedAt)]]
+                </div>
+              </template>
+              <template is="dom-if" if="[[_showStages(item.progress, item.unlocked)]]">
+                <div class="col-xs-3 text-right text-warning">
+                  [[item.progress]] / [[item.stages]]
+                </div>
+              </template>
+              <template is="dom-if" if="[[_showUnstarted(item.progress, item.unlocked)]]">
+                <div class="col-xs-3 text-right text-primary">
+                  Unstarted
+                </div>
+              </template>
+            </div>
+          </li>
+        </template>
+      </ul>
+    </div>
+  </template>
+
+  <script>
+    class HiveAchievementsCard extends Polymer.Element {
+      static get is() { return 'hive-achievements-card'; }
+      static get properties() {
+        return {
+          achievements: {
+            type: Array,
+            value: [{
+              name: "That Wasn't So Hard",
+              description: "Finish as a runner for the first time.",
+              unlockedAt: new Date()
+            }, {
+              name: "Contributor",
+              description: "Get your DeathRun suggestion added to the game.",
+              progress: 1,
+              stages: 3
+            }, {
+                name: "Escapist",
+                description: "Finish the map \"The Prison\" 10 times!"
+            }]
+          },
+          unlockedAchivements: {
+            computed: '_unlockedAchievements(achievements)'
+          }
+        }
+      }
+
+      _unlockedAchievements(achievements){
+        return achievements.filter(a => a.unlocked).length;
+      }
+
+      _dateFormat(date){
+        return new Date(date).toLocaleDateString();
+      }
+
+      _showStages(a, b){
+        return a && !b;
+      }
+
+      _showUnstarted(a, b){
+        return !a && !b;
+      }
+    }
+
+    window.customElements.define(HiveAchievementsCard.is, HiveAchievementsCard);
+
+  </script>
+</dom-module>
