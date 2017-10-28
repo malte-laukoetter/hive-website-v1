@@ -1,0 +1,75 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="hive-profile-styles.html">
+<link rel="import" href="my-icons.html">
+
+
+<dom-module id="pprdash-count">
+  <template>
+    <style include="hive-profile-styles">
+      :host {
+        display: block;
+      }
+
+      .icon-big {
+        --iron-icon-height: 48px;
+        --iron-icon-width: 48px;
+      }
+      .numbers {
+        font-size: 90%;
+      }
+    </style>
+    <div class="card">
+      <div class="content">
+        <div class="row">
+          <div class="col-xs-4">
+            <div class$="[[_class(type)]]">
+              <iron-icon icon="[[icon]]"></iron-icon>
+            </div>
+          </div>
+          <div class="col-xs-8">
+            <div class="numbers">
+              <p>[[text]]</p>
+              [[_numFormat(value)]]
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    class PprDashCount extends Polymer.Element {
+      static get is() { return 'pprdash-count'; }
+      static get properties() {
+        return {
+          icon: {
+            type: String,
+            value: "my-icons:link"
+          },
+          type: {
+            type: String,
+            value: "info"
+          },
+          value: {
+            type: Number,
+            value: 0
+          },
+          text: {
+            type: String,
+            value: "Count"
+          }
+        }
+      }
+      _numFormat(num){
+        return new Number(num).toLocaleString();
+      }
+      _class(type){
+        return `icon-big icon-${type} text-center`
+      }
+    }
+
+    window.customElements.define(PprDashCount.is, PprDashCount);
+
+  </script>
+</dom-module>

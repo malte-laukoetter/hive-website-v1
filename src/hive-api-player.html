@@ -12,12 +12,18 @@
             type: Array,
             value: []
           },
+          game: String,
           apiPlayer: {
             type: Object,
             readonly: true,
             computed: "getPlayerApi(player)"
           },
           apiPlayerGameInfos: {
+            type: Object,
+            readonly: true,
+            notify: true
+          },
+          apiPlayerGameInfo: {
             type: Object,
             readonly: true,
             notify: true
@@ -46,7 +52,8 @@
 
       static get observers() {
         return [
-          'getPlayerGameInfosApi(games)'
+          'getPlayerGameInfosApi(games)',
+          'getPlayerGameInfoApi(game)'
         ]
       }
 
@@ -74,10 +81,29 @@
           }.bind(this));
         }, 500);
 
+        window.setTimeout(()=> {
+          this.getPlayerGameInfoApi();
+          this.getPlayerGameInfosApi();
+        }, 10)
+
         return apiPlayer;
       }
 
+      async getPlayerGameInfoApi(game){
+        game = game || this.game;
+        if (!game || !this.apiPlayer) return;
+          if (hive.GameTypes[game]) {
+            let gameInfo = await this.apiPlayer.gameInfo(hive.GameTypes[game]);
+            
+            this.apiPlayerGameInfo = gameInfo;
+
+            return gameInfo;
+          }
+          throw new Error(`Unknown GameType: ${game}`);
+      }
+
       getPlayerGameInfosApi(games){
+        games = games || this.games;
         if(!games || !this.apiPlayer) return;
 
         games.forEach(game => {

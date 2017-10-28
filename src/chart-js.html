@@ -1,0 +1,54 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="chart-js">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <div>
+      <canvas id="chart" height="[[height]]"></canvas>
+    </div>
+  </template>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+
+  <script>
+    class ChartJs extends Polymer.Element {
+      static get is() { return 'chart-js'; }
+      static get properties() {
+        return {
+          height: {
+            type: Number,
+            value: 100
+          },
+          type: {
+            type: String,
+            value: "line"
+          },
+          data: Object,
+          options: Object
+        }
+      }
+      static get observers() {
+        return [
+          'updateChart(data.*, options, type)'
+        ]
+      }
+      updateChart(){
+        if(!this.data) return;
+
+        new Chart(this.$.chart.getContext('2d'), {
+          type: this.type,
+          data: this.data,
+          options: this.options
+        });
+      }
+    }
+
+    window.customElements.define(ChartJs.is, ChartJs);
+
+  </script>
+</dom-module>
