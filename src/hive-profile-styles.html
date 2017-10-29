@@ -93,17 +93,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   border-bottom: 0px;
 }
 
-.nav-tabs>li.active>a,.nav-tabs>li.active>a:focus,.nav-tabs>li.active>a:hover {
-  border: 0px;
-}
-
-.nav.nav-tabs {
-  margin-bottom: 10px;
-}
-
-.nav-tabs>li>a {
+.nav-tabs>li {
+  cursor: pointer;
   border: 0px;
   border-radius: 4px;
+}
+
+.nav-tabs>li .active {
+  cursor: default;
 }
 
 .nav-tabs>li>a:hover {
@@ -112,6 +109,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 .card .numbers {
   font-size: 1.8em;
+}
+
+hive-profile-game-tab {
+  margin-top: 10px;
 }
 
     </style>

@@ -40,6 +40,9 @@
       updateChart(){
         if(!this.data) return;
 
+        console.log(this.data)
+        console.log(this.options)
+
         new Chart(this.$.chart.getContext('2d'), {
           type: this.type,
           data: this.data,

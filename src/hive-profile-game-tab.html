@@ -20,7 +20,7 @@
     <div class="row">
       <div class="col-md-4">
         <hive-api-player id="hiveApi" player="[[player]]" game="[[gamemode]]" api-player-game-info="{{gameInfo}}"></hive-api-player>
-        <hive-game-player-info-card gamemode="[[gamemode]]" player-title="[[gameInfo.title]]" title-min="2000" title-max="4000">
+        <hive-game-player-info-card gamemode="[[gamemode]]" player-title="[[gameInfo.title]]">
           <div slot="stats" class="row">
             <template is="dom-repeat" items="[[compStats]]">
               <div class="col-md-4">
@@ -73,11 +73,290 @@
   </template>
 
   <script>
-    const numFormat = a => new Number(a).toLocaleString();
-    const strFormat = a => a.charAt(0).toUpperCase() + a.slice(1).toLowerCase();
+    const numFormat = a => new Number(a || 0).toLocaleString();
+    const strFormat = a => a?a.charAt(0).toUpperCase() + a.slice(1).toLowerCase():"";
     const dateFormat = a => new Date(a).toLocaleDateString();
+    const boolFormat = a => strFormat(`${(a == undefined) ? "false" : a.toString()}`) + "​";
+    const timeFormat = a => `${Math.floor(a / (60 * 60))}:${Math.floor(a / 60) - Math.floor(a / (60 * 60)) * 60}:${a - Math.floor(a / 60) * 60}`;
+    /**
+     * creates the text for an unlock that has the amount stored in an enum onder the hive api libary
+     * a : name of the enum
+     * b : array of unlocks
+     */
+    const unlocks = a => b =>  `${numFormat(b ? b.length : 0)} / ${enumAmount(a)}`;
+    const enumAmount = a => Object.keys(hive[a]).length;
 
     const gameModeConfigs = {
+      BED: {
+        stats: [
+          {
+            title: "Points",
+            prop: "points",
+            func: numFormat
+          },
+          {
+            title: "Victories",
+            prop: "victories",
+            func: numFormat
+          },
+          {
+            title: "Games Played",
+            prop: "gamesPlayed",
+            func: numFormat
+          },
+          {
+            title: "Kills",
+            prop: "kills",
+            func: numFormat
+          },
+          {
+            title: "Deaths",
+            prop: "deaths",
+            func: numFormat
+          },
+          {
+            title: "Beds Destroyed",
+            prop: "bedsDestroyed",
+            func: numFormat
+          },
+          {
+            title: "Teams Eliminated",
+            prop: "teamsEliminated",
+            func: numFormat
+          }
+        ],
+        logins: [
+          {
+            title: "First Login",
+            prop: "firstLogin",
+            func: dateFormat
+          },
+          {
+            title: "Latest Login",
+            prop: "lastLogin",
+            func: dateFormat
+          }
+        ]
+      },
+      BP: {
+        stats: [
+          {
+            title: "Points",
+            prop: "points",
+            func: numFormat
+          },
+          {
+            title: "Victories",
+            prop: "victories",
+            func: numFormat
+          },
+          {
+            title: "Games Played",
+            prop: "gamesPlayed",
+            func: numFormat
+          },
+          {
+            title: "Eliminations",
+            prop: "totalElimination",
+            func: numFormat
+          }, 
+          {
+            title: "Placings",
+            prop: "totalPlacing",
+            func: numFormat
+          },
+          {
+            title: "Selected Bling",
+            prop: "selectedBling",
+            func: strFormat
+          },
+          {
+            title: "Blings Unlocked",
+            prop: "unlockedBling",
+            func: unlocks("BpBling")
+          },
+          {
+            title: "Selected Death Sound",
+            prop: "selectedDeathSound",
+            func: strFormat
+          },
+          {
+            title: "Death Sounds Unlocked",
+            prop: "unlockedDeathSounds",
+            func: unlocks("BpDeathSound")
+          },
+          {
+            title: "Selected Trail",
+            prop: "selectedTrail",
+            func: strFormat
+          },
+          {
+            title: "Trails Unlocked",
+            prop: "unlockedTrails",
+            func: unlocks("BpTrail")
+          }
+        ],
+        logins: [
+          {
+            title: "First Login",
+            prop: "firstLogin",
+            func: dateFormat
+          }
+        ]
+      },
+      CAI: {
+        stats: [
+          {
+            title: "Points",
+            prop: "points",
+            func: numFormat
+          },
+          {
+            title: "Victories",
+            prop: "victories",
+            func: numFormat
+          },
+          {
+            title: "Games Played",
+            prop: "gamesPlayed",
+            func: numFormat
+          },
+          {
+            title: "Captures",
+            prop: "captures",
+            func: numFormat
+          },
+          {
+            title: "Captured",
+            prop: "captured",
+            func: numFormat
+          },
+          {
+            title: "Catches",
+            prop: "catches",
+            func: numFormat
+          },
+          {
+            title: "Caught",
+            prop: "caught",
+            func: numFormat
+          }
+        ],
+        logins: [
+          {
+            title: "First Login",
+            prop: "firstLogin",
+            func: dateFormat
+          },
+          {
+            title: "Latest Login",
+            prop: "lastLogin",
+            func: dateFormat
+          }
+        ]
+      },
+      CR: {
+        stats: [
+          {
+            title: "Points",
+            prop: "points",
+            func: numFormat
+          },
+          {
+            title: "Victories",
+            prop: "victories",
+            func: numFormat
+          },
+          {
+            title: "Games Played",
+            prop: "gamesPlayed",
+            func: numFormat
+          },
+          {
+            title: "Kills",
+            prop: "kills",
+            func: numFormat
+          },
+          {
+            title: "Deaths",
+            prop: "deaths",
+            func: numFormat
+          },
+          {
+            title: "RCCAT Count",
+            prop: "rccatCount",
+            func: numFormat
+          },
+          {
+            title: "RCCAT Kills",
+            prop: "rccatKills",
+            func: numFormat
+          },
+          {
+            title: "Airstrice Count",
+            prop: "airstrikeCount",
+            func: numFormat
+          },
+          {
+            title: "Airstrice Kills",
+            prop: "airstrikeKills",
+            func: numFormat
+          }
+        ],
+        logins: [
+          {
+            title: "First Login",
+            prop: "firstLogin",
+            func: dateFormat
+          },
+          {
+            title: "Latest Login",
+            prop: "lastLogin",
+            func: dateFormat
+          }
+        ]
+      },
+      DRAW: {
+        stats: [
+          {
+            title: "Points",
+            prop: "points",
+            func: numFormat
+          },
+          {
+            title: "Victories",
+            prop: "victories",
+            func: numFormat
+          },
+          {
+            title: "Games Played",
+            prop: "gamesPlayed",
+            func: numFormat
+          },
+          {
+            title: "Correct Guesses",
+            prop: "correctGuesses",
+            func: numFormat
+          },
+          {
+            title: "Incorrect Guesses",
+            prop: "incorrectGuesses",
+            func: numFormat
+          },
+          {
+            title: "Skips",
+            prop: "skips",
+            func: numFormat
+          }
+        ],
+        logins: [
+          {
+            title: "First Login",
+            prop: "firstLogin",
+            func: dateFormat
+          }
+        ]
+      },
       HB: {
         stats: [
           {
@@ -108,7 +387,7 @@
           {
             title: "Classes Unlocked",
             prop: "unlockedClasses",
-            func: a => `${a.length} / 7`
+            func: unlocks("HbClass")
           }
         ],
         logins: [
@@ -118,9 +397,334 @@
             func: dateFormat
           }
         ]
-      }
+      },
+      HERO: {
+        stats: [
+          {
+            title: "Points",
+            prop: "points",
+            func: numFormat
+          },
+          {
+            title: "Victories",
+            prop: "victories",
+            func: numFormat
+          },
+          {
+            title: "Games Played",
+            prop: "gamesPlayed",
+            func: numFormat
+          },
+          {
+            title: "Kills",
+            prop: "kills",
+            func: numFormat
+          },
+          {
+            title: "Deaths",
+            prop: "deaths",
+            func: numFormat
+          },
+          {
+            title: "One vs One wins",
+            prop: "oneVsOnesWins",
+            func: numFormat
+          },
+          {
+            title: "Deathmatches",
+            prop: "deathmatches",
+            func: numFormat
+          },
+          {
+            title: "TNT used",
+            prop: "tntUsed",
+            func: numFormat
+          },
+          {
+            title: "Food consumed",
+            prop: "foodConsumed",
+            func: numFormat
+          },
+          {
+            title: "Crates opened",
+            prop: "cratesOpened",
+            func: numFormat
+          }
+        ],
+        logins: [
+          {
+            title: "First Login",
+            prop: "firstLogin",
+            func: dateFormat
+          },
+          {
+            title: "Latest Login",
+            prop: "lastLogin",
+            func: dateFormat
+          }
+        ]
+      },
+      HIDE: {
+        stats: [
+          {
+            title: "Points",
+            prop: "points",
+            func: numFormat
+          },
+          {
+            title: "Victories",
+            prop: "victories",
+            func: numFormat
+          },
+          {
+            title: "Games Played",
+            prop: "gamesPlayed",
+            func: numFormat
+          },
+          {
+            title: "Deaths",
+            prop: "deaths",
+            func: numFormat
+          },
+          {
+            title: "Time Alive",
+            prop: "timeAlive",
+            func: timeFormat
+          },
+          {
+            title: "Unlocked Blocks",
+            prop: "blocks",
+            func: a => a ? a.length : 0
+          },
+          {
+            title: "Hider Kills",
+            prop: "hiderKills",
+            func: numFormat
+          },
+          {
+            title: "Seeker Kills",
+            prop: "seekerKills",
+            func: numFormat
+          }
+        ],
+        logins: [
+          {
+            title: "First Login",
+            prop: "firstLogin",
+            func: dateFormat
+          },
+          {
+            title: "Latest Login",
+            prop: "lastLogin",
+            func: dateFormat
+          }
+        ]
+      },
+      MIMV: {
+        stats: [
+          {
+            title: "Points",
+            prop: "points",
+            func: numFormat
+          },
+          {
+            title: "Victories",
+            prop: "victories",
+            func: numFormat
+          },
+          {
+            title: "Games Played",
+            prop: "gamesPlayed",
+            func: numFormat
+          },
+          {
+            title: "Kills",
+            prop: "kills",
+            func: numFormat
+          },
+          {
+            title: "Deaths",
+            prop: "deaths",
+            func: numFormat
+          },
+          {
+            title: "Latest Emote",
+            prop: "lastUsedEmote",
+            func: strFormat
+          },
+          {
+            title: "Emote Selector",
+            prop: "preferredEmoteSelectorMenu",
+            func: a => a ? a.replace("EmoteSelectorMenu", "") : 0
+          }
+        ],
+        logins: [
+          {
+            title: "First Login",
+            prop: "firstLogin",
+            func: dateFormat
+          },
+          {
+            title: "Latest Login",
+            prop: "lastLogin",
+            func: dateFormat
+          }
+        ]
+      },
+      OITC: {
+        stats: [
+          {
+            title: "Points",
+            prop: "points",
+            func: numFormat
+          },
+          {
+            title: "Victories",
+            prop: "victories",
+            func: numFormat
+          },
+          {
+            title: "Games Played",
+            prop: "gamesPlayed",
+            func: numFormat
+          },
+          {
+            title: "Kills",
+            prop: "kills",
+            func: numFormat
+          },
+          {
+            title: "Deaths",
+            prop: "deaths",
+            func: numFormat
+          },
+          {
+            title: "Arrows Fired",
+            prop: "arrowsFired",
+            func: numFormat
+          },
+          {
+            title: "Cupid Unlock",
+            prop: "cupidUnlock",
+            func: boolFormat
+          },
+          {
+            title: "Rainbow Unlock",
+            prop: "rainbowUnlock",
+            func: boolFormat
+          },
+          {
+            title: "Music Unlock",
+            prop: "musicUnlock",
+            func: boolFormat
+          },
+          {
+            title: "Herobrine Unlock",
+            prop: "herobrineUnlock",
+            func: boolFormat
+          }
+        ],
+        logins: [
+          {
+            title: "First Login",
+            prop: "firstLogin",
+            func: dateFormat
+          },
+          {
+            title: "Latest Login",
+            prop: "lastLogin",
+            func: dateFormat
+          }
+        ]
+      },
+      RR: {
+        stats: [
+          {
+            title: "Points",
+            prop: "points",
+            func: numFormat
+          },
+          {
+            title: "Victories",
+            prop: "victories",
+            func: numFormat
+          },
+          {
+            title: "Games Played",
+            prop: "gamesPlayed",
+            func: numFormat
+          },
+          {
+            title: "Tables Cleared",
+            prop: "tablesCleared",
+            func: numFormat
+          }
+        ],
+        logins: [
+          {
+            title: "First Login",
+            prop: "firstLogin",
+            func: dateFormat
+          },
+          {
+            title: "Latest Login",
+            prop: "lastLogin",
+            func: dateFormat
+          }
+        ]
+      },
+      SKY: {
+        stats: [
+          {
+            title: "Points",
+            prop: "points",
+            func: numFormat
+          },
+          {
+            title: "Victories",
+            prop: "victories",
+            func: numFormat
+          },
+          {
+            title: "Games Played",
+            prop: "gamesPlayed",
+            func: numFormat
+          },
+          {
+            title: "Kills",
+            prop: "kills",
+            func: numFormat
+          },
+          {
+            title: "Deaths",
+            prop: "deaths",
+            func: numFormat
+          },
+          {
+            title: "Most Points",
+            prop: "mostPoints",
+            func: numFormat
+          },
+          {
+            title: "Time Alive",
+            prop: "timeAlive",
+            func: timeFormat
+          },
+        ],
+        logins: [
+          {
+            title: "First Login",
+            prop: "firstLogin",
+            func: dateFormat
+          },
+          {
+            title: "Latest Login",
+            prop: "lastLogin",
+            func: dateFormat
+          }
+        ]
+      },
     }
-
 
     class HiveProfileGameTab extends Polymer.Element {
       static get is() { return 'hive-profile-game-tab'; }
@@ -138,7 +742,7 @@
             computed: '_computeLogins(gamemode, gameInfo)'
           },
           loginClass: {
-            computed: '_computeLoginClass(logins)'
+            computed: '_computeLoginClass(compLogins)'
           }
         }
       }
@@ -153,11 +757,13 @@
         if (!gameInfo) return;
 
         return gameModeConfigs[gamemode].stats.map(a => {
-          return {
-            title: a.title,
-            value: a.func(gameInfo[a.prop])
+          if(a.func(gameInfo[a.prop])){
+            return {
+              title: a.title,
+              value: a.func(gameInfo[a.prop])
+            }
           }
-        })
+        }).filter(a=>a);
       }
 
       _computeLogins(gamemode, gameInfo) {
@@ -190,10 +796,7 @@
       async _preProcessAchievements() {
         if (!this.gameInfo.achievements) return;
 
-        let achievements = await hive.GameTypes.list.find(a => a.id == "HB").achievements();
-
-        console.log(achievements)
-
+        let achievements = await hive.GameTypes.list.find(a => a.id == this.gamemode).achievements();
 
         this.gameInfo.achievements.forEach(achie => {
           let a = achievements.find(a => a.id == achie.id);
@@ -201,7 +804,7 @@
           if (a == undefined) {
             achie.name = achie.id;
             achievements.push(achie)
-            console.error("unknown achievmenet:", achie)
+            console.debug("unknown achievmenet:", achie)
             return;
           }
 

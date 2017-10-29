@@ -13,17 +13,17 @@
 
     <div class="card card-user card-game-info">
       <div class="image">
-        <img src="https://hive.lergin.de/images/[[_lowerCase(gamemode)]].png" alt="Title Image for [[_gamemodeName(gamemode)]]" />
+        <img src="/images/[[_lowerCase(gamemode)]].png" alt="Title Image for [[_gamemodeName(gamemode)]]" />
         <h4>[[_gamemodeName(gamemode)]]</h4>
       </div>
       <template is="dom-if" if="[[playerTitle]]">
         <div class="content">
           <div class="author">
             <h4 class="title">[[playerTitle]]
-              <br />
+              <!--<br />
               <a href="#">
                 <small>[[titleMin]] - [[titleMax]] Points</small>
-              </a>
+              </a>-->
             </h4>
           </div>
         </div>
@@ -52,10 +52,7 @@
       }
 
       _gamemodeName(mode) {
-        switch(mode) {
-          case "HB": return "The Herobrine";
-          default: return "Unknown";
-        }
+        return hive.GameTypes.list.find(a => a.id == mode).name || "Unknown GameMode";
       }
 
       _lowerCase(str){
