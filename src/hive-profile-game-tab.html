@@ -20,7 +20,7 @@
     <div class="row">
       <div class="col-md-4">
         <hive-api-player id="hiveApi" player="[[player]]" game="[[gamemode]]" api-player-game-info="{{gameInfo}}"></hive-api-player>
-        <hive-game-player-info-card gamemode="[[gamemode]]" player-title="[[gameInfo.title]]">
+        <hive-game-player-info-card gamemode="[[gamemode]]" points="[[gameInfo.points]]" player-title="[[gameInfo.title]]">
           <div slot="stats" class="row">
             <template is="dom-repeat" items="[[compStats]]">
               <div class="col-md-4">
