@@ -64,20 +64,7 @@
       static get properties() {
         return {
           achievements: {
-            type: Array,
-            value: [{
-              name: "That Wasn't So Hard",
-              description: "Finish as a runner for the first time.",
-              unlockedAt: new Date()
-            }, {
-              name: "Contributor",
-              description: "Get your DeathRun suggestion added to the game.",
-              progress: 1,
-              stages: 3
-            }, {
-                name: "Escapist",
-                description: "Finish the map \"The Prison\" 10 times!"
-            }]
+            type: Array
           },
           unlockedAchivements: {
             computed: '_unlockedAchievements(achievements)'

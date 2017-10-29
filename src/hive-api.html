@@ -17,3 +17,14 @@
     }
 </script>
 <script src="https://admin.lergin.de/hive.min.js"></script>
+<script>
+  // init gamenames so there are available without waiting
+  const gameModes = { "SG": "Survival Games", "BP": "BlockParty", "CAI": "Cowboys and Indians", "CR": "Cranked", "DR": "DeathRun", "HB": "The Herobrine", "HERO": "SG:Heroes", "HIDE": "Hide and Seek", "OITC": "One in the Chamber", "SP": "Splegg", "TIMV": "Trouble in Mineville", "SKY": "SkyWars", "LAB": "The Lab", "DRAW": "Draw It", "SLAP": "Slaparoo", "EF": "Electric Floor", "MM": "Music Masters", "GRAV": "Gravity", "RR": "Restaurant Rush", "GNT": "SkyGiants", "GNTM": "SkyGiants: Mini", "PMK": "Pumpkinfection", "SGN": "Survival Games 2", "BD": "BatteryDash", "SPL": "Sploop", "MIMV": "Murder in Mineville", "BED": "BedWars", "SURV": "Survive the Night" }
+
+  Object.entries(gameModes).forEach( ([id, name]) => {
+    if(!hive.GameTypes[id]){
+      hive.GameTypes[id] = new hive.GameType(id);
+    }
+    hive.GameTypes[id].name = name;
+  });
+</script>
