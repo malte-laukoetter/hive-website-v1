@@ -1,6 +1,8 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="hive-profile-styles.html">
 <link rel="import" href="hive-achievements-card.html">
+<link rel="import" href="chart-js.html">
 
 <link rel="import" href="hive-api-player.html">
 
@@ -11,15 +13,28 @@
         display: block;
       }
 
-      .content {
-        max-height: 400px;
-        overflow-x: hidden;
+      [hidden] {
+        display: none;
       }
     </style>
+    <hive-api-player id="hiveApi" player="[[player]]" game="[[gamemode]]" api-player-game-info="{{gameInfo}}"></hive-api-player>
 
-    <div class="row">
+    <template is="dom-if" if="[[_hideGameInfo(gameInfo)]]">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card ">
+            <div class="content">
+              No data about this game <small>([[gamemode]])</small>! The player has probably never played this game :(
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <div class="row" hidden="[[_hideGameInfo(gameInfo)]]">
       <div class="col-md-4">
-        <hive-api-player id="hiveApi" player="[[player]]" game="[[gamemode]]" api-player-game-info="{{gameInfo}}"></hive-api-player>
+        
+        
         <hive-game-player-info-card gamemode="[[gamemode]]" points="[[gameInfo.points]]" player-title="[[gameInfo.title]]">
           <div slot="stats" class="row">
             <template is="dom-repeat" items="[[compStats]]">
@@ -43,7 +58,7 @@
           </div>
         </hive-game-player-info-card>
 
-        <hive-achievements-card achievements="[[preProcessAchievements]]"></hive-achievements-card>
+        <hive-achievements-card hidden="[[!preProcessedAchievements]]" achievements="[[preProcessAchievements]]"></hive-achievements-card>
       </div>
       <div class="col-md-8">
         <div class="row">
@@ -53,20 +68,36 @@
                 <h4 class="title">Points</h4>
               </div>
               <div class="content">
-                <canvas id="gamePointChart" height="140"></canvas>
+                <firebase-document
+                  path="playerStats/data/[[player]]/points/[[gamemode]]"
+                  data="{{points}}">
+                </firebase-document>
+                
+                <chart-js
+                  type="line"
+                  options="[[pointChartOptions]]"
+                  data="[[_calcPointChartData(points)]]" 
+                  height="140"
+                ></chart-js>
               </div>
             </div>
           </div>
-          <div class="col-md-12">
-            <div class="card ">
-              <div class="header">
-                <h4 class="title">Achievements</h4>
-              </div>
-              <div class="content">
-                <canvas id="gameAchievementChart" height="140"></canvas>
+          <template is="dom-if" if="[[preProcessAchievements]]">
+            <div class="col-md-12">
+              <div class="card ">
+                <div class="header">
+                  <h4 class="title">Achievements</h4>
+                </div>
+                <div class="content">
+                  <firebase-document path="playerStats/data/[[player]]/achievements/[[gamemode]]" data="{{achievements}}">
+                  </firebase-document>
+
+                  <chart-js type="line" options="[[achievementChartOptions]]" data="[[_calcAchievementChartData(achievements)]]" height="140"></chart-js>
+                </div>
               </div>
             </div>
-          </div>
+          </template>
+          
         </div>
 
       </div>
@@ -78,6 +109,7 @@
     const dateFormat = a => new Date(a).toLocaleDateString();
     const boolFormat = a => strFormat(`${(a == undefined) ? "false" : a.toString()}`) + "​";
     const timeFormat = a => `${Math.floor(a / (60 * 60))}:${Math.floor(a / 60) - Math.floor(a / (60 * 60)) * 60}:${a - Math.floor(a / 60) * 60}`;
+    const subPropCount = a => b => b ? numFormat(b[a]) : 0;
     /**
      * creates the text for an unlock that has the amount stored in an enum onder the hive api libary
      * a : name of the enum
@@ -87,6 +119,52 @@
     const enumAmount = a => Object.keys(hive[a]).length;
 
     const gameModeConfigs = {
+      BD: {
+         stats: [
+          {
+            title: "Points",
+            prop: "points",
+            func: numFormat
+          },
+          {
+            title: "Games Played",
+            prop: "gamesPlayed",
+            func: numFormat
+          },
+          {
+            title: "Kills",
+            prop: "kills",
+            func: numFormat
+          },
+          {
+            title: "Deaths",
+            prop: "deaths",
+            func: numFormat
+          },
+          {
+            title: "Energy Collected",
+            prop: "energyCollected",
+            func: numFormat
+          },
+          {
+            title: "Batteries Charged",
+            prop: "batteriesCharged",
+            func: numFormat
+          }
+        ],
+        logins: [
+          {
+            title: "First Login",
+            prop: "firstLogin",
+            func: dateFormat
+          },
+          {
+            title: "Latest Login",
+            prop: "lastLogin",
+            func: dateFormat
+          }
+        ]
+      },
       BED: {
         stats: [
           {
@@ -357,6 +435,123 @@
           }
         ]
       },
+      DR: {
+        stats: [
+          {
+            title: "Points",
+            prop: "points",
+            func: numFormat
+          },
+          {
+            title: "Victories",
+            prop: "victories",
+            func: numFormat
+          },
+          {
+            title: "Games Played",
+            prop: "gamesPlayed",
+            func: numFormat
+          },
+          {
+            title: "Kills",
+            prop: "kills",
+            func: numFormat
+          },
+          {
+            title: "Deaths",
+            prop: "deaths",
+            func: numFormat
+          },
+          {
+            title: "Games as Death",
+            prop:"deathGamesPlayed",
+            func: numFormat
+          },
+          {
+            title: "Wins as Death",
+            prop:"deathWins",
+            func: numFormat
+          },
+          {
+            title: "Games as Runner",
+            prop:"runnerGamesPlayed",
+            func: numFormat
+          },
+          {
+            title: "Wins as Runner",
+            prop:"runnerWins",
+            func: numFormat
+          },
+          {
+            title: "Checkpoints passed",
+            prop:"totalCheckpoints",
+            func: numFormat
+          },
+          {
+            title: "Traps activated",
+            prop:"trapsActivated",
+            func: numFormat
+          },
+          {
+            title: "Runner Visibility",
+            prop: "visibility",
+            func: strFormat
+          }
+        ],
+        logins: [
+          {
+            title: "First Login",
+            prop: "firstLogin",
+            func: dateFormat
+          },
+          {
+            title: "Latest Login",
+            prop: "lastLogin",
+            func: dateFormat
+          }
+        ]
+      },
+      EF: {
+        stats: [
+          {
+            title: "Points",
+            prop: "points",
+            func: numFormat
+          },
+          {
+            title: "Victories",
+            prop: "victories",
+            func: numFormat
+          },
+          {
+            title: "Games Played",
+            prop: "gamesPlayed",
+            func: numFormat
+          },
+          {
+            title: "Blocks activated",
+            prop: "blocksactivated",
+            func: numFormat
+          },
+          {
+            title: "Players outlived",
+            prop: "outlived",
+            func: numFormat
+          }
+        ],
+        logins: [
+          {
+            title: "First Login",
+            prop: "firstLogin",
+            func: dateFormat
+          },
+          {
+            title: "Latest Login",
+            prop: "lastLogin",
+            func: dateFormat
+          }
+        ]
+      },
       HB: {
         stats: [
           {
@@ -520,6 +715,102 @@
           }
         ]
       },
+      LAB: {
+        stats: [
+          {
+            title: "Points",
+            prop: "points",
+            func: numFormat
+          },
+          {
+            title: "Victories",
+            prop: "victories",
+            func: numFormat
+          },
+          {
+            title: "Games Played",
+            prop: "gamesPlayed",
+            func: numFormat
+          },
+          {
+            title: "Rocket Race Victories",
+            prop: "gameVictories",
+            func: subPropCount("ROCKETRACE")
+          },
+          {
+            title: "Breaking Blocks Victories",
+            prop: "gameVictories",
+            func: subPropCount("BREAKINGBLOCKS")
+          },
+          {
+            title: "Fight Victories",
+            prop: "gameVictories",
+            func: subPropCount("FIGHT")
+          },
+          {
+            title: "Dodgeball Victories",
+            prop: "gameVictories",
+            func: subPropCount("DODGEBALL")
+          },
+          {
+            title: "Balloon Pop Victories",
+            prop: "gameVictories",
+            func: subPropCount("BALLOONPOP")
+          },
+          {
+            title: "Boat Wars Victories",
+            prop: "gameVictories",
+            func: subPropCount("BOATWARS")
+          },
+          {
+            title: "Crazy Paint Victories",
+            prop: "gameVictories",
+            func: subPropCount("CRAZYPAINT")
+          },
+          {
+            title: "Gold Rush Victories",
+            prop: "gameVictories",
+            func: subPropCount("GOLDRUSH")
+          },
+          {
+            title: "Splegg Victories",
+            prop: "gameVictories",
+            func: subPropCount("SPLEGG")
+          },
+          {
+            title: "Pig Raicing Victories",
+            prop: "gameVictories",
+            func: subPropCount("PIGRACING")
+          },
+          {
+            title: "Whack a Mob Victories",
+            prop: "gameVictories",
+            func: subPropCount("WHACKAMOB")
+          },
+          {
+            title: "Catastrophic Victories",
+            prop: "gameVictories",
+            func: subPropCount("CATASTROPHIC")
+          },
+          {
+            title: "Snowman Victories",
+            prop: "gameVictories",
+            func: subPropCount("SNOWMAN")
+          }
+        ],
+        logins: [
+          {
+            title: "First Login",
+            prop: "firstLogin",
+            func: dateFormat
+          },
+          {
+            title: "Latest Login",
+            prop: "lastLogin",
+            func: dateFormat
+          }
+        ]
+      },
       MIMV: {
         stats: [
           {
@@ -622,6 +913,62 @@
             title: "Herobrine Unlock",
             prop: "herobrineUnlock",
             func: boolFormat
+          }
+        ],
+        logins: [
+          {
+            title: "First Login",
+            prop: "firstLogin",
+            func: dateFormat
+          },
+          {
+            title: "Latest Login",
+            prop: "lastLogin",
+            func: dateFormat
+          }
+        ]
+      },
+      SGN: {
+        stats: [
+          {
+            title: "Points",
+            prop: "points",
+            func: numFormat
+          },
+          {
+            title: "Victories",
+            prop: "victories",
+            func: numFormat
+          },
+          {
+            title: "Games Played",
+            prop: "gamesPlayed",
+            func: numFormat
+          },
+          {
+            title: "Kills",
+            prop: "kills",
+            func: numFormat
+          },
+          {
+            title: "Deaths",
+            prop: "deaths",
+            func: numFormat
+          },
+          {
+            title: "Most Points",
+            prop: "mostPoints",
+            func: numFormat
+          },
+          {
+            title: "Crates opened",
+            prop: "cratesOpened",
+            func: numFormat
+          },
+          {
+            title: "Deathmatches",
+            prop: "deathMatches",
+            func: numFormat
           }
         ],
         logins: [
@@ -743,6 +1090,58 @@
           },
           loginClass: {
             computed: '_computeLoginClass(compLogins)'
+          },
+          pointChartOptions: {
+            type: Object,
+            value: {
+              responsive: true,
+              legend: {
+                display: false
+              },
+              scales: {
+                xAxes: [{
+                  type: "time",
+                  display: true,
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'Date'
+                  },
+                }],
+                yAxes: [{
+                  display: true,
+                  ticks: {
+                    beginAtZero: true,
+
+                  }
+                }]
+              }
+            }
+          },
+          achievementChartOptions: {
+            type: Object,
+            value: {
+              responsive: true,
+              legend: {
+                display: false
+              },
+              scales: {
+                xAxes: [{
+                  type: "time",
+                  display: true,
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'Date'
+                  },
+                }],
+                yAxes: [{
+                  display: true,
+                  ticks: {
+                    beginAtZero: true,
+
+                  }
+                }]
+              }
+            }
           }
         }
       }
@@ -751,6 +1150,36 @@
         return [
           '_preProcessAchievements(gameInfo.achievements)'
         ]
+      }
+
+      _hideGameInfo(a){
+        return a == undefined || a.points === 0;
+      }
+
+      toDateValue([a, b]){ return { x: new Date(new Number(a)), y: b } };
+
+      _calcPointChartData(points){
+        return {
+          datasets: [{
+            label: "Points",
+            data: Object.entries(points).map(this.toDateValue),
+            backgroundColor: "#2196F3",
+            borderColor: "#2196F3",
+            fill: false
+          }]
+        }
+      }
+
+      _calcAchievementChartData(achievemenets){
+        return {
+          datasets: [{
+            label: "Achievements",
+            data: Object.entries(achievemenets).map(this.toDateValue),
+            backgroundColor: "#2196F3",
+            borderColor: "#2196F3",
+            fill: false
+          }]
+        }
       }
 
       _computeStats(gamemode, gameInfo) {

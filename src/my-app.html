@@ -16,7 +16,7 @@
 <link rel="lazy-import" href="hive-leaderboards-kills.html">
 <link rel="lazy-import" href="hive-team-changes.html">
 <link rel="lazy-import" href="hive-maps.html">
-<link rel="lazy-import" href="hive-profile.html">
+<link rel="lazy-import" href="hive-player-page.html">
 <link rel="lazy-import" href="hive-random-game.html">
 
 <link rel="import" href="shared-styles.html">
@@ -93,7 +93,7 @@
         <hive-leaderboards-kills name="kills"></hive-leaderboards-kills>
         <hive-team-changes name="team"></hive-team-changes>
         <hive-maps name="maps"></hive-maps>
-        <hive-profile id="playerProfile" name="player" route="{{subroute}}"></hive-profile>
+        <hive-player-page id="playerProfile" name="player" route="{{subroute}}"></hive-player-page>
         <hive-random-game name="random"></hive-random-game>
       </iron-pages>
     </app-drawer-layout>
@@ -164,7 +164,7 @@
             resolvedPageUrl = this.resolveUrl('hive-team-changes.html');
             break;
           case 'player':
-            resolvedPageUrl = this.resolveUrl('hive-profile.html');
+            resolvedPageUrl = this.resolveUrl('hive-player-page.html');
             break;
           case 'maps':
             resolvedPageUrl = this.resolveUrl('hive-maps.html');
