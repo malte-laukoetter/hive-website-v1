@@ -1,6 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../bower_components/page-title/page-title.html">
 <link rel="import" href="hive-profile-styles.html">
 <link rel="import" href="hive-profile-game-tab.html">
 <link rel="import" href="hive-game-player-info-card.html">
@@ -26,11 +27,13 @@
     </style>
 
     <hive-api-player 
-      player="Lergin_"
+      player="[[player]]"
       name="{{username}}"
       uuid="{{uuid}}"
       info="{{info}}"
     ></hive-api-player>
+
+<!--    <app-route route="{{route}}" pattern="/:player" data="{{routeData}}" tail="{{subroute}}"></app-route>-->
 
 <div class="wrapper" >
     <div class="content">
@@ -143,8 +146,7 @@
             <div class="card">
               <div class="header">
                 <h4 class="title">Achievements</h4>
-                <p class="category">by Gamemode
-                  <p>
+                <p class="category">by Gamemode</p>
               </div>
               <div class="content">
                 <firebase-document
@@ -185,16 +187,21 @@
 
         <div>
             <iron-selector class="nav nav-tabs" selected="{{selectedGameMode}}" attr-for-selected="gamemode" role="navigation" selected-class="active">
+              <li gamemode="BD"><a>Battery Dash</a></li>
               <li gamemode="BED"><a>BedWars</a></li>
-              <li gamemode="BP"><a>BlockParty</a></li>
+              <li gamemode="BP"><a>Block Party</a></li>
               <li gamemode="CAI"><a>Cowboys and Indians</a></li>
               <li gamemode="CR"><a>Cranked</a></li>
               <li gamemode="DRAW"><a>Draw It</a></li>
+              <li gamemode="DR"><a>Death Run</a></li>
+              <li gamemode="EF"><a>Electric Floor</a></li>
               <li gamemode="HB"><a>The Herobrine</a></li>
               <li gamemode="HERO"><a>SG:Heroes</a></li>
               <li gamemode="HIDE"><a>Hide and Seek</a></li>
+              <li gamemode="LAB"><a>The Lab</a></li>
               <li gamemode="MIMV"><a>Murder in Mineville</a></li>
               <li gamemode="OITC"><a>One in the Chamber</a></li>
+              <li gamemode="SGN"><a>Survival Games 2</a></li>
               <li gamemode="RR"><a>Restaurant Rush</a></li>
               <li gamemode="SKY"><a>SkyWars</a></li>
             </iron-selector>
@@ -214,6 +221,7 @@
       static get is() { return 'hive-profile'; }
       static get properties() {
         return {
+          player: String,
           totalPoints: {
             computed: "_computePoints(points)"
           },
@@ -247,7 +255,6 @@
                   display: true,
                   ticks: {
                     beginAtZero: true,
-
                   }
                 }]
               }
@@ -277,8 +284,35 @@
 
       static get observers(){
         return [
-          '_preProcessAchievements(gameInfo.achievements)'
+          '_preProcessAchievements(gameInfo.achievements)',
+          '_routeChanged(routeData.player)'
         ]
+      }
+
+      toggleDrawer() {
+        this.dispatchEvent(new CustomEvent('toggle-drawer', { bubbles: true, composed: true }))
+      }
+
+      _routeChanged(player) {
+        if (player === undefined) {
+          return;
+        }
+
+        window.clearTimeout(this.latestTimeout);
+
+        this.latestTimeout = window.setTimeout(() => {
+          if (this.uuid) {
+            firebase.database().ref("latestPlayers").push().set(this.uuid);
+            firebase.database().ref("playerStats").child("daily").child(this.uuid).set(0);
+          }
+        }, 1000);
+
+        this.player = player || undefined;
+
+
+        if (this.route.path == "") {
+          this.set('route.path', `/${player}/stats`);
+        }
       }
 
       _calcPointTokenChartData(tokens, points){

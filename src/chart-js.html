@@ -8,7 +8,11 @@
       }
     </style>
     <div>
+      <template is="dom-if" if="[[!hasData]]">
+        No data available... Come back in a few minutes or tomorrow!
+      </template>
       <canvas id="chart" height="[[height]]"></canvas>
+      
     </div>
   </template>
 
@@ -29,7 +33,12 @@
             value: "line"
           },
           data: Object,
-          options: Object
+          options: Object,
+          instance: Object,
+          hasData: {
+            type: Boolean,
+            value: false
+          }
         }
       }
       static get observers() {
@@ -38,16 +47,29 @@
         ]
       }
       updateChart(){
-        if(!this.data) return;
+        if(!(this.data && this.data.datasets && this.data.datasets[0] && this.data.datasets[0].data && this.data.datasets[0].data.length > 0) ){
+          this.hasData = false;
+          if(this.instance){
+            this.instance.destroy();
+            this.instance = undefined;
 
-        console.log(this.data)
-        console.log(this.options)
+          }
+          return;
+        }
 
-        new Chart(this.$.chart.getContext('2d'), {
-          type: this.type,
-          data: this.data,
-          options: this.options
-        });
+        this.hasData = true;
+
+        if(this.instance){
+          this.instance.config.data = this.data;
+          this.instance.config.options = this.options;
+          this.instance.update();
+        }else{
+          this.instance = new Chart(this.$.chart.getContext('2d'), {
+            type: this.type,
+            data: this.data,
+            options: this.options
+          });
+        }
       }
     }
 

@@ -62,7 +62,9 @@
         }
       }
       _numFormat(num){
-        return new Number(num).toLocaleString();
+        const parsed = parseInt(num);
+        
+        return isNaN(parsed) ? '?' : parsed.toLocaleString();
       }
       _class(type){
         return `icon-big icon-${type} text-center`

@@ -439,7 +439,7 @@
         
         const titles = gamemodeTitle[gamemode];
 
-        if(!titles) return 'Unknown';
+        if(!titles) return '';
 
         return  Object.entries(titles).filter(([a, b]) => b < points).map(([a,b])=>a).slice(-1)[0];
       }
