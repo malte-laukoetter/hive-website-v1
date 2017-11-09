@@ -5,8 +5,8 @@
     "src/hive-team-changes.html",
     "src/hive-leaderboard.html",
     "src/hive-profile.html",
-    "src/hive-profile-stats.html",
-    "src/hive-profile-graphs.html"
+    "src/hive-random-game.html",
+    "src/hive-gamemode-stats.html"
   ],
   "sources": [
     "src/**/*",

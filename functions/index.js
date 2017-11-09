@@ -60,6 +60,14 @@ function generateTeamChangeNotificationPayload(data){
       payload.notification.title = 'An Owner left the Hive';
       payload.notification.body = `${data.name} is no longer an Owner!`;
       break;
+    case "NECTAR_ADD":
+      payload.notification.title = 'New Team Nectar Member';
+      payload.notification.body = `${data.name} is now a part of Team Nectar!`;
+      break;
+    case "NECTAR_REMOVE":
+      payload.notification.title = 'An Team Nectar Member left';
+      payload.notification.body = `${data.name} is no longer part of Team Nectar!`;
+      break;
     default:
       payload.notification.title = 'Something changed in the team of the Hive';
       payload.notification.body = `${data.name} is now something else but we don't know what...`;

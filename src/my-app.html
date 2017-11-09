@@ -17,6 +17,7 @@
 <link rel="lazy-import" href="hive-team-changes.html">
 <link rel="lazy-import" href="hive-maps.html">
 <link rel="lazy-import" href="hive-player-page.html">
+<link rel="lazy-import" href="hive-gamemode-stats.html">
 <link rel="lazy-import" href="hive-random-game.html">
 
 <link rel="import" href="shared-styles.html">
@@ -73,6 +74,7 @@
           <a name="team" href="/team">Team Changes</a>
           <a name="maps" href="/maps">Maps</a>
           <a name="player" href="/player/">Player Infos</a>
+          <a name="stats" href="/stats">Server Stats</a>
           <a name="medals" href="/medals">Medal Leaderboard</a>
           <a name="points" href="/points">Total Points Leaderboard</a>
           <a name="tokens" href="/tokens">Token Leaderboard</a>
@@ -95,6 +97,7 @@
         <hive-maps name="maps"></hive-maps>
         <hive-player-page id="playerProfile" name="player" route="{{subroute}}"></hive-player-page>
         <hive-random-game name="random"></hive-random-game>
+        <hive-gamemode-stats name="stats"></hive-gamemode-stats>
       </iron-pages>
     </app-drawer-layout>
   </template>
@@ -168,6 +171,9 @@
             break;
           case 'maps':
             resolvedPageUrl = this.resolveUrl('hive-maps.html');
+            break;
+          case 'stats':
+            resolvedPageUrl = this.resolveUrl('hive-gamemode-stats.html');
             break;
           case 'random':
             resolvedPageUrl = this.resolveUrl('hive-random-game.html');

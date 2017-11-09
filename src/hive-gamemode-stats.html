@@ -1,0 +1,236 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/page-title/page-title.html">
+<link rel="import" href="../bower_components/neon-animation/web-animations.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
+
+<link rel="import" href="my-icons.html">
+<link rel="import" href="chart-js.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="hive-gamemode-stats">
+  <template>
+    <style include="shared-styles paper-material-styles">
+      :host {
+        display: block;
+
+        --paper-item-icon-width: 70px;
+      }
+
+      paper-icon-item {
+        margin-top: 10px;
+      }
+
+      .paper-material {
+        padding: 16px;
+        margin: 0 16px 16px 16px;
+        background-color: #fff;
+      }
+    </style>
+
+    <page-title base-title="Hive" page-title="Server Stats"></page-title>
+
+    <app-header-layout has-scrolling-region fullbleed>
+      <app-header slot="header" condenses reveals effects="waterfall">
+        <app-toolbar>
+          <paper-icon-button icon="my-icons:menu" drawer-toggle on-tap="toggleDrawer"></paper-icon-button>
+          <div main-title>Server Stats</div>
+          <paper-icon-button icon="my-icons:info" on-tap="openInfoDialog"></paper-icon-button>
+        </app-toolbar>
+      </app-header>
+      <div class="content">
+        <div class="paper-material" elevation="1">
+          <h3>Unique Players - Server</h3>
+
+          <iron-ajax
+            auto
+            url='https://lergin.de/api/hive/uniqueplayers'
+            handle-as="json"
+            last-response="{{globalStats}}">
+          </iron-ajax>
+
+          <chart-js
+            type="line"
+            options="[[globalChartOptions]]"
+            data="[[_calcGlobalChartData(globalStats)]]" 
+            height="140"
+          ></chart-js>
+        </div>
+        <div class="paper-material" elevation="1">
+          <h3>Unique Players - Gamemodes</h3>
+
+          <iron-ajax
+            auto
+            url='https://lergin.de/api/hive/gamemodePlayersAll'
+            handle-as="json"
+            last-response="{{gamemodeStats}}">
+          </iron-ajax>
+
+          <chart-js
+            type="line"
+            options="[[gamemodesChartOptions]]"
+            data="[[_calcGamemodesChartData(gamemodeStats)]]"
+            height="140"
+          ></chart-js>
+        </div>
+      </div>
+    </app-header-layout>
+
+    <paper-dialog id="infoDialog">
+      <h2>Information</h2>
+      <paper-dialog-scrollable>
+        <div>
+          Statistics about the growth of players on the server and the different gamemodes.<br>
+
+          You can hide certain gamemodes by clicking on the corresponding label.
+        </div>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-confirm>OK</paper-button>
+      </div>
+    </paper-dialog>
+
+  </template>
+
+  <script>
+      const gameModes = { "SG": "Survival Games", "BP": "BlockParty", "CAI": "Cowboys and Indians", "CR": "Cranked", "DR": "DeathRun", "HB": "The Herobrine", "HERO": "SG:Heroes", "HIDE": "Hide and Seek", "OITC": "One in the Chamber", "SP": "Splegg", "TIMV": "Trouble in Mineville", "SKY": "SkyWars", "LAB": "The Lab", "DRAW": "Draw It", "SLAP": "Slaparoo", "EF": "Electric Floor", "MM": "Music Masters", "GRAV": "Gravity", "RR": "Restaurant Rush", "GNT": "SkyGiants", "GNTM": "SkyGiants: Mini", "PMK": "Pumpkinfection", "SGN": "Survival Games 2", "BD": "BatteryDash", "SPL": "Sploop", "MIMV": "Murder in Mineville", "BED": "BedWars", "SURV": "Survive the Night" }
+
+      const colors = [
+        "#4caf50",
+        "#2196f3",
+        "#ffeb3b",
+        "#ff5722",
+        "#03a9f4",
+        "#009688",
+        "#8bc34a",
+        "#673ab7",
+        "#795548",
+        "#e91e63",
+        "#cddc39",
+        "#3f51b5",
+        "#ff9800",
+        "#9c27b0",
+        "#f44336",
+        "#00bcd4",
+        "#ffc107",
+        "#607d8b",
+        "#fb8c00",
+        "#00acc1",
+        "#4527a0",
+        "#c62828",
+        "#ffa000",
+        "#039be5",
+        "#c0ca33",
+        "#d81b60",
+        "#fdd835",
+        "#546e7a",
+        "#00897b"
+      ];
+
+    class HiveGameModeStats extends Polymer.Element {
+      static get is() { return 'hive-gamemode-stats'; }
+      static get properties() {
+        return {
+          globalChartOptions: {
+            type: Object,
+            value: {
+              responsive: true,
+              legend: {
+                display: false
+              },
+              scales: {
+                xAxes: [{
+                  type: "time",
+                  display: true,
+                  scaleLabel: {
+                    display: true,
+                    labelString: 'Date'
+                  },
+                }],
+                yAxes: [{
+                  display: true,
+                  ticks: {
+
+                  }
+                }]
+              }
+            }
+          },
+          gamemodesChartOptions: {
+            type: Object,
+            value: {
+              responsive: true, scales: {
+                xAxes: [{
+                  type: "time", display: true, scaleLabel: {
+                    display: true, labelString:
+                    'Date'
+                  }
+                }], yAxes: [{ display: true }]
+              }
+            }
+          },
+        }
+      }
+      toDateValue([a, b]) { return { x: new Date(new Number(a)), y: b } };
+
+      _calcGlobalChartData(points) {
+        return {
+          datasets: [{
+            label: "Points",
+            data: Object.entries(points).map(this.toDateValue),
+            backgroundColor: "#2196F3",
+            borderColor: "#2196F3",
+            fill: false
+          }]
+        }
+      }
+
+      _calcGamemodesChartData(points) {
+        let a = [];
+
+        if (!points) return;
+
+
+        Object.entries(points)
+        .sort((a,b) => {
+          const aEntries = Object.entries(a[1]);
+          const aPoints = parseInt(aEntries[aEntries.length - 1][1]);
+          const bEntries = Object.entries(b[1]);
+          const bPoints = parseInt(bEntries[bEntries.length - 1][1]);
+
+          return bPoints - aPoints;
+        })
+        .forEach((mode, i) => {
+          a.push({
+            label: gameModes[mode[0]] ? gameModes[mode[0]] : mode[0],
+            data: Object.entries(mode[1]).map(this.toDateValue),
+            backgroundColor: colors[i],
+            borderColor: colors[i],
+            fill: false
+          })
+        })
+
+        return {
+          datasets: a
+        }
+      }
+
+      openInfoDialog() {
+        this.$.infoDialog.toggle()
+      }
+
+      toggleDrawer() {
+        this.dispatchEvent(new CustomEvent('toggle-drawer', { bubbles: true, composed: true }))
+      }
+    }
+
+    window.customElements.define(HiveGameModeStats.is, HiveGameModeStats);
+  </script>
+</dom-module>
