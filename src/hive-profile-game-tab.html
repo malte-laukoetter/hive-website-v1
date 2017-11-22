@@ -108,7 +108,12 @@
     const strFormat = a => a?a.charAt(0).toUpperCase() + a.slice(1).toLowerCase():"";
     const dateFormat = a => new Date(a).toLocaleDateString();
     const boolFormat = a => strFormat(`${(a == undefined) ? "false" : a.toString()}`) + "​";
-    const timeFormat = a => `${Math.floor(a / (60 * 60))}:${Math.floor(a / 60) - Math.floor(a / (60 * 60)) * 60}:${a - Math.floor(a / 60) * 60}`;
+
+    const secToDays = a => Math.floor(a / (60 * 60 * 24));
+    const secToHours = a => Math.floor(a / (60 * 60));
+    const secToMinutes = a => Math.floor(a / 60);
+
+    const timeFormat = a => (secToDays(a) >= 1?`${secToDays(a)}d `:'') + `${secToHours(a) - secToDays(a) * 24}h ${secToMinutes(a) - secToHours(a) * 60}m ${a - secToMinutes(a) * 60}s`;
     const subPropCount = a => b => b ? numFormat(b[a]) : 0;
     /**
      * creates the text for an unlock that has the amount stored in an enum onder the hive api libary
@@ -536,6 +541,37 @@
           {
             title: "Players outlived",
             prop: "outlived",
+            func: numFormat
+          }
+        ],
+        logins: [
+          {
+            title: "First Login",
+            prop: "firstLogin",
+            func: dateFormat
+          },
+          {
+            title: "Latest Login",
+            prop: "lastLogin",
+            func: dateFormat
+          }
+        ]
+      },
+      GRAV: {
+        stats: [
+          {
+            title: "Points",
+            prop: "points",
+            func: numFormat
+          },
+          {
+            title: "Victories",
+            prop: "victories",
+            func: numFormat
+          },
+          {
+            title: "Games Played",
+            prop: "gamesPlayed",
             func: numFormat
           }
         ],
@@ -1062,6 +1098,97 @@
           {
             title: "First Login",
             prop: "firstLogin",
+            func: dateFormat
+          },
+          {
+            title: "Latest Login",
+            prop: "lastLogin",
+            func: dateFormat
+          }
+        ]
+      },
+      SG: {
+        stats: [
+          {
+            title: "Points",
+            prop: "points",
+            func: numFormat
+          },
+          {
+            title: "Victories",
+            prop: "victories",
+            func: numFormat
+          },
+          {
+            title: "Games Played",
+            prop: "gamesPlayed",
+            func: numFormat
+          },
+          {
+            title: "Kills",
+            prop: "kills",
+            func: numFormat
+          },
+          {
+            title: "Deaths",
+            prop: "deaths",
+            func: numFormat
+          },
+          {
+            title: "Most Points",
+            prop: "mostPoints",
+            func: numFormat
+          },
+          {
+            title: "Crates opened",
+            prop: "cratesOpened",
+            func: numFormat
+          },
+          {
+            title: "Deathmatches",
+            prop: "deathMatches",
+            func: numFormat
+          },
+          {
+            title: "Time Alive",
+            prop: "timeAlive",
+            func: timeFormat
+          },
+          {
+            title: "Unlocked vanity colors",
+            prop: "vanityColors",
+            func: unlocks("SgVanityColor")
+          },
+          {
+            title: "Active vanity color",
+            prop: "activeVanityColor",
+            func: strFormat
+          },
+          {
+            title: "Unlocked arrow trails",
+            prop: "arrowTrails",
+            func: unlocks("SgArrowTrail")
+          },
+          {
+            title: "Unlocked battle cries",
+            prop: "battleCries",
+            func: unlocks("SgBattleCrie")
+          },
+          {
+            title: "Death Crate Active",
+            prop: "activeDeathcrate",
+            func: boolFormat
+          },
+        ],
+        logins: [
+          {
+            title: "First Login",
+            prop: "firstLogin",
+            func: dateFormat
+          },
+          {
+            title: "First Win",
+            prop: "firstWinDay",
             func: dateFormat
           },
           {
