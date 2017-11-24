@@ -58,7 +58,10 @@
           </div>
         </hive-game-player-info-card>
 
-        <hive-achievements-card hidden="[[!preProcessedAchievements]]" achievements="[[preProcessAchievements]]"></hive-achievements-card>
+        <template is="dom-if" if="[[preProcessAchievements.length]]">
+          <hive-achievements-card achievements="[[preProcessAchievements]]"></hive-achievements-card>
+        </template>
+    
       </div>
       <div class="col-md-8">
         <div class="row">
@@ -82,7 +85,7 @@
               </div>
             </div>
           </div>
-          <template is="dom-if" if="[[preProcessAchievements]]">
+          <template is="dom-if" if="[[preProcessAchievements.length]]">
             <div class="col-md-12">
               <div class="card ">
                 <div class="header">
@@ -105,7 +108,7 @@
 
   <script>
     const numFormat = a => new Number(a || 0).toLocaleString();
-    const strFormat = a => a?a.charAt(0).toUpperCase() + a.slice(1).toLowerCase():"";
+    const strFormat = a => a ? a.toString().charAt(0).toUpperCase() + a.toString().slice(1).toLowerCase() : "";
     const dateFormat = a => new Date(a).toLocaleDateString();
     const boolFormat = a => strFormat(`${(a == undefined) ? "false" : a.toString()}`) + "​";
 
@@ -1611,7 +1614,10 @@
       }
 
       async _preProcessAchievements() {
-        if (!this.gameInfo.achievements) return;
+        if (!this.gameInfo.achievements) {
+          this.preProcessAchievements = [];
+          return;
+        }
 
         let achievements = await hive.GameTypes.list.find(a => a.id == this.gamemode).achievements();
 
@@ -1632,18 +1638,6 @@
 
         this.preProcessAchievements = achievements;
         return achievements;
-
-        console.log("A")
-
-        this.preProcessAchievements = await Promise.all(this.gameInfo.achievements.map(async a => {
-          console.log(a)
-          let info = await a.info();
-          a.id = info.id;
-          a.name = info.name;
-          a.description = info.description;
-          a.stages = info.stages;
-          return a;
-        }));
       }
     }
 
