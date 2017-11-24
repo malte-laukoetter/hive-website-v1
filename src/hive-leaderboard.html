@@ -65,11 +65,6 @@
             </paper-icon-item>
           </template>
         </div>
-
-        <div style="display: flex">
-          <paper-input style="flex-grow: 1" label="New Name / UUID" value="{{newName}}"></paper-input>
-          <paper-button style="flex-basis: 200px" raised on-tap="addNewName" disabled="[[!online]]">Add to List</paper-button>
-        </div>
       </div>
     </app-header-layout>
 
@@ -80,7 +75,7 @@
           <slot name="info"></slot>
         </div>
         <div>
-          You can test if you are one of those players through entering your name into the input at the bottom and it will check it and add you if you are one (this may take some minutes).
+          To add a player that isn't in the list already you just need to search for the player on the <a href="/player/" >Player Stats Page</a>!
         </div>
       </paper-dialog-scrollable>
       <div class="buttons">
@@ -143,21 +138,12 @@
         return a + 1;
       }
 
-      convertNewName(name){
-        return name.replace(" ", "").replace("-", "");
-      }
-
       _conv(data){
         return Object.keys(data).map(key => {
           let d = data[key];
           d.$key = key;
           return d;
         });
-      }
-
-      addNewName(){
-        firebase.database().ref(this.leaderboard).child('newPlayers').child(this.convertNewName(this.newName)).set(true);
-        this.newName = "";
       }
 
       _getProperty(data){
