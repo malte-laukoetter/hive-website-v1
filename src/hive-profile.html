@@ -156,7 +156,7 @@
 
                 <chart-js
                   type="pie"
-                  height="120"
+                  height="140"
                   data="[[_calcAchievementChartData(achievements)]]"
                   options="[[achievementChartOptions]]"
                 ></chart-js>
@@ -166,7 +166,40 @@
           <div class="col-md-6">
             <div class="card ">
               <div class="header">
+                <h4 class="title">Total Achievements</h4>
+                <p class="category">by Date</p>                
+              </div>
+              <div class="content">
+                <chart-js
+                  type="line"
+                  options="[[medalChartOptions]]"
+                  data="[[_calcAchievementLineChartData(achievements)]]"
+                  height="140"
+                ></chart-js>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="header">
+                <h4 class="title">Points</h4>
+                <p class="category">by Gamemode</p>
+              </div>
+              <div class="content">
+                <chart-js
+                  type="pie"
+                  height="140"
+                  data="[[_calcPointsPieChartData(points)]]"
+                  options="[[achievementChartOptions]]"
+                ></chart-js>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card ">
+              <div class="header">
                 <h4 class="title">Medals</h4>
+                <p class="category">by Date</p>
               </div>
               <div class="content">
                 <firebase-document 
@@ -352,6 +385,20 @@
         }
       }
 
+      _calcAchievementLineChartData(achievements){
+        if(!achievements || !achievements.total) return;
+
+        return {
+          datasets: [{
+            label: "Achievements",
+            data: Object.entries(achievements.total).map(toDateValue),
+            backgroundColor: "#2196F3",
+            borderColor: "#2196F3",
+            fill: false
+          }]
+        }
+      }
+
       _calcAchievementChartData(achievements){
         if(!achievements) return;
 
@@ -393,7 +440,77 @@
               "#f44336",
               "#00bcd4",
               "#ffc107",
-              "#607d8b"
+              "#607d8b",
+              "#fb8c00",
+              "#00acc1",
+              "#4527a0",
+              "#c62828",
+              "#ffa000",
+              "#039be5",
+              "#c0ca33",
+              "#d81b60",
+              "#fdd835",
+              "#546e7a",
+              "#00897b"
+            ],
+          }],
+          labels: data.map(([a, b]) => a)
+        }
+      }
+
+      _calcPointsPieChartData(points) {
+        if (!points) return;
+
+        let data = [];
+
+        for (let mode in points) {
+          if (mode !== "total") {
+            const ele = Object.keys(points[mode]).sort((a, b) => b - a)[0];
+
+            const val = points[mode][ele];
+
+            if (val > 0) {
+              data.push([mode, val]);
+            }
+          }
+        }
+
+        data = data.sort(([x, a], [y, b]) => b - a);
+
+        return {
+          datasets: [{
+            label: "Points",
+            data: data.map(([a, b]) => b),
+            backgroundColor: [
+              "#4caf50",
+              "#2196f3",
+              "#ffeb3b",
+              "#ff5722",
+              "#03a9f4",
+              "#009688",
+              "#8bc34a",
+              "#673ab7",
+              "#795548",
+              "#e91e63",
+              "#cddc39",
+              "#3f51b5",
+              "#ff9800",
+              "#9c27b0",
+              "#f44336",
+              "#00bcd4",
+              "#ffc107",
+              "#607d8b",
+              "#fb8c00",
+              "#00acc1",
+              "#4527a0",
+              "#c62828",
+              "#ffa000",
+              "#039be5",
+              "#c0ca33",
+              "#d81b60",
+              "#fdd835",
+              "#546e7a",
+              "#00897b"
             ],
           }],
           labels: data.map(([a, b]) => a)

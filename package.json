@@ -1,7 +1,21 @@
 {
   "name": "hive-site",
   "devDependencies": {
+    "css-slam": "^2.0.2",
+    "del": "^3.0.0",
+    "gulp": "^3.9.1",
+    "gulp-cache": "^1.0.1",
+    "gulp-html-minifier": "^0.1.8",
+    "gulp-if": "^2.0.2",
+    "gulp-imagemin": "^4.0.0",
+    "gulp-uglify": "^3.0.0",
+    "hive-api": "^1.2.6",
+    "polymer-build": "^2.1.1",
+    "run-sequence": "^2.2.0",
+    "uglify-es": "^3.2.0"
   },
   "scripts": {
+    "build": "polymer build",
+    "release": "firebase deploy --only hosting"
   }
 }

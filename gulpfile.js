@@ -18,6 +18,7 @@ const mergeStream = require('merge-stream');
 const polymerBuild = require('polymer-build');
 const runSequence = require('run-sequence');
 const cache = require('gulp-cache');
+const process = require("process");
 
 
 // Here we add tools that will be used to process our source files.
@@ -294,3 +295,5 @@ gulp.task('dev', callback => runSequence(["copyToTemp", "deleteBuild"], "hiveGam
 
 gulp.task('build', callback => runSequence(["copyToTemp", "deleteBuild"], "polymer", "copyBuildFromTemp", ["deleteTemp", "deleteBuildTemp"], callback));
 
+gulp.on('stop', () => { process.exit(0); });
+gulp.on('err', () => { process.exit(1); });
