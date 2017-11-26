@@ -220,34 +220,8 @@
   </template>
 
   <script>
-    const gameModes = new Map([['SG', 'Survival Games'],
-      ['BP', 'BlockParty'],
-      ['CAI', 'Cowboys and Indians'],
-      ['CR', 'Cranked'],
-      ['DR', 'DeathRun'],
-      ['HB', 'The Herobrine'],
-      ['HERO', 'SG:Heroes'],
-      ['HIDE', 'Hide and Seek'],
-      ['OITC', 'One in the Chamber'],
-      ['SP', 'Splegg'],
-      ['TIMV', 'Trouble in Mineville'],
-      ['SKY', 'SkyWars'],
-      ['LAB', 'The Lab'],
-      ['DRAW', 'Draw It'],
-      ['SLAP', 'Slaparoo'],
-      ['EF', 'Electric Floor'],
-      ['MM', 'Music Masters'],
-      ['GRAV', 'Gravity'],
-      ['RR', 'Restaurant Rush'],
-      ['GNT', 'SkyGiants'],
-      ['GNTM', 'SkyGiants: Mini'],
-      ['PMK', 'Pumpkinfection'],
-      ['SGN', 'Survival Games 2'],
-      ['BD', 'BatteryDash'],
-      ['SPL', 'Sploop'],
-      ['MIMV', 'Murder in Mineville'],
-      ['SURV', 'Survive the Night'],
-      ['BED', 'BedWars']]);
+    const gameModes = {}/* HIVE_GAMEMODE_NAMES */
+
 
     class HiveMaps extends Polymer.Element {
       static get is() { return 'hive-maps'; }
@@ -320,7 +294,7 @@
       }
 
       gameToName(a) {
-        return gameModes.get(a)
+        return gameModes[a];
       }
 
       subscribeToMapNotifications() {

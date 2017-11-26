@@ -100,7 +100,7 @@
   </template>
 
   <script>
-      const gameModes = { "SG": "Survival Games", "BP": "BlockParty", "CAI": "Cowboys and Indians", "CR": "Cranked", "DR": "DeathRun", "HB": "The Herobrine", "HERO": "SG:Heroes", "HIDE": "Hide and Seek", "OITC": "One in the Chamber", "SP": "Splegg", "TIMV": "Trouble in Mineville", "SKY": "SkyWars", "LAB": "The Lab", "DRAW": "Draw It", "SLAP": "Slaparoo", "EF": "Electric Floor", "MM": "Music Masters", "GRAV": "Gravity", "RR": "Restaurant Rush", "GNT": "SkyGiants", "GNTM": "SkyGiants: Mini", "PMK": "Pumpkinfection", "SGN": "Survival Games 2", "BD": "BatteryDash", "SPL": "Sploop", "MIMV": "Murder in Mineville", "BED": "BedWars", "SURV": "Survive the Night" }
+      const gameModes_2 = {}/* HIVE_GAMEMODE_NAMES */ // generated at build
 
       const colors = [
         "#4caf50",
@@ -209,7 +209,7 @@
         })
         .forEach((mode, i) => {
           a.push({
-            label: gameModes[mode[0]] ? gameModes[mode[0]] : mode[0],
+            label: gameModes_2[mode[0]] ? gameModes_2[mode[0]] : mode[0],
             data: Object.entries(mode[1]).map(this.toDateValue),
             backgroundColor: colors[i],
             borderColor: colors[i],
