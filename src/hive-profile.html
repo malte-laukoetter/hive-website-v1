@@ -2,6 +2,7 @@
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../bower_components/page-title/page-title.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-firestore-mixin.html">
 <link rel="import" href="hive-profile-styles.html">
 <link rel="import" href="hive-profile-game-tab.html">
 <link rel="import" href="hive-game-player-info-card.html">
@@ -56,7 +57,7 @@
           <pprdash-count
             class="col-lg-2 col-sm-6"
             text="Achievements"
-            value="[[totalAchievements]]"
+            value="[[firestoreStats.total_achievements]]"
             icon="my-icons:ti-rocket"
             type="danger"
           ></pprdash-count>
@@ -77,7 +78,7 @@
           <pprdash-count
             class="col-lg-2 col-sm-6"
             text="Points"
-            value="[[totalPoints]]"
+            value="[[firestoreStats.total_points]]"
             icon="my-icons:ti-game"
             type="info"
           ></pprdash-count>
@@ -123,15 +124,6 @@
                 <h4 class="title">Tokens and Points</h4>
               </div>
               <div class="content">
-                <firebase-document 
-                  path="playerStats/data/[[uuid]]/tokens"
-                  data="{{tokens}}">
-                </firebase-document>
-                <firebase-document 
-                  path="playerStats/data/[[uuid]]/points"
-                  data="{{points}}">
-                </firebase-document>
-
                 <chart-js
                   type="line"
                   options="[[pointTokenChartOptions]]"
@@ -149,15 +141,10 @@
                 <p class="category">by Gamemode</p>
               </div>
               <div class="content">
-                <firebase-document
-                  path="playerStats/data/[[uuid]]/achievements"
-                  data="{{achievements}}">
-                </firebase-document>
-
                 <chart-js
                   type="pie"
                   height="140"
-                  data="[[_calcAchievementChartData(achievements)]]"
+                  data="[[_calcAchievementChartData(firestoreStats.achievements)]]"
                   options="[[achievementChartOptions]]"
                 ></chart-js>
               </div>
@@ -189,7 +176,7 @@
                 <chart-js
                   type="pie"
                   height="140"
-                  data="[[_calcPointsPieChartData(points)]]"
+                  data="[[_calcPointsPieChartData(firestoreStats.points)]]"
                   options="[[achievementChartOptions]]"
                 ></chart-js>
               </div>
@@ -202,11 +189,6 @@
                 <p class="category">by Date</p>
               </div>
               <div class="content">
-                <firebase-document 
-                  path="playerStats/data/[[uuid]]/medals"
-                  data="{{medals}}">
-                </firebase-document>
-
                 <chart-js
                   type="line"
                   options="[[medalChartOptions]]"
@@ -233,18 +215,33 @@
   </template>
 
   <script>
-    const toDateValue = ([a, b]) => { return { x: new Date(new Number(a)), y: b } };
+    const toDateValue = ([a, b]) => { return { x: new Date(a), y: b } };
 
-    class HiveProfile extends Polymer.Element {
+    class HiveProfile extends Polymer.FirestoreMixin(Polymer.Element) {
       static get is() { return 'hive-profile'; }
       static get properties() {
         return {
+          uuis: String,
           player: String,
-          totalPoints: {
-            computed: "_computePoints(points)"
+          tokens: {
+            type: Object,
+            doc: 'players/{uuid}/stats/tokens'
           },
-          totalAchievements: {
-            computed: "_computeAchievementCount(achievements)"
+          points: {
+            type: Object,
+            doc: 'players/{uuid}/stats/points_total'
+          },
+          medals: {
+            type: Object,
+            doc: 'players/{uuid}/stats/medals'
+          },
+          achievements: {
+            type: Object,
+            doc: 'players/{uuid}/stats/achievements_total'
+          },
+          firestoreStats: {
+            type: Object,
+            doc: 'players/{uuid}'
           },
           preProcessAchievements: {
             type: Array
@@ -334,10 +331,10 @@
       }
 
       _calcPointTokenChartData(tokens, points){
-        if(!points || !tokens || !points.total) return;
+        if(!points || !tokens) return;
 
-        const tokenData = Object.entries(tokens).map(toDateValue);
-        const pointData = Object.entries(points.total).map(toDateValue);
+        const tokenData = Object.entries(tokens).filter(([key, a]) => key !== '__id__').map(toDateValue);
+        const pointData = Object.entries(points).filter(([key, a]) => key !== '__id__').map(toDateValue);
 
         return {
           datasets: [{
@@ -357,27 +354,13 @@
         }
       }
 
-      _computePoints(points){
-        if(!points || !points.total) return NaN;
-
-        // get the newest value
-        return Object.entries(points.total).sort(([x, x2], [y, y2]) => y - x)[0][1]
-      }
-
-      _computeAchievementCount(achievments){
-        if(!achievments || !achievments.total) return NaN;
-
-        // get the newest value
-        return Object.entries(achievments.total).sort(([x, x2], [y, y2]) => y - x)[0][1]
-      }
-
       _calcMedalChartData(medals){
         if(!medals) return;
 
         return {
           datasets: [{
             label: "Medals",
-            data: Object.entries(medals).map(toDateValue),
+            data: Object.entries(medals).filter(([key, a]) => key !== '__id__').map(toDateValue),
             backgroundColor: "#2196F3",
             borderColor: "#2196F3",
             fill: false
@@ -386,12 +369,12 @@
       }
 
       _calcAchievementLineChartData(achievements){
-        if(!achievements || !achievements.total) return;
+        if(!achievements) return;
 
         return {
           datasets: [{
             label: "Achievements",
-            data: Object.entries(achievements.total).map(toDateValue),
+            data: Object.entries(achievements).filter(([key, a]) => key !== '__id__').map(toDateValue),
             backgroundColor: "#2196F3",
             borderColor: "#2196F3",
             fill: false
@@ -405,14 +388,10 @@
         let data = [];
 
         for(let mode in achievements){
-          if(mode !== "total"){
-            const ele = Object.keys(achievements[mode]).sort((a, b) => b - a)[0];
+          const val = achievements[mode];
 
-            const val = achievements[mode][ele];
-
-            if (val > 0){
-              data.push([mode, val]);
-            }
+          if (val > 0){
+            data.push([mode, val]);
           }
         }
 
@@ -464,14 +443,10 @@
         let data = [];
 
         for (let mode in points) {
-          if (mode !== "total") {
-            const ele = Object.keys(points[mode]).sort((a, b) => b - a)[0];
+          const val = points[mode];
 
-            const val = points[mode][ele];
-
-            if (val > 0) {
-              data.push([mode, val]);
-            }
+          if (val > 0) {
+            data.push([mode, val]);
           }
         }
 
@@ -531,9 +506,6 @@
 
         let achievements = await hive.GameTypes.list.find(a => a.id == "HB").achievements();
 
-        console.log(achievements)
-
-
         this.gameInfo.achievements.forEach(achie => {
           let a = achievements.find(a => a.id == achie.id);
 
@@ -551,8 +523,6 @@
 
         this.preProcessAchievements = achievements;
         return achievements;
-
-        console.log("A")
 
         this.preProcessAchievements =  await Promise.all(this.gameInfo.achievements.map(async a => {
           console.log(a)
