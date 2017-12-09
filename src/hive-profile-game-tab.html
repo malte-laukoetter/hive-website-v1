@@ -1,6 +1,5 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-document.html">
-<link rel="import" href="../bower_components/polymerfire/firebase-firestore-mixin.html">
 <link rel="import" href="hive-profile-styles.html">
 <link rel="import" href="hive-achievements-card.html">
 <link rel="import" href="chart-js.html">
@@ -71,7 +70,12 @@
               <div class="header">
                 <h4 class="title">Points</h4>
               </div>
-              <div class="content">                
+              <div class="content">
+                <firebase-document
+                  path="playerStats/data/[[player]]/points/[[gamemode]]"
+                  data="{{points}}">
+                </firebase-document>
+                
                 <chart-js
                   type="line"
                   options="[[pointChartOptions]]"
@@ -88,6 +92,9 @@
                   <h4 class="title">Achievements</h4>
                 </div>
                 <div class="content">
+                  <firebase-document path="playerStats/data/[[player]]/achievements/[[gamemode]]" data="{{achievements}}">
+                  </firebase-document>
+
                   <chart-js type="line" options="[[achievementChartOptions]]" data="[[_calcAchievementChartData(achievements)]]" height="140"></chart-js>
                 </div>
               </div>
@@ -102,20 +109,12 @@
   <script src="/hive-gamemodes-config.js"></script>
 
   <script>
-    class HiveProfileGameTab extends Polymer.FirestoreMixin(Polymer.Element) {
+    class HiveProfileGameTab extends Polymer.Element {
       static get is() { return 'hive-profile-game-tab'; }
       static get properties() {
         return {
           gamemode: String,
           player: String,
-          points: {
-            type: Object,
-            doc: 'players/{player}/stats/points_{gamemode}'
-          },
-          achievements: {
-            type: Object,
-            doc: 'players/{player}/stats/achievements_{gamemode}'
-          },
           preProcessAchievements: {
             type: Array
           },
@@ -193,13 +192,13 @@
         return a == undefined || a.points === 0;
       }
 
-      toDateValue([a, b]){ return { x: new Date(a), y: b } };
+      toDateValue([a, b]){ return { x: new Date(new Number(a)), y: b } };
 
       _calcPointChartData(points){
         return {
           datasets: [{
             label: "Points",
-            data: Object.entries(points).filter(([key, a]) => key !== '__id__').map(this.toDateValue),
+            data: Object.entries(points).map(this.toDateValue),
             backgroundColor: "#2196F3",
             borderColor: "#2196F3",
             fill: false
@@ -208,12 +207,10 @@
       }
 
       _calcAchievementChartData(achievemenets){
-        if(!achievemenets) return;
-        
         return {
           datasets: [{
             label: "Achievements",
-            data: Object.entries(achievemenets).filter(([key, a]) => key !== '__id__').map(this.toDateValue),
+            data: Object.entries(achievemenets).map(this.toDateValue),
             backgroundColor: "#2196F3",
             borderColor: "#2196F3",
             fill: false
