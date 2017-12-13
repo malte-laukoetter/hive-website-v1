@@ -526,32 +526,31 @@
       _textFormat(str){
         return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
       }
-      async _preProcessAchievements(){
+      _preProcessAchievements(){
         if(!this.gameInfo.achievements) return;
 
-        let achievements = await hive.GameTypes.list.find(a => a.id == "HB").achievements();
-
-        console.log(achievements)
+        return hive.GameTypes.list.find(a => a.id == "HB").achievements().then(achievements => {
 
 
-        this.gameInfo.achievements.forEach(achie => {
-          let a = achievements.find(a => a.id == achie.id);
+          this.gameInfo.achievements.forEach(achie => {
+            let a = achievements.find(a => a.id == achie.id);
 
-          if(a == undefined){
-            achie.name = achie.id;
-            achievements.push(achie)
-            console.error("unknown achievmenet:", achie)
-            return;
-          }
+            if(a == undefined){
+              achie.name = achie.id;
+              achievements.push(achie)
+              console.error("unknown achievmenet:", achie)
+              return;
+            }
 
-          a.progress = achie.progress;
-          a.unlockedAt = achie.unlockedAt;
-          a.unlocked = achie.unlocked;
+            a.progress = achie.progress;
+            a.unlockedAt = achie.unlockedAt;
+            a.unlocked = achie.unlocked;
+          });
+
+          this.preProcessAchievements = achievements;
+          return achievements;
         });
-
-        this.preProcessAchievements = achievements;
-        return achievements;
-
+/*
         console.log("A")
 
         this.preProcessAchievements =  await Promise.all(this.gameInfo.achievements.map(async a => {
@@ -562,7 +561,7 @@
           a.description = info.description;
           a.stages = info.stages;
           return a;
-        }));
+        }));*/
       }
     }
 

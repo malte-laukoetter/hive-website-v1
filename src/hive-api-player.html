@@ -89,15 +89,17 @@
         return apiPlayer;
       }
 
-      async getPlayerGameInfoApi(game){
+      getPlayerGameInfoApi(game){
         game = game || this.game;
         if (!game || !this.apiPlayer) return;
           if (hive.GameTypes[game]) {
-            let gameInfo = await this.apiPlayer.gameInfo(hive.GameTypes[game]);
+            return this.apiPlayer.gameInfo(hive.GameTypes[game]).then(gameInfo => {
+              this.apiPlayerGameInfo = gameInfo;
+              
+              return gameInfo;
+            });
             
-            this.apiPlayerGameInfo = gameInfo;
 
-            return gameInfo;
           }
           throw new Error(`Unknown GameType: ${game}`);
       }

@@ -18,6 +18,7 @@
 <link rel="lazy-import" href="hive-maps.html">
 <link rel="lazy-import" href="hive-player-page.html">
 <link rel="lazy-import" href="hive-gamemode-stats.html">
+<link rel="lazy-import" href="hive-gamemode-leaderboards.html">
 <link rel="lazy-import" href="hive-random-game.html">
 
 <link rel="import" href="shared-styles.html">
@@ -63,7 +64,7 @@
         tail="{{subroute}}"></app-route>
 
     <firebase-app auth-domain="hivewebsite-1da4d.firebaseapp.com" database-url="https://hivewebsite-1da4d.firebaseio.com/" api-key="AIzaSyBPl570AoqaHuCgX342wICImCJbz4c3vFs"
-      storage-bucket="hivewebsite-1da4d.appspot.com" project-id="hivewebsite-1da4d" , messaging-sender-id="836246928386">
+      storage-bucket="hivewebsite-1da4d.appspot.com" project-id="hivewebsite-1da4d" messaging-sender-id="836246928386">
     </firebase-app>
 
     <app-drawer-layout fullbleed>
@@ -80,6 +81,7 @@
           <a name="tokens" href="/tokens">Token Leaderboard</a>
           <a name="kills" href="/kills">Kill Leaderboard</a>
           <a name="achievements" href="/achievements">Achievement Leaderboard</a>
+         <!-- <a name="leaderboards" href="/leaderboards/BED">Advanced Gamemode Leaderboards</a>-->
           <span></span>
           <a name="imprint" href="https://lergin.de/imprint">Imprint</a>
           <a name="privacy" href="https://lergin.de/privacy">Privacy</a>
@@ -98,6 +100,7 @@
         <hive-player-page id="playerProfile" name="player" route="{{subroute}}"></hive-player-page>
         <hive-random-game name="random"></hive-random-game>
         <hive-gamemode-stats name="stats"></hive-gamemode-stats>
+        <hive-gamemode-leaderboards name="leaderboards" route="{{subroute}}"></hive-gamemode-leaderboards>
       </iron-pages>
     </app-drawer-layout>
   </template>
@@ -174,6 +177,9 @@
             break;
           case 'stats':
             resolvedPageUrl = this.resolveUrl('hive-gamemode-stats.html');
+            break;
+          case 'leaderboards':
+            resolvedPageUrl = this.resolveUrl('hive-gamemode-leaderboards.html');
             break;
           case 'random':
             resolvedPageUrl = this.resolveUrl('hive-random-game.html');

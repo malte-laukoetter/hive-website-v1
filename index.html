@@ -82,18 +82,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           navigator.serviceWorker.register('service-worker.js', {
             scope: Polymer.rootPath,
           }).then(reg => {
+            if(reg && reg.update){
               setInterval(() => reg.update(), 1000 * 60 * 60);
               reg.update();
+            }
           });
         });
       }
     </script>
+    <script src="/bower_components/webcomponentsjs/custom-elements-es5-adapter.js"></script>
 
     <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
     <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
 
     <!-- Load your application shell -->
-    <link rel="import" href="/src/my-app.html">
+   
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css"
     />
 
@@ -109,11 +112,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
   </head>
   <body>
-    <my-app></my-app>
+    <my-app unresolved>Loading...</my-app>
     <noscript>
       Please enable JavaScript to view this website.
     </noscript>
     <!-- Built with love using Polymer Starter Kit -->
+
+    <!-- so google renders the shit... -->
+    <link rel="import" href="/src/my-app.html">
 
     <!-- error logging -->
    <!-- <script src="https://cdn.ravenjs.com/3.17.0/raven.min.js" crossorigin="anonymous"></script>
