@@ -1,0 +1,523 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-styles/element-styles/paper-material-styles.html">
+<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="my-icons.html">
+<link rel="import" href="../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../bower_components/page-title/page-title.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../bower_components/neon-animation/web-animations.html">
+<link rel="import" href="../bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="../bower_components/iron-iconset/iron-iconset.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-firestore-mixin.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../bower_components/app-datepicker/app-datepicker-dialog.html">
+<link rel="import" href="../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
+
+<dom-module id="hive-gamemode-leaderboards">
+  <template>
+    <style include="shared-styles paper-material-styles">
+      :host {
+        display: block;
+      }
+
+      [hidden] {
+        display: none;
+      }
+
+      .content {
+        height: 100%;
+      }
+
+      vaadin-grid {
+        height: calc(100% - 20px);
+        font-family: Roboto, sans-serif;
+        --divider-color: rgba(0, 0, 0, var(--dark-divider-opacity));
+
+        --vaadin-grid-header-cell: {
+          height: 64px;
+          color: rgba(0, 0, 0, var(--dark-secondary-opacity));
+          font-size: 12px;
+        }
+        ;
+
+        --vaadin-grid-body-cell: {
+          height: 48px;
+          color: rgba(0, 0, 0, var(--dark-primary-opacity));
+          font-size: 13px;
+        }
+        ;
+
+        --vaadin-grid-body-row-hover-cell: {
+          background-color: var(--paper-grey-200);
+        }
+        ;
+
+        --vaadin-grid-body-row-selected-cell: {
+          background-color: var(--paper-grey-100);
+        }
+        ;
+
+        --vaadin-grid-focused-cell: {
+          box-shadow: none;
+          font-weight: bold;
+        }
+        ;
+      }
+
+      vaadin-grid .cell {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-right: 56px;
+      }
+
+      vaadin-grid .cell.last {
+        padding-right: 24px;
+      }
+
+      vaadin-grid .cell.numeric {
+        text-align: right;
+      }
+
+      vaadin-grid vaadin-grid-sorter {
+        --vaadin-grid-sorter-arrow: {
+          display: none !important;
+        }
+        ;
+      }
+
+      vaadin-grid vaadin-grid-sorter .cell {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      vaadin-grid vaadin-grid-sorter iron-icon {
+        transform: scale(0.8);
+      }
+
+      vaadin-grid vaadin-grid-sorter:not([direction]) iron-icon {
+        color: rgba(0, 0, 0, var(--dark-disabled-opacity));
+      }
+
+      vaadin-grid vaadin-grid-sorter[direction] {
+        color: rgba(0, 0, 0, var(--dark-primary-opacity));
+      }
+
+      vaadin-grid vaadin-grid-sorter[direction=desc] iron-icon {
+        transform: scale(0.8) rotate(180deg);
+      }
+
+      paper-button {
+        background-color: #fff;
+        color: var(--app-secondary-color);
+        text-transform: none;
+        padding: 6px;
+        font-size: initial;
+      }
+
+      paper-menu-button {
+        padding: 0px;
+      }
+
+      paper-listbox {
+        padding: 0px
+      }
+
+      [main-title] {
+        pointer-events: all
+      }
+    </style>
+
+    <app-route route="{{route}}" pattern="/:gamemode" data="{{routeData}}" tail="{{subroute}}"></app-route>
+    <app-route route="{{subroute}}" pattern="/:date" data="{{routeData2}}" tail="{{subroute2}}"></app-route>
+    <app-route route="{{subroute2}}" pattern="/:timeforchanges" data="{{routeData3}}" tail="{{subroute3}}"></app-route>
+
+    <app-indexeddb-mirror key="gameLeaderboards/[[gamemode]]/data" data="[[liveData]]" persisted-data="{{persistendData}}" online="{{online}}">
+    </app-indexeddb-mirror>
+    <page-title base-title="Hive Advanced Leaderboards" page-title="[[gameToName(gamemode)]]"></page-title>
+
+    <app-header-layout has-scrolling-region fullbleed>
+      <app-header slot="header" condenses reveals effects="waterfall">
+        <app-toolbar>
+          <paper-icon-button icon="my-icons:menu" drawer-toggle on-tap="toggleDrawer"></paper-icon-button>
+          <div main-title>Advanced Leaderboards - <paper-menu-button>
+            <paper-button slot="dropdown-trigger">
+              <span>[[gameToName(gamemode)]]</span>
+            </paper-button>
+            <paper-listbox slot="dropdown-content" attr-for-selected="value" selected="{{gamemode}}">
+              <template is="dom-repeat" items="[[objToArr(gamemodes)]]">
+                <paper-item value="[[item.0]]">[[item.1]]</paper-item>
+              </template>
+            </paper-listbox>
+            </paper-menu-button> - <paper-button on-tap="openDatepickerDialog">
+              <span>[[date]]</span>
+            </paper-button>
+          </div>
+          
+          <div>
+             Changes to
+          
+            <paper-menu-button>
+              <paper-button slot="dropdown-trigger">
+                <span>[[timeForChangesTitle(timeForChanges)]]</span>
+              </paper-button>
+              <paper-listbox slot="dropdown-content" attr-for-selected="value" selected="{{timeForChanges}}">
+                <template is="dom-repeat" items="[[timesForChanges]]">
+                  <paper-item value="[[item.key]]">[[item.title]]</paper-item>
+                </template>
+              </paper-listbox>
+            </paper-menu-button>
+             earlier
+          </div>
+
+          <app-datepicker-dialog id="datepicker" first-day-of-week="1" disable-days="[]" format="yyyy-mm-dd" min-date="2017-12-05" max-date="[[today]]" date="{{date}}"></app-datepicker-dialog>
+      </app-header>
+      </app-toolbar>
+      <div class="content">
+        
+        <vaadin-grid id="grid" items="[[leaderboard.data]]" data-provider="[[loadStuff]]" size="1000" page-size=100>
+          <vaadin-grid-column resizable>
+            <template class="header">
+              <div class="cell">
+                <span>Place</span>
+              </div>
+            </template>
+            <template>
+              <div>
+                [[addOne(item.place)]] 
+                <iron-icon icon="my-icons:[[placeChangeIcon(item)]]"></iron-icon> [[numFormatPlaceChange(item)]]
+              </div>
+            </template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column resizable>
+            <template class="header">
+              Name
+            </template>
+            <template><a href="/player/[[item.uuid]]">[[item.name]]</a></template>
+          </vaadin-grid-column>
+
+          <template is="dom-repeat" items="[[dataKeys]]" as="dataKey">
+            <vaadin-grid-column resizable>
+              <template class="header">
+                 [[dataKey.title]]
+              </template>
+              <template>[[numFormatSubProp(item, dataKey.key)]] ([[numFormatSubPropChange(item.prev, dataKey.key)]])</template>
+            </vaadin-grid-column>
+          </template>
+        </vaadin-grid>
+
+      </div>
+    </app-header-layout>
+  </template>
+  
+  <script src="/hive-gamemodes-config.js"></script>
+
+  <script>
+    class HiveGamemodeLeaderboards extends Polymer.FirestoreMixin(Polymer.Element) {
+      static get is() { return 'hive-gamemode-leaderboards'; }
+
+      static get properties() {
+        return {
+          defSort: {
+            value: "asc"
+          },
+          liveData: Array,
+          timesForChanges: {
+            type: Array,
+            value: [{
+              key: 'day_1',
+              title: '1 day'
+            }, {
+              key: 'day_3',
+              title: '3 days'
+            }, {
+              key: 'day_7',
+              title: '1 week'
+            }, {
+              key: 'month_1',
+              title: '1 month'
+            }, {
+              key: 'month_6',
+              title: '6 months'
+            }, {
+              key: 'year_1',
+              title: '1 year'
+            }]
+          },
+          timeForChanges: {
+            type: String,
+            value: "day_7"
+          },
+          gamemode: {
+            type: String,
+            value: "BED"
+          },
+          today: {
+            type: String,
+            value: new Date().toISOString().substring(0, 10)
+          },
+          date: {
+            type: String,
+            value: new Date().toISOString().substring(0, 10)
+          },
+          dataKeys: {
+            type: Array,
+            computed: 'dataKeysGamemode(gamemode)',
+          },
+          prevData: {
+            type: Array,
+            value: []
+          },
+          firestoreCache: {
+            type: Map,
+            value: new Map()
+          },
+          prevDataCacheKeys: {
+            type: Set,
+            value: new Set()
+          },
+          gamemodes: {
+            type: Array,
+            value: { "SG": "Survival Games", "BP": "BlockParty", "CAI": "Cowboys and Indians", "CR": "Cranked", "DR": "DeathRun", "HB": "The Herobrine", "HERO": "SG:Heroes", "HIDE": "Hide and Seek", "OITC": "One in the Chamber", "SP": "Splegg", "TIMV": "Trouble in Mineville", "SKY": "SkyWars", "LAB": "The Lab", "DRAW": "Draw It", "SLAP": "Slaparoo", "EF": "Electric Floor", "MM": "Music Masters", "GRAV": "Gravity", "RR": "Restaurant Rush", "GNT": "SkyGiants", "GNTM": "SkyGiants: Mini", "PMK": "Pumpkinfection", "SGN": "Survival Games 2", "BD": "BatteryDash", "SPL": "Sploop", "MIMV": "Murder in Mineville", "BED": "BedWars", "SURV": "Survive the Night" }
+            //value: {}/* HIVE_GAMEMODE_NAMES */
+          }
+        }
+        
+      }
+
+      static get observers() {
+        return [
+          '_routeChanged(routeData.gamemode, routeData2.date, routeData3.timeforchanges)',
+          '_dataChanged(gamemode, date, timeForChanges)'
+        ];
+      }
+
+      dataKeysGamemode(gamemode){
+        return gameModeConfigs[gamemode] ? gameModeConfigs[gamemode].leaderboard || [] : []
+      }
+
+      objToArr(obj){
+        return Object.entries(obj);
+      }
+
+      getFirestore(path, cache=true){
+        if(cache && this.firestoreCache.has(path)){
+          return [this.firestoreCache.get(path), path];
+        }else{
+          let ref = firebase.default.firestore();
+
+          path.split('/').forEach((a, i) => {
+            if (i % 2 == 0) {
+              ref = ref.collection(a)
+            } else {
+              ref = ref.doc(a)
+            }
+          })
+
+
+          return ref.get().then(res => {
+            this.firestoreCache.set(path, res);
+            return [res, path];
+          });
+        }
+      }
+
+      ready(){
+        super.ready();
+
+        // to stop the url from updating to the default values
+        this.doUrlUpdate = false;
+        setTimeout(()=>this.doUrlUpdate = true, 500);
+
+        this.$.grid.dataProvider = (prop, call) => {
+          if (!this.gamemode || !this.date) {
+            return;
+          }
+
+          let changeDate = new Date(this.date);
+          let changeAmount = this.timeForChanges.split('_')[1]
+
+          switch(this.timeForChanges.split('_')[0]){
+            case "day": 
+              changeDate.setDate(changeDate.getDate() - changeAmount);
+              break;
+            case "month": 
+              changeDate.setMonth(changeDate.getMonth() - changeAmount);
+              break;
+            case "year": 
+              changeDate.setFullYear(changeDate.getFullYear() - changeAmount);
+              break;
+          }
+
+          Promise.all([
+            this.getFirestore(`gameLeaderboards/${this.gamemode}/dates/${this.date}/pages/${prop.page * 100}`),
+            this.getFirestore(`gameLeaderboards/${this.gamemode}/dates/${changeDate.toISOString().substring(0, 10)}/pages/${prop.page * 100}`)
+          ]).then(res => {
+            let doc = res[0][0];
+
+            if (doc && doc.exists) {
+              let data = doc.data().data;
+              let prevDoc = res[1][0];
+
+              if(prevDoc && prevDoc.exists && !this.prevDataCacheKeys.has(res[1][1])){
+                let prevData = prevDoc.data().data;
+                this.prevData = this.prevData.concat(prevData);
+                this.prevDataCacheKeys.add(res[1][1])
+                this.$.grid.clearCache();
+              }
+
+              data = data.map(place => {
+                let placePrevData = this.prevData.filter(a => a.uuid === place.uuid);
+
+                if(placePrevData[0]){
+                  place.prev = Object.keys(placePrevData[0])
+                    // calc values for each key
+                    .map(key => [key, place[key] - placePrevData[0][key] || NaN])
+                    // put them together into one object
+                    .reduce((obj, [key, val]) => { obj[key] = val; return obj }, {})
+                }
+
+                return place;
+              }); 
+
+              call(data);
+            }            
+          })
+        }
+      }
+
+      _dataChanged(){
+        this.prevData = [];
+        this.prevDataCacheKeys = new Set();
+        this.$.grid.clearCache();
+
+        if(this.doUrlUpdate){
+          window.history.pushState({}, null, `/leaderboards/${this.gamemode}/${this.date}/${this.timeForChanges}`);
+          window.dispatchEvent(new CustomEvent('location-changed'));
+        }
+
+      }
+
+      placeChangeIcon(obj){
+        if(!obj || !obj.prev) return "questionmark";
+
+        if(obj.prev.place > 0) return 'trending-down';
+        if(obj.prev.place < 0) return 'trending-up';
+        return '';
+      }
+
+      openDatepickerDialog(){
+        this.$.datepicker.open();
+      }
+
+      timeForChangesTitle(time){
+        let timeForChange = this.timesForChanges.filter(a => a.key == time)[0];
+
+        return timeForChange ? timeForChange.title : time;
+      }
+
+      numFormatSubProp(obj, prop){
+        if(!obj) return '?';
+
+
+        return this.numFormat(obj[prop]);
+      }
+
+      numFormatSubPropChange(obj, prop){
+        if (!obj) return '?';
+        
+        return this.numWithSign(this.numFormatSubProp(obj, prop));
+      }
+
+      numFormatPlaceChange(obj){   
+        if (!obj || !obj.prev) return '';
+        
+        let change = this.numFormat(Math.abs(obj.prev.place));
+
+        if(change == 0) return '';
+        
+        if(change == 1) return  `(${change} place)`
+        
+        return `(${change} places)`;
+      }
+
+      numFormat(a){
+        return new Number(a || 0).toLocaleString()
+      }
+      
+      numWithSign(a){
+        if (a.charAt(0) != '0' && a.charAt(0) != '-') {
+          return `+${a}`;
+        } else {
+          return a;
+        }
+      }
+
+      _routeChanged(gamemode, date, timeforchanges) {
+        if(!gamemode || !this.gamemodes[gamemode.toUpperCase()]) return
+        this.gamemode = gamemode.toUpperCase();
+        this.date = date && date.toString().match(/\d\d\d\d-\d\d-\d\d/) ? date : new Date().toISOString().substring(0, 10);
+        this.timeForChanges = timeforchanges ? timeforchanges : 'day_7';
+      }
+
+      and(a, b) {
+        return a && b;
+      }
+      addOne(a) {
+        return a + 1;
+      }
+
+      exists(a) {
+        return !(!a || (a instanceof Object && Object.keys(a).length == 0));
+      }
+
+      sortByDate(a, b) {
+        return b.date - a.date;
+      }
+
+      _reverse(a) {
+        return a.sort((a, b) => b - a);
+      }
+
+      toggleDrawer() {
+        this.dispatchEvent(new CustomEvent('toggle-drawer', { bubbles: true, composed: true }))
+      }
+
+      openInfoDialog() {
+        this.$.infoDialog.toggle()
+      }
+
+      same(a, b) {
+        return a == b;
+      }
+
+      gameToName(a) {
+        if (!a) return "";
+
+        return this.gamemodes[a.toString().toUpperCase()];
+      }
+    }
+
+
+
+    window.customElements.define(HiveGamemodeLeaderboards.is, HiveGamemodeLeaderboards);
+  </script>
+</dom-module>

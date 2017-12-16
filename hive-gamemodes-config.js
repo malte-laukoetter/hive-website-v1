@@ -62,7 +62,26 @@ const gameModeConfigs = {
         prop: "lastLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'total_points',
+      title: 'Points'
+    }, {
+      key: 'games_played',
+      title: 'Games Played'
+    }, {
+      key: 'kills',
+      title: 'Kills'
+    }, {
+      key: 'deaths',
+      title: 'Deaths'
+    }, {
+      key: 'energy_collected',
+      title: 'Energy Collected'
+    }, {
+      key: 'batteries_charged',
+      title: 'Batteries Charged'
+    }]
   },
   BED: {
     stats: [
@@ -113,7 +132,29 @@ const gameModeConfigs = {
         prop: "lastLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'total_points',
+      title: 'Points'
+    }, {
+      key: 'games_played',
+      title: 'Games Played'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }, {
+      key: 'kills',
+      title: 'Kills'
+    }, {
+      key: 'deaths',
+      title: 'Deaths'
+    }, {
+      key: 'beds_destroyed',
+      title: 'Beds destroyed'
+    }, {
+      key: 'teams_eliminated',
+      title: 'Teams eliminated'
+    }]
   },
   BP: {
     stats: [
@@ -179,7 +220,23 @@ const gameModeConfigs = {
         prop: "firstLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'total_points',
+      title: 'Points'
+    }, {
+      key: 'games_played',
+      title: 'Games Played'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }, {
+      key: 'total_eliminations',
+      title: 'Eliminations'
+    }, {
+      key: 'total_placing',
+      title: 'Placings'
+    }]
   },
   CAI: {
     stats: [
@@ -230,7 +287,23 @@ const gameModeConfigs = {
         prop: "lastLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'points',
+      title: 'Points'
+    }, {
+      key: 'played',
+      title: 'Games Played'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }, {
+      key: 'caught',
+      title: 'Caught'
+    }, {
+      key: 'captures',
+      title: 'Captures'
+    }]
   },
   CR: {
     stats: [
@@ -291,7 +364,23 @@ const gameModeConfigs = {
         prop: "lastLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'points',
+      title: 'Points'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }, {
+      key: 'kills',
+      title: 'Kills'
+    }, {
+      key: 'deaths',
+      title: 'Deaths'
+    }, {
+      key: 'kd',
+      title: 'K/D'
+    }]
   },
   DRAW: {
     stats: [
@@ -332,7 +421,26 @@ const gameModeConfigs = {
         prop: "firstLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'total_points',
+      title: 'Points'
+    }, {
+      key: 'gamesplayed',
+      title: 'Games Played'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }, {
+      key: 'correct_guesses',
+      title: 'Correct Guesses'
+    }, {
+      key: 'incorrect_guesses',
+      title: 'Incorrect Guesses'
+    }, {
+      key: 'skips',
+      title: 'Skips'
+    }]
   },
   DR: {
     stats: [
@@ -408,7 +516,23 @@ const gameModeConfigs = {
         prop: "lastLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'total_points',
+      title: 'Points'
+    }, {
+      key: 'games_played',
+      title: 'Games Played'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }, {
+      key: 'kills',
+      title: 'Kills'
+    }, {
+      key: 'deaths',
+      title: 'Deaths'
+    }]
   },
   EF: {
     stats: [
@@ -449,7 +573,20 @@ const gameModeConfigs = {
         prop: "lastLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'points',
+      title: 'Points'
+    }, {
+      key: 'gamesplayed',
+      title: 'Games Played'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }, {
+      key: 'outlived',
+      title: 'Outlived'
+    }]
   },
   GRAV: {
     stats: [
@@ -480,7 +617,17 @@ const gameModeConfigs = {
         prop: "lastLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'points',
+      title: 'Points'
+    }, {
+      key: 'gamesplayed',
+      title: 'Games Played'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }]
   },
   HB: {
     stats: [
@@ -521,7 +668,23 @@ const gameModeConfigs = {
         prop: "firstLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'points',
+      title: 'Points'
+    }, {
+      key: 'captures',
+      title: 'Captures'
+    }, {
+      key: 'kills',
+      title: 'Kills'
+    }, {
+      key: 'deaths',
+      title: 'Deaths'
+    }, {
+      key: 'kd',
+      title: 'K/D'
+    }]
   },
   HERO: {
     stats: [
@@ -587,7 +750,23 @@ const gameModeConfigs = {
         prop: "lastLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'total_points',
+      title: 'Points'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }, {
+      key: 'kills',
+      title: 'Kills'
+    }, {
+      key: 'deaths',
+      title: 'Deaths'
+    }, {
+      key: 'one_vs_ones_wins',
+      title: 'One vs One wins'
+    }]
   },
   HIDE: {
     stats: [
@@ -643,7 +822,23 @@ const gameModeConfigs = {
         prop: "lastLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'points',
+      title: 'Points'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }, {
+      key: 'hiderKills',
+      title: 'Hider Kills'
+    }, {
+      key: 'seekerKills',
+      title: 'SeekerKills'
+    }, {
+      key: 'deaths',
+      title: 'Deaths'
+    }]
   },
   LAB: {
     stats: [
@@ -739,7 +934,17 @@ const gameModeConfigs = {
         prop: "lastLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'total_points',
+      title: 'Points'
+    }, {
+      key: 'gamesplayed',
+      title: 'Games Played'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }]
   },
   MIMV: {
     stats: [
@@ -790,7 +995,23 @@ const gameModeConfigs = {
         prop: "lastLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'total_points',
+      title: 'Points'
+    }, {
+      key: 'games_played',
+      title: 'Games Played'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }, {
+      key: 'kills',
+      title: 'Kills'
+    }, {
+      key: 'deaths',
+      title: 'Deaths'
+    }]
   },
   MM: {
     stats: [
@@ -841,7 +1062,23 @@ const gameModeConfigs = {
         prop: "lastLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'points',
+      title: 'Points'
+    }, {
+      key: 'gamesplayed',
+      title: 'Games Played'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }, {
+      key: 'correctnotes',
+      title: 'Correct Notes'
+    }, {
+      key: 'incorrectnotes',
+      title: 'Incorrect Notes'
+    }]
   },
   OITC: {
     stats: [
@@ -907,7 +1144,23 @@ const gameModeConfigs = {
         prop: "lastLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'victories',
+      title: 'Victories'
+    }, {
+      key: 'kills',
+      title: 'Kills'
+    }, {
+      key: 'deaths',
+      title: 'Deaths'
+    }, {
+      key: 'arrowsfired',
+      title: 'Arrows Fired'
+    }, {
+      key: 'arrowshit',
+      title: 'Arrows Hit'
+    }]
   },
   RR: {
     stats: [
@@ -943,7 +1196,20 @@ const gameModeConfigs = {
         prop: "lastLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'points',
+      title: 'Points'
+    }, {
+      key: 'gamesplayed',
+      title: 'Games Played'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }, {
+      key: 'tablescleared',
+      title: 'Tables Cleard'
+    }]
   },
   SGN: {
     stats: [
@@ -999,7 +1265,32 @@ const gameModeConfigs = {
         prop: "lastLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'total_points',
+      title: 'Points'
+    }, {
+      key: 'games_played',
+      title: 'Games Played'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }, {
+      key: 'deathmatches',
+      title: 'Deathmatches'
+    }, {
+      key: 'crates_opened',
+      title: 'Crates Opened'
+    }, {
+      key: 'kills',
+      title: 'Kills'
+    }, {
+      key: 'deaths',
+      title: 'Deaths'
+    }, {
+      key: 'most_points',
+      title: 'Mots Points'
+    }]
   },
   SG: {
     stats: [
@@ -1090,7 +1381,23 @@ const gameModeConfigs = {
         prop: "lastLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'points',
+      title: 'Points'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }, {
+      key: 'deathmatches',
+      title: 'Deathmatches'
+    }, {
+      key: 'kills',
+      title: 'Kills'
+    }, {
+      key: 'deaths',
+      title: 'Deaths'
+    }]
   },
   SKY: {
     stats: [
@@ -1141,7 +1448,29 @@ const gameModeConfigs = {
         prop: "lastLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'total_points',
+      title: 'Points'
+    }, {
+      key: 'gamesplayed',
+      title: 'Games Played'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }, {
+      key: 'deathmatches',
+      title: 'Deathmatches'
+    }, {
+      key: 'kills',
+      title: 'Kills'
+    }, {
+      key: 'deaths',
+      title: 'Deaths'
+    }, {
+      key: 'most_points',
+      title: 'Most Points'
+    }]
   },
   SLAP: {
     stats: [
@@ -1182,7 +1511,26 @@ const gameModeConfigs = {
         prop: "lastLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'points',
+      title: 'Points'
+    }, {
+      key: 'gamesplayed',
+      title: 'Games Played'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }, {
+      key: 'deathmatches',
+      title: 'Deathmatches'
+    }, {
+      key: 'kills',
+      title: 'Kills'
+    }, {
+      key: 'deaths',
+      title: 'Deaths'
+    }]
   },
   SP: {
     stats: [
@@ -1233,7 +1581,26 @@ const gameModeConfigs = {
         prop: "lastLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'points',
+      title: 'Points'
+    }, {
+      key: 'played',
+      title: 'Games Played'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }, {
+      key: 'eggs',
+      title: 'Eggs Fired'
+    }, {
+      key: 'blocks',
+      title: 'Blocks Destoyed'
+    }, {
+      key: 'deaths',
+      title: 'Deaths'
+    }]
   },
   SPL: {
     stats: [
@@ -1285,7 +1652,29 @@ const gameModeConfigs = {
         prop: "lastLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'total_points',
+      title: 'Points'
+    }, {
+      key: 'games_played',
+      title: 'Games Played'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }, {
+      key: 'kills',
+      title: 'Kills'
+    }, {
+      key: 'deaths',
+      title: 'Deaths'
+    }, {
+      key: 'blocks_painted',
+      title: 'Blocks Painted'
+    }, {
+      key: 'ultimates_earned',
+      title: 'Ultimates Earned'
+    }]
   },
   TIMV: {
     stats: [
@@ -1351,7 +1740,23 @@ const gameModeConfigs = {
         prop: "lastLogin",
         func: dateFormat
       }
-    ]
+    ],
+    leaderboard: [{
+      key: 'karma',
+      title: 'Karma'
+    }, {
+      key: 'detective',
+      title: 'Detective Games'
+    }, {
+      key: 'innocent',
+      title: 'Innocent Games'
+    }, {
+      key: 'traitor',
+      title: 'Traitor Games'
+    }, {
+      key: 'mostPoints',
+      title: 'Most Points'
+    }]
   },
 }
 

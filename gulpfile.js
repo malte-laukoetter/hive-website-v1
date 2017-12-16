@@ -19,7 +19,8 @@ const polymerBuild = require('polymer-build');
 const runSequence = require('run-sequence');
 const cache = require('gulp-cache');
 const process = require("process");
-
+const { generateCountingSharedBundleUrlMapper,
+  generateSharedDepsMergeStrategy } = require('polymer-bundler');
 
 // Here we add tools that will be used to process our source files.
 const imagemin = require('gulp-imagemin');
@@ -70,7 +71,8 @@ function buildPolymer() {
       "src/hive-leaderboard.html",
       "src/hive-profile.html",
       "src/hive-random-game.html",
-      "src/hive-gamemode-stats.html"
+      "src/hive-gamemode-stats.html",
+      "src/hive-gamemode-leaderboards.html"
     ],
     "sources": [
       "src/**/*",
@@ -84,6 +86,8 @@ function buildPolymer() {
       "bower_components/firebase/*.js",
       "google61bee3df118b250a.html",
       "firebase-messaging-sw.js",
+      "bower_components/web-animations-js/*.js",
+      "bower_components/web-animations-js/*.html",
       "__/**"
     ]
   });
@@ -120,9 +124,9 @@ function buildPolymer() {
           // the require statements at the beginning.
           .pipe(gulpif(/\.js$/, babel({
             presets: ['env']}))) // Install gulp-uglify to use
-       //   .pipe(gulpif(/\.js$/, uglify())) // Install gulp-uglify to use
-        //  .pipe(gulpif(/\.css$/, cssSlam())) // Install css-slam to use
-         // .pipe(gulpif(/\.html$/, htmlMinifier(htmlMinifierOptions))) // Install gulp-html-minifier to use
+          .pipe(gulpif(/\.js$/, uglify())) // Install gulp-uglify to use
+          .pipe(gulpif(/\.css$/, cssSlam())) // Install css-slam to use
+          .pipe(gulpif(/\.html$/, htmlMinifier(htmlMinifierOptions))) // Install gulp-html-minifier to use
 
           // Remember, you need to rejoin any split inline code when you're done.
           .pipe(sourcesStreamSplitter.rejoin());
@@ -135,9 +139,9 @@ function buildPolymer() {
           .pipe(gulpif(/\.js$/, babel({
             presets: ['env']
           }))) // Install gulp-uglify to use
-          //.pipe(gulpif(/\.js$/, uglify())) // Install gulp-uglify to use
-        //  .pipe(gulpif(/\.css$/, cssSlam())) // Install css-slam to use
-        //  .pipe(gulpif(/\.html$/, htmlMinifier(htmlMinifierOptions))) // Install gulp-html-minifier to use
+          .pipe(gulpif(/\.js$/, uglify())) // Install gulp-uglify to use
+          .pipe(gulpif(/\.css$/, cssSlam())) // Install css-slam to use
+          .pipe(gulpif(/\.html$/, htmlMinifier(htmlMinifierOptions))) // Install gulp-html-minifier to use
           // Add any dependency optimizations here.
           .pipe(dependenciesStreamSplitter.rejoin());
 
@@ -151,10 +155,19 @@ function buildPolymer() {
         // If you want bundling, pass the stream to polymerProject.bundler.
         // This will bundle dependencies into your fragments so you can lazy
         // load them.
-        buildStream = buildStream.pipe(polymerProject.bundler());
+        buildStream = buildStream.pipe(polymerProject.bundler({
+          excludes: ['bower_components/web-animations-js'],
+          sourcemaps: true,
+          stripComments: true,
+          strategy: generateSharedDepsMergeStrategy(3),
+          urlMapper: generateCountingSharedBundleUrlMapper('shared/bundle_')
+        }));
 
         // Now let's generate the HTTP/2 Push Manifest
         buildStream = buildStream.pipe(polymerProject.addPushManifest());
+
+        //add es5 adapter
+        buildStream = buildStream.pipe(polymerProject.addCustomElementsEs5Adapter());
 
         // Okay, time to pipe to the build directory
         buildStream = buildStream.pipe(gulp.dest(buildDirectory));
@@ -209,7 +222,11 @@ function copySrc() {
 }
 
 function copyWebcomponentsjs() {
-  return gulp.src(["bower_componenets/webcomponentsjs/*"]).pipe(gulp.dest('temp/bower_componenets/webcomponentsjs'));
+  return gulp.src(["bower_components/webcomponentsjs/*.js"]).pipe(gulp.dest('build/bower_components/webcomponentsjs'));
+}
+
+function copyWebanimationsjs() {
+  return gulp.src(["bower_components/web-animations-js/*.js"]).pipe(gulp.dest('build/bower_components/web-animations-js'));
 }
 
 function copyBaseFiles() {
@@ -256,6 +273,7 @@ gulp.task('copyStatic', copySrc);
 gulp.task('copyImages', copyImages);
 gulp.task('copyBaseFiles', copyBaseFiles);
 gulp.task('copyWebcomponentsjs', copyWebcomponentsjs);
+gulp.task('copyWebanimationsjs', copyWebanimationsjs);
 
 gulp.task('copyToTemp', callback => runSequence("deleteTemp", ["copyComponents", "copyStatic", "copyBaseFiles", "copyImages"], callback));
 
@@ -301,9 +319,9 @@ gulp.task('hiveGamemodeNames', async ()=> {
 gulp.task('hiveGamemodes', callback => runSequence(['hiveGamemodeNames', 'hiveGamemodeTabs-HiveProfileHtml'], callback))
 
 
-gulp.task('dev', callback => runSequence(["copyToTemp", "deleteBuild"], "hiveGamemodes", "copyWebcomponentsjs", "copyFromTemp", ["deleteTemp", "deleteBuildTemp"], callback));
+gulp.task('dev', callback => runSequence(["copyToTemp", "deleteBuild"], "hiveGamemodes", "copyFromTemp", ["copyWebcomponentsjs", "copyWebanimationsjs"], ["deleteTemp", "deleteBuildTemp"], callback));
 
-gulp.task('build', callback => runSequence(["copyToTemp", "deleteBuild"], "hiveGamemodes", "polymer", "copyWebcomponentsjs", "copyBuildFromTemp", ["deleteTemp", "deleteBuildTemp"], callback));
+gulp.task('build', callback => runSequence(["copyToTemp", "deleteBuild"], "hiveGamemodes", "polymer", "copyBuildFromTemp", ["copyWebcomponentsjs", "copyWebanimationsjs"], ["deleteTemp", "deleteBuildTemp"], callback));
 
 gulp.on('stop', () => { process.exit(0); });
 gulp.on('err', () => { process.exit(1); });

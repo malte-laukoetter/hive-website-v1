@@ -142,12 +142,9 @@
         <vaadin-grid items="[[persistendData]]">
           <vaadin-grid-column width="200px" resizable>
             <template class="header">
-              <vaadin-grid-sorter path="date" id="sorter">
-                <div class="cell">
-                  <span>Date Added</span>
-                  <iron-icon icon="my-icons:arrow-upward"></iron-icon>
-                </div>
-              </vaadin-grid-sorter>
+              <div class="cell">
+                <span>Date Added</span>
+              </div>
             </template>
             <template>[[dateToDateString(item.date)]]</template>
           </vaadin-grid-column>
@@ -168,7 +165,6 @@
                   <vaadin-grid-filter aria-label="Map Name" path="mapName" value="[[_filterMapName]]">
                     <input slot="filter" placeholder="Map Name" value="{{_filterMapName::input}}" focus-target>
                   </vaadin-grid-filter>
-                  <iron-icon icon="my-icons:arrow-upward"></iron-icon>
                 </div>
               </vaadin-grid-sorter>
             </template>
@@ -182,7 +178,6 @@
                   <vaadin-grid-filter aria-label="World Name" path="worldName" value="[[_filterWorldName]]">
                     <input slot="filter" placeholder="World Name" value="{{_filterWorldName::input}}" focus-target>
                   </vaadin-grid-filter>
-                  <iron-icon icon="my-icons:arrow-upward"></iron-icon>
                 </div>
               </vaadin-grid-sorter>
             </template>
@@ -196,7 +191,6 @@
                   <vaadin-grid-filter aria-label="Author" path="author" value="[[_filterAuthor]]">
                     <input slot="filter" placeholder="Author" value="{{_filterAuthor::input}}" focus-target>
                   </vaadin-grid-filter>
-                  <iron-icon icon="my-icons:arrow-upward"></iron-icon>
                 </div>
               </vaadin-grid-sorter>
             </template>
