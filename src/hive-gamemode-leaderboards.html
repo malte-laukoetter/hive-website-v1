@@ -272,11 +272,27 @@
           },
           today: {
             type: String,
-            value: new Date().toISOString().substring(0, 10)
+            value: () => {
+              let date = new Date();
+
+              if (date.getUTCHours() < 2) {
+                date.setDate(date.getDate() - 1)
+              }
+
+              return date.toISOString().substring(0, 10)
+            }
           },
           date: {
             type: String,
-            value: new Date().toISOString().substring(0, 10)
+            value: ()=> {
+              let date = new Date();
+
+              if(date.getUTCHours() < 2){
+                date.setDate(date.getDate()-1)
+              }
+
+              return date.toISOString().substring(0, 10)
+            }
           },
           dataKeys: {
             type: Array,
@@ -306,7 +322,8 @@
       static get observers() {
         return [
           '_routeChanged(routeData.gamemode, routeData2.date, routeData3.timeforchanges)',
-          '_dataChanged(gamemode, date, timeForChanges)'
+          '_dataChanged(gamemode, date, timeForChanges)',
+          '_dateChanged(date)'
         ];
       }
 
@@ -416,6 +433,14 @@
 
       }
 
+      _dateChanged(newDate){
+        if(newDate && newDate.toString().match(/\d\d\d\d-\d\d-\d\d/) && new Date(newDate).getTime() <= new Date(this.today).getTime()){
+          return;
+        } 
+        this.set("date", this.today);
+
+      }
+
       placeChangeIcon(obj){
         if(!obj || !obj.prev) return "questionmark";
 
@@ -474,7 +499,7 @@
       _routeChanged(gamemode, date, timeforchanges) {
         if(!gamemode || !this.gamemodes[gamemode.toUpperCase()]) return
         this.gamemode = gamemode.toUpperCase();
-        this.date = date && date.toString().match(/\d\d\d\d-\d\d-\d\d/) ? date : new Date().toISOString().substring(0, 10);
+        this.date = date && date.toString().match(/\d\d\d\d-\d\d-\d\d/) && new Date(date).getTime() <= new Date(this.today).getTime() ? date : new Date().toISOString().substring(0, 10);
         this.timeForChanges = timeforchanges ? timeforchanges : 'day_7';
       }
 
