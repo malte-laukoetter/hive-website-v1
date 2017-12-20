@@ -312,8 +312,8 @@
           },
           gamemodes: {
             type: Array,
-            value: { "SG": "Survival Games", "BP": "BlockParty", "CAI": "Cowboys and Indians", "CR": "Cranked", "DR": "DeathRun", "HB": "The Herobrine", "HERO": "SG:Heroes", "HIDE": "Hide and Seek", "OITC": "One in the Chamber", "SP": "Splegg", "TIMV": "Trouble in Mineville", "SKY": "SkyWars", "LAB": "The Lab", "DRAW": "Draw It", "SLAP": "Slaparoo", "EF": "Electric Floor", "MM": "Music Masters", "GRAV": "Gravity", "RR": "Restaurant Rush", "GNT": "SkyGiants", "GNTM": "SkyGiants: Mini", "PMK": "Pumpkinfection", "SGN": "Survival Games 2", "BD": "BatteryDash", "SPL": "Sploop", "MIMV": "Murder in Mineville", "BED": "BedWars", "SURV": "Survive the Night" }
-            //value: {}/* HIVE_GAMEMODE_NAMES */
+           // value: { "SG": "Survival Games", "BP": "BlockParty", "CAI": "Cowboys and Indians", "CR": "Cranked", "DR": "DeathRun", "HB": "The Herobrine", "HERO": "SG:Heroes", "HIDE": "Hide and Seek", "OITC": "One in the Chamber", "SP": "Splegg", "TIMV": "Trouble in Mineville", "SKY": "SkyWars", "LAB": "The Lab", "DRAW": "Draw It", "SLAP": "Slaparoo", "EF": "Electric Floor", "MM": "Music Masters", "GRAV": "Gravity", "RR": "Restaurant Rush", "GNT": "SkyGiants", "GNTM": "SkyGiants: Mini", "PMK": "Pumpkinfection", "SGN": "Survival Games 2", "BD": "BatteryDash", "SPL": "Sploop", "MIMV": "Murder in Mineville", "BED": "BedWars", "SURV": "Survive the Night" }
+            value: {}/* HIVE_GAMEMODE_NAMES */
           }
         }
         
@@ -385,8 +385,8 @@
           }
 
           Promise.all([
-            this.getFirestore(`gameLeaderboards/${this.gamemode}/dates/${this.date}/pages/${prop.page * 100}`),
-            this.getFirestore(`gameLeaderboards/${this.gamemode}/dates/${changeDate.toISOString().substring(0, 10)}/pages/${prop.page * 100}`)
+            this.getFirestore(`gameLeaderboards/${this.gamemode}/data/${this.date}-${prop.page}`),
+            this.getFirestore(`gameLeaderboards/${this.gamemode}/data/${changeDate.toISOString().substring(0, 10)}-${prop.page}`)
           ]).then(res => {
             let doc = res[0][0];
 
