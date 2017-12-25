@@ -86,8 +86,6 @@ function buildPolymer() {
       "bower_components/firebase/*.js",
       "google61bee3df118b250a.html",
       "firebase-messaging-sw.js",
-      "bower_components/web-animations-js/*.js",
-      "bower_components/web-animations-js/*.html",
       "__/**"
     ]
   });
@@ -156,7 +154,10 @@ function buildPolymer() {
         // This will bundle dependencies into your fragments so you can lazy
         // load them.
         buildStream = buildStream.pipe(polymerProject.bundler({
-          excludes: ['bower_components/web-animations-js'],
+          excludes: [
+            'bower_components/web-animations-js',
+            'node_modules/hive-api'
+          ],
           sourcemaps: true,
           stripComments: true,
           strategy: generateSharedDepsMergeStrategy(3),
@@ -213,7 +214,11 @@ function buildPolymer() {
   });
 }
 
-function copyComponents() {
+function copyNodeModules() {
+  return gulp.src(["node_modules/hive-api/**"]).pipe(gulp.dest('temp/node_modules/hive-api'))
+}
+
+function copyBowerComponents() {
   return gulp.src(["components/**", "bower_components/**"]).pipe(gulp.dest('temp/bower_components'));
 }
 
@@ -227,6 +232,10 @@ function copyWebcomponentsjs() {
 
 function copyWebanimationsjs() {
   return gulp.src(["bower_components/web-animations-js/*.js"]).pipe(gulp.dest('build/bower_components/web-animations-js'));
+}
+
+function copyHiveApi() {
+  return gulp.src(["node_modules/hive-api/dist/*.js"]).pipe(gulp.dest('build/node_modules/hive-api/dist'));
 }
 
 function copyBaseFiles() {
@@ -268,12 +277,17 @@ gulp.task('deleteTemp', deleteTemp);
 gulp.task('deleteBuild', deleteBuild);
 gulp.task('deleteBuildTemp', deleteBuildTemp);
 
-gulp.task('copyComponents', copyComponents);
+gulp.task('copyBowerComponents', copyBowerComponents);
+gulp.task('copyNodeModules', copyNodeModules);
+gulp.task('copyComponents', ["copyNodeModules", "copyBowerComponents"]);
+
 gulp.task('copyStatic', copySrc);
 gulp.task('copyImages', copyImages);
 gulp.task('copyBaseFiles', copyBaseFiles);
+
 gulp.task('copyWebcomponentsjs', copyWebcomponentsjs);
 gulp.task('copyWebanimationsjs', copyWebanimationsjs);
+gulp.task('copyHiveApi', copyHiveApi);
 
 gulp.task('copyToTemp', callback => runSequence("deleteTemp", ["copyComponents", "copyStatic", "copyBaseFiles", "copyImages"], callback));
 
@@ -281,6 +295,7 @@ gulp.task('polymer', buildPolymer);
 
 gulp.task('copyBuildFromTemp', copyBuildFromTemp)
 gulp.task('copyFromTemp', copyFromTemp)
+
 /**
  * generate the tabs for the different gamemodes
  */
@@ -314,14 +329,14 @@ gulp.task('hiveGamemodeNames', async ()=> {
   buffers = buffers.map(buffer => replaceInBuffer(buffer, /\{\}\/\* HIVE_GAMEMODE_NAMES \*\//, JSON.stringify(gamemodeTabs)));
 
   return Promise.all(files.map((a,i) => writeFile(a, buffers[i])))
-})
+});
 
 gulp.task('hiveGamemodes', callback => runSequence(['hiveGamemodeNames', 'hiveGamemodeTabs-HiveProfileHtml'], callback))
 
 
-gulp.task('dev', callback => runSequence(["copyToTemp", "deleteBuild"], "hiveGamemodes", "copyFromTemp", ["copyWebcomponentsjs", "copyWebanimationsjs"], ["deleteTemp", "deleteBuildTemp"], callback));
+gulp.task('dev', callback => runSequence(["copyToTemp", "deleteBuild"], "hiveGamemodes", "copyFromTemp", ["copyWebcomponentsjs", "copyWebanimationsjs", "copyHiveApi"], ["deleteTemp", "deleteBuildTemp"], callback));
 
-gulp.task('build', callback => runSequence(["copyToTemp", "deleteBuild"], "hiveGamemodes", "polymer", "copyBuildFromTemp", ["copyWebcomponentsjs", "copyWebanimationsjs"], ["deleteTemp", "deleteBuildTemp"], callback));
+gulp.task('build', callback => runSequence(["copyToTemp", "deleteBuild"], "hiveGamemodes", "polymer", "copyBuildFromTemp", ["copyWebcomponentsjs", "copyWebanimationsjs", "copyHiveApi"], ["deleteTemp", "deleteBuildTemp"], callback));
 
 gulp.on('stop', () => { process.exit(0); });
 gulp.on('err', () => { process.exit(1); });
