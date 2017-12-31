@@ -66,7 +66,7 @@ function generateTeamChangeNotificationPayload(data){
       break;
     case "NECTAR_REMOVE":
       payload.notification.title = 'An Team Nectar Member left';
-      payload.notification.body = `${data.name} is no longer part of Team Nectar!`;
+      payload.notification.body = `${data.name} is is no longer active on Team Nectar!`;
       break;
     default:
       payload.notification.title = 'Something changed in the team of the Hive';
@@ -115,9 +115,9 @@ function generateNewMapNotificationPayload(data){
   };
 
   if(data.author){
-    notification.notification.body = `The map was created by: ${data.author}.\nIt may take some weeks till the map can be played...`;
+    notification.notification.body = `The map was created by: ${data.author}.`;
   }else{
-    notification.notification.body = `The map's author is still unknown...\nIt may take some weeks till the map can be played...`;
+    notification.notification.body = `The map's author is still unknown...`;
   }
 
   return notification;
