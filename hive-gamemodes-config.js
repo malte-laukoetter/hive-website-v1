@@ -752,11 +752,11 @@ const gameModeConfigs = {
       }
     ],
     leaderboard: [{
-      key: 'total_points',
-      title: 'Points'
-    }, {
       key: 'victories',
       title: 'Victories'
+    }, {
+      key: 'total_points',
+      title: 'Points'
     }, {
       key: 'kills',
       title: 'Kills'
@@ -1383,11 +1383,11 @@ const gameModeConfigs = {
       }
     ],
     leaderboard: [{
-      key: 'points',
-      title: 'Points'
-    }, {
       key: 'victories',
       title: 'Victories'
+    }, {
+      key: 'points',
+      title: 'Points'
     }, {
       key: 'deathmatches',
       title: 'Deathmatches'
