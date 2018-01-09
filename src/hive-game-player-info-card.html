@@ -69,20 +69,22 @@
         return str.toLowerCase();
       }
 
-      async _title(info, gamemode){
+      _title(info, gamemode){
         if(!info){
           this.title = "";
           return;
         }
 
-        const title = await info.currentTitle();
-
-        if(title){
-          this.title = {
-            title: title,
-            next: await title.next()
+        info.currentTitle().then(title => {
+          if (title) {
+            title.next().then(next => {
+              this.title = {
+                title: title,
+                next: next
+              }
+            });
           }
-        }
+        });
 
         return;
       }

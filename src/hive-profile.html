@@ -550,18 +550,6 @@
           this.preProcessAchievements = achievements;
           return achievements;
         });
-/*
-        console.log("A")
-
-        this.preProcessAchievements =  await Promise.all(this.gameInfo.achievements.map(async a => {
-          console.log(a)
-          let info = await a.info();
-          a.id = info.id;
-          a.name = info.name;
-          a.description = info.description;
-          a.stages = info.stages;
-          return a;
-        }));*/
       }
     }
 
