@@ -163,7 +163,7 @@
             </paper-button>
             <paper-listbox slot="dropdown-content" attr-for-selected="value" selected="{{gamemode}}">
               <template is="dom-repeat" items="[[objToArr(gamemodes)]]">
-                <paper-item value="[[item.0]]">[[item.1]]</paper-item>
+                <a href="/leaderboards/[[item.0]]/[[time]]/[[timeForChanges]]"><paper-item value="[[item.0]]">[[item.1]]</paper-item></a>
               </template>
             </paper-listbox>
             </paper-menu-button> - <paper-button on-tap="openDatepickerDialog">

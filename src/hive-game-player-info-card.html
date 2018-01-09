@@ -1,6 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="hive-profile-styles.html">
 
+<script type="module" src="../node_modules/mc-format/mc-format.js"></script>
 <link rel="import" href="hive-api-player.html">
 
 <dom-module id="hive-game-player-info-card">
@@ -16,10 +17,11 @@
         <img src="/images/[[_lowerCase(gamemode)]].png" alt="Title Image for [[_gamemodeName(gamemode)]]" />
         <h4>[[_gamemodeName(gamemode)]]</h4>
       </div>
-      <template is="dom-if" if="[[title]]">
+      <template is="dom-if" if="[[title.title]]">
         <div class="content">
           <div class="author">
-            <h4 class="title">[[title]]
+            <h4 class="title">
+              <mc-format text="[[title.title.mcFormatName]]"></mc-format>
               <template is="dom-if" if="[[minMaxPoints]]">
                 <br />
                   <small>[[minMaxPoints]]</small>
@@ -40,390 +42,23 @@
   </template>
 
   <script>
-    const gamemodeTitle = {
-      
-      BED: {
-        'Sleepy 5': 0,
-        'Sleepy 4': 100,
-        'Sleepy 3': 300,
-        'Sleepy 2': 600,
-        'Sleepy 1': 1000,
-        'Snoozer 5': 1500,
-        'Snoozer 4': 2100,
-        'Snoozer 3': 2800,
-        'Snoozer 2': 3600,
-        'Snoozer 1': 4500,
-        'Drowsy 5': 5500,
-        'Drowsy 4': 6600,
-        'Drowsy 3': 7800,
-        'Drowsy 2': 9100,
-        'Drowsy 1': 10500,
-        'Sloth 5': 12000,
-        'Sloth 4': 13600,
-        'Sloth 3': 15300,
-        'Sloth 2': 17100,
-        'Sloth 1': 19000,
-        'Hypnotist 5': 21000,
-        'Hypnotist 4': 23100,
-        'Hypnotist 3': 25300,
-        'Hypnotist 2': 27600,
-        'Hypnotist 1': 30000,
-        'Siesta 5': 32500,
-        'Siesta 4': 35100,
-        'Siesta 3': 37800,
-        'Siesta 2': 40600,
-        'Siesta 1': 43500,
-        'Dreamer 5': 46500,
-        'Dreamer 4': 49600,
-        'Dreamer 3': 52800,
-        'Dreamer 2': 56100,
-        'Dreamer 1': 59500,
-        'Sleep Walker 5': 63000,
-        'Sleep Walker 4': 66600,
-        'Sleep Walker 3': 70300,
-        'Sleep Walker 2': 74100,
-        'Sleep Walker 1': 78000,
-        'Hibernator 5': 82000,
-        'Hibernator 4': 86100,
-        'Hibernator 3': 90300,
-        'Hibernator 2': 94600,
-        'Hibernator 1': 99000,
-        'Bed Head 5': 103500,
-        'Bed Head 4': 108100,
-        'Bed Head 3': 112800,
-        'Bed Head 2': 117600,
-        'Bed Head 1': 122500,
-        'Panda 5': 127500,
-        'Panda 4': 132600,
-        'Panda 3': 137800,
-        'Panda 2': 143100,
-        'Panda 1': 148500,
-        'Insomniac 5': 154000,
-        'Insomniac 4': 159600,
-        'Insomniac 3': 165300,
-        'Insomniac 2': 171100,
-        'Insomniac 1': 177000,
-        'Well Rested 5': 183000,
-        'Well Rested 4': 189100,
-        'Well Rested 3': 195300,
-        'Well Rested 2': 201600,
-        'Well Rested 1': 208000,
-        'Koala 5': 214500,
-        'Koala 4': 221100,
-        'Koala 3': 227800,
-        'Koala 2': 234600,
-        'Koala 1': 241500,
-        'Day Dreamer 5': 248500,
-        'Day Dreamer 4': 255600,
-        'Day Dreamer 3': 262800,
-        'Day Dreamer 2': 270100,
-        'Day Dreamer 1': 277500,
-        'Power Nap 5': 285000,
-        'Power Nap 4': 292600,
-        'Power Nap 3': 300300,
-        'Power Nap 2': 308100,
-        'Power Nap 1': 316000,
-        'Bear 5': 324000,
-        'Bear 4': 332100,
-        'Bear 3': 340300,
-        'Bear 2': 348600,
-        'Bear 1': 357000,
-        'Bed Warrior 5': 365500,
-        'Bed Warrior 4': 374100,
-        'Bed Warrior 3': 382800,
-        'Bed Warrior 2': 391600,
-        'Bed Warrior 1': 400500,
-        'Snorlax 5': 409500,
-        'Snorlax 4': 418600,
-        'Snorlax 3': 427800,
-        'Snorlax 2': 437100,
-        'Snorlax 1': 446500,
-        'Nightmare 5': 456000,
-        'Nightmare 4': 465600,
-        'Nightmare 3': 475300,
-        'Nightmare 2': 485100,
-        'Nightmare 1': 495000,
-        '✹Zzzzzz': Infinity
-      },
-      BP: {
-        'First Step': 0,
-        'Party Animal': 100,
-        Ballerina: 500,
-        Raver: 1000,
-        Freestyler: 2500,
-        Breakdancer: 5000,
-        Star: 10000,
-        'MC Hammer': 20000,
-        Carlton: 35000,
-        Destroyer: 50000,
-        Famous: 75000,
-        Dominator: 100000,
-        Fabulous: 150000,
-        'King of Dance': 200000,
-        Choreographer: 300000,
-        'Happy Feet': 400000,
-        Jackson: 500000,
-        Astaire: 625000,
-        Swayze: 750000,
-        Legendary: 1000000,
-        'Billy Elliot': Infinity
-      },
-      CAI: {
-        Campfire: 0,
-        Blacksmith: 101,
-        Rustler: 1001,
-        Bronco: 2501,
-        Wrangler: 3501,
-        Buckaroo: 5001,
-        Wigwam: 7501,
-        Caboose: 15001,
-        Ambusher: 25001,
-        'Pistol Pete': 35001,
-        Rattlesnake: 45001,
-        Outlaw: 75001,
-        Chief: 125001,
-        Mustang: 250001,
-        Stallion: 500001,
-        Revolver: 750001,
-        Tomahawk: 1000001,
-        Sheriff: Infinity
-      },
-      DR: {
-        Snail: 0,
-        Turtle: 101,
-        Jogger: 1001,
-        Runner: 3501,
-        Rabbit: 10001,
-        Kangaroo: 20001,
-        Speedster: 35001,
-        Blur: 60001,
-        Cheetah: 100001,
-        Flash: 200001,
-        'Speedy Gonzales': 300001,
-        Bolt: 400001,
-        Forrest: 500001,
-        Sonic: 600001,
-        Falcon: 700001,
-        'Road Runner': 800001,
-        Basilisk: 950001,
-        Sailfish: 1200001,
-        'Formula 1': 1500001,
-        Tornado: 2000001,
-        Jet: 2500001,
-        Blackbird: 3500001,
-        Hyperspace: 5000001,
-        'Speed of Light': Infinity
-      },
-      HIDE: {
-        Blind: 0,
-        'Short Sighted': 100,
-        Sneaker: 1000,
-        Sneaky: 2500,
-        Mysterious: 10000,
-        Camouflaged: 20000,
-        Chameleon: 30000,
-        Stealthy: 40000,
-        Hunter: 75000,
-        Magician: 100000,
-        Escapist: 150000,
-        Invisible: 300000,
-        Shadow: 500000,
-        Houdini: 1000000,
-        Ninja: 1750000,
-        Wally: 2500000,
-        Ghost: 4000000,
-        'Master of Disguise': Infinity
-      },
-      GRAV: {
-        Tumbler: 0,
-        Faller: 250,
-        Freefaller: 1000,
-        Slider: 5000,
-        'Sky Diver': 15000,
-        'Base Jumper': 35000,
-        Swerver: 75000,
-        Dodger: 100000,
-        Evader: 150000,
-        Eagle: 250000,
-        Superman: 350000,
-        Ironman: 500000,
-        Graviton: 750000,
-        'Orbital Force': 1000000,
-        Chronolock: 1500000,
-        'Gravity Defiance': 2500000,
-        'Felix Baumgartner': Infinity
-      },
-      MIMV: {
-        Pacifist: 0,
-        Citizen: 150,
-        Observer: 1000,
-        Bystander: 2250,
-        Butcher: 3500,
-        Bandit: 5500,
-        Rebel: 8000,
-        Executioner: 11500,
-        Psycho: 18000,
-        Assassin: 25000,
-        Huntsman: 35000,
-        'Bounty Hunter': 55000,
-        Shadow: 75000,
-        Enforcer: 100000,
-        Altair: 125000,
-        Ezio: 175000,
-        MuckDuck: Infinity
-      },
-      GNT: {
-        Dwarf: 0,
-        'Little John': 500,
-        'Gentle Giant': 1500,
-        Colossal: 2500,
-        Galactus: 5000,
-        Behemoth: 10000,
-        Grawp: 25,
-        Andre: 50000,
-        Cyclops: 100000,
-        'Big Friendly Giant': 250000,
-        Gulliver: 500000,
-        Bigfoot: 750000,
-        Titan: 1000000,
-        Hagrid: 1500000,
-        Goliath: 2000000,
-        'Sky Giant': Infinity
-      },
-      GNTM: {
-        Dwarf: 0,
-        'Little John': 500,
-        'Gentle Giant': 1500,
-        Colossal: 2500,
-        Galactus: 5000,
-        Behemoth: 10000,
-        Grawp: 25,
-        Andre: 50000,
-        Cyclops: 100000,
-        'Big Friendly Giant': 250000,
-        Gulliver: 500000,
-        Bigfoot: 750000,
-        Titan: 1000000,
-        Hagrid: 1500000,
-        Goliath: 2000000,
-        'Sky Giant': Infinity
-      },
-      SKY: {
-        Brawler: 0,
-        Defender: 250,
-        Skylander: 750,
-        Warrior: 1250,
-        Gladiator: 2500,
-        Veteran: 5000,
-        Voyager: 10000,
-        Warlord: 25000,
-        Warmonger: 50000,
-        Keeper: 75000,
-        Overseer: 100000,
-        Hero: 125000,
-        Guardian: 150000,
-        Paladin: 175000,
-        Champion: 200000,
-        Zeus: 225000,
-        Godly: 250000,
-        Skylord: Infinity
-      },
-      SP: {
-        Farmer: 0,
-        Cook: 5000,
-        Chef: 10000,
-        Master: 100000,
-        'Humpty Dumpty': 250000,
-        Ramsay: 500000,
-        'Hot\'n\'Spicy': 1000000,
-        'Splegg Head': 1200000,
-        Bacon: 1500000,
-        Sunnyside: 2000000,
-        Delicious: 3000000,
-        'Easter Bunny': 4000000,
-        Scrambled: 5000000,
-        'The Eggspert': Infinity
-      },
-      LAB: {
-        'Test Tube': 0,
-        Microscopic: 20,
-        Ion: 50,
-        Photon: 100,
-        Thermal: 150,
-        Atomic: 200,
-        Corrosive: 300,
-        Elemental: 500,
-        Molecular: 750,
-        Catalyst: 1000,
-        Acidic: 1500,
-        Enzyme: 2000,
-        Gamma: 3000,
-        Isotopic: Infinity,
-        Electronic: 6000,
-        Metallic: 8000,
-        Radioactive: 10000,
-        Nuclear: 12500,
-        Darwin: 15000,
-        'Da Vinci': 20000,
-        Sagan: 25000,
-        Newton: 30000,
-        Tesla: 35000,
-        Galileo: 40000,
-        Hawking: 50000,
-        Einstein: Infinity
-      },
-      TIMV: {
-        Civilian: 0,
-        Inspector: 100,
-        Witness: 500,
-        Scout: 750,
-        Forensic: 1000,
-        Trustable: 2000,
-        Director: 3500,
-        Deceiver: 5000,
-        Tracer: 7500,
-        Agent: 10000,
-        Spy: 15000,
-        Conspirator: 25000,
-        Eavesdropper: 35000,
-        Constable: 45000,
-        Officer: 60000,
-        Sergeant: 80000,
-        Commissioner: 100000,
-        Undercover: 125000,
-        Lestrade: 150000,
-        Watson: 200000,
-        '✦ Sherlock': Infinity
-      },
-      SGN: {
-        Stray: 0,
-        Wanderer: 1000,
-        Defender: 1500,
-        Soldier: 3000,
-        Champion: 6000,
-        Sargeant: 10000,
-        'War Hero': 15000,
-        Veteran: 20000,
-        Guardian: 30000,
-        Elite: 40000
-      }
-    }
-
-
     class HiveGamePlayerInfoCard extends Polymer.Element {
       static get is() { return 'hive-game-player-info-card'; }
       static get properties() {
         return {
           gamemode: String,
-          title: {
-            computed: '_title(playerTitle, points, gamemode)'
-          },
-          playerTitle: String,
-          points: Number,
+          gameInfo: Object,
+          title: Object,
           minMaxPoints: {
-            computed: '_titleMinMax(title, gamemode)'
+            computed: '_titleMinMax(title.title, title.next)'
           }
         }
+      }
+    
+      static get observers() {
+        return [
+          '_title(gameInfo, gamemode)'
+        ]
       }
 
       _gamemodeName(mode) {
@@ -434,28 +69,36 @@
         return str.toLowerCase();
       }
 
-      _title(title, points, gamemode){
-        if(title) return title;
-        
-        const titles = gamemodeTitle[gamemode];
+      async _title(info, gamemode){
+        if(!info){
+          this.title = "";
+          return;
+        }
 
-        if(!titles) return '';
+        const title = await info.currentTitle();
 
-        return  Object.entries(titles).filter(([a, b]) => b < points).map(([a,b])=>a).slice(-1)[0];
+        if(title){
+          this.title = {
+            title: title,
+            next: await title.next()
+          }
+        }
+
+        return;
       }
 
-      _titleMinMax(title, gamemode){
-        const titles = gamemodeTitle[gamemode];
+      _titleMinMax(curr, next){
+        if (!curr) return "";
 
-        if (!titles || titles[title] === undefined) return false;
+        const minPoints = curr.requiredPoints;          
 
-        const minPoints = titles[title];          
+        if (minPoints === -1) return 'Top Player';
 
-        if (minPoints === Infinity) return 'Top Player';
+        if(!next){
+          return `after ${this._numFormat(minPoints)} Points`;
+        }
 
-        const maxPoints = Object.entries(titles).filter(([a, b]) => b > minPoints)[0][1] - 1;
-
-        if (maxPoints === Infinity) return `after ${this._numFormat(minPoints)} Points`
+        const maxPoints = next.requiredPoints;
 
         return `${this._numFormat(minPoints)} - ${this._numFormat(maxPoints)} Points`;
       }

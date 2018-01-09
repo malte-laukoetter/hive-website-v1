@@ -215,7 +215,9 @@ function buildPolymer() {
 }
 
 function copyNodeModules() {
-  return gulp.src(["node_modules/hive-api/**"]).pipe(gulp.dest('temp/node_modules/hive-api'))
+  const nodeModulesToCopy = ["hive-api", "mc-format"];
+
+  return nodeModulesToCopy.map(name => gulp.src([`node_modules/${name}/**`]).pipe(gulp.dest(`temp/node_modules/${name}`)))
 }
 
 function copyBowerComponents() {
