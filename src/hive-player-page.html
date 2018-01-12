@@ -16,6 +16,7 @@
 <link rel="import" href="../bower_components/paper-avatar/paper-avatar.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/neon-animation/web-animations.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 
 
 <link rel="import" href="hive-api-player.html">
@@ -23,6 +24,7 @@
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="hive-api.html">
 <link rel="import" href="hive-profile.html">
+<script src="./calcGlobalLeaderboardPoints.js"></script>
 
 <dom-module id="hive-player-page">
   <template>
@@ -35,6 +37,10 @@
 
       paper-icon-item {
         margin-top: 10px;
+      }
+
+      paper-toast {
+        left: inherit !important;
       }
     </style>
 
@@ -88,6 +94,8 @@
             </template>
           </div>
         </template>
+
+        <paper-toast id="toast" duration=30000></paper-toast>
       </div>
     </app-header-layout>
 
@@ -100,6 +108,7 @@
         </div>
       </paper-dialog-scrollable>
       <div class="buttons">
+        <paper-button dialog-confirm on-tap="calcGlobalLeaderboard">Calculate Global Leaderboard Points</paper-button>
         <paper-button dialog-confirm>OK</paper-button>
       </div>
     </paper-dialog>
@@ -133,6 +142,16 @@
           '_pageChanged(page)',
         ];
       }
+
+      calcGlobalLeaderboard(){
+        calcGlobalLeaderboardPoints(new hive.Player(this.player)).then(points => {
+          this.$.toast.text = `${points} Points`;
+          this.$.toast.close();
+          this.$.toast.open();
+          this.$.toast.open();
+        });
+      }
+      
       _routeChanged(player) {
         if (player === undefined) {
           return;
