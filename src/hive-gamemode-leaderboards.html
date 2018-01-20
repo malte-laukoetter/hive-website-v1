@@ -28,6 +28,7 @@
 <link rel="import" href="../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../bower_components/app-datepicker/app-datepicker-dialog.html">
 <link rel="import" href="../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
+<script src="../node_modules/lz-string/libs/lz-string.min.js"></script>
 
 <dom-module id="hive-gamemode-leaderboards">
   <template>
@@ -312,8 +313,8 @@
           },
           gamemodes: {
             type: Array,
-           // value: { "SG": "Survival Games", "BP": "BlockParty", "CAI": "Cowboys and Indians", "CR": "Cranked", "DR": "DeathRun", "HB": "The Herobrine", "HERO": "SG:Heroes", "HIDE": "Hide and Seek", "OITC": "One in the Chamber", "SP": "Splegg", "TIMV": "Trouble in Mineville", "SKY": "SkyWars", "LAB": "The Lab", "DRAW": "Draw It", "SLAP": "Slaparoo", "EF": "Electric Floor", "MM": "Music Masters", "GRAV": "Gravity", "RR": "Restaurant Rush", "GNT": "SkyGiants", "GNTM": "SkyGiants: Mini", "PMK": "Pumpkinfection", "SGN": "Survival Games 2", "BD": "BatteryDash", "SPL": "Sploop", "MIMV": "Murder in Mineville", "BED": "BedWars", "SURV": "Survive the Night" }
-            value: {}/* HIVE_GAMEMODE_NAMES */
+            value: { "SG": "Survival Games", "BP": "BlockParty", "CAI": "Cowboys and Indians", "CR": "Cranked", "DR": "DeathRun", "HB": "The Herobrine", "HERO": "SG:Heroes", "HIDE": "Hide and Seek", "OITC": "One in the Chamber", "SP": "Splegg", "TIMV": "Trouble in Mineville", "SKY": "SkyWars", "LAB": "The Lab", "DRAW": "Draw It", "SLAP": "Slaparoo", "EF": "Electric Floor", "MM": "Music Masters", "GRAV": "Gravity", "RR": "Restaurant Rush", "GNT": "SkyGiants", "GNTM": "SkyGiants: Mini", "PMK": "Pumpkinfection", "SGN": "Survival Games 2", "BD": "BatteryDash", "SPL": "Sploop", "MIMV": "Murder in Mineville", "BED": "BedWars", "SURV": "Survive the Night" }
+           // value: {}/* HIVE_GAMEMODE_NAMES */
           }
         }
         
@@ -391,11 +392,12 @@
             let doc = res[0][0];
 
             if (doc && doc.exists) {
-              let data = doc.data().data;
+              let data = JSON.parse(LZString.decompressFromBase64(doc.data().a.toBase64()));
+
               let prevDoc = res[1][0];
 
               if(prevDoc && prevDoc.exists && !this.prevDataCacheKeys.has(res[1][1])){
-                let prevData = prevDoc.data().data;
+                let prevData = JSON.parse(LZString.decompressFromBase64(prevDoc.data().a.toBase64()));
                 this.prevData = this.prevData.concat(prevData);
                 this.prevDataCacheKeys.add(res[1][1])
                 this.$.grid.clearCache();

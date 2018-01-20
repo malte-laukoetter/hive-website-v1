@@ -22,11 +22,12 @@
   },
   "scripts": {
     "build": "gulp build",
-    "publish": "npm build && firebase deploy --only hosting"
+    "publish": "npm run build && firebase deploy --only hosting"
   },
   "dependencies": {
     "babel-runtime": "^6.26.0",
     "hive-api": "^1.4.0",
+    "lz-string": "^1.4.4",
     "mc-format": "^1.0.1"
   }
 }

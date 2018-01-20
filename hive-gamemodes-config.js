@@ -366,11 +366,11 @@ const gameModeConfigs = {
       }
     ],
     leaderboard: [{
-      key: 'points',
-      title: 'Points'
-    }, {
       key: 'victories',
       title: 'Victories'
+    }, {
+      key: 'points',
+      title: 'Points'
     }, {
       key: 'kills',
       title: 'Kills'
@@ -474,11 +474,13 @@ const gameModeConfigs = {
         prop: "deathGamesPlayed",
         func: numFormat
       },
+      /*
+      These aren't working
       {
         title: "Wins as Death",
         prop: "deathWins",
         func: numFormat
-      },
+      },*/
       {
         title: "Games as Runner",
         prop: "runnerGamesPlayed",

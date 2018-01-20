@@ -215,7 +215,7 @@ function buildPolymer() {
 }
 
 function copyNodeModules() {
-  const nodeModulesToCopy = ["hive-api", "mc-format"];
+  const nodeModulesToCopy = ["hive-api", "mc-format", "lz-string"];
 
   return nodeModulesToCopy.map(name => gulp.src([`node_modules/${name}/**`]).pipe(gulp.dest(`temp/node_modules/${name}`)))
 }
