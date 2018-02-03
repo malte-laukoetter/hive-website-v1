@@ -37,8 +37,14 @@
         height: calc(100% - 64px);
       }
 
-      .drawer-list span{
+      .drawer-list .flex{
         @apply --layout-flex;
+      }
+
+      .drawer-list div {
+        font-size: smaller;
+        text-align: center; 
+        margin: 5px;
       }
 
       .drawer-list a {
@@ -82,9 +88,13 @@
           <a name="kills" href="/kills">Kill Leaderboard</a>
           <a name="achievements" href="/achievements">Achievement Leaderboard</a>
           <a name="leaderboards" href="/leaderboards/">Advanced Gamemode Leaderboards</a>
-          <span></span>
+          <span class="flex"></span>
           <a name="imprint" href="https://lergin.de/imprint">Imprint</a>
           <a name="privacy" href="https://lergin.de/privacy">Privacy</a>
+          <span></span>
+          <div>
+            This site is a hobby project and neither affiliated with the Hive nor Mojang.
+          </div>
         </iron-selector>
       </app-drawer>
 
