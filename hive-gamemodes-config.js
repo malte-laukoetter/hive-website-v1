@@ -631,6 +631,150 @@ const gameModeConfigs = {
       title: 'Victories'
     }]
   },
+  GNT: {
+    stats: [
+      {
+        title: "Points",
+        prop: "points",
+        func: numFormat
+      },
+      {
+        title: "Victories",
+        prop: "victories",
+        func: numFormat
+      },
+      {
+        title: "Games Played",
+        prop: "gamesPlayed",
+        func: numFormat
+      },
+      {
+        title: "Kills",
+        prop: "kills",
+        func: numFormat
+      },
+      {
+        title: "Deaths",
+        prop: "deaths",
+        func: numFormat
+      },
+      {
+        title: "Gold earned",
+        prop: "goldEarned",
+        func: numFormat
+      },
+      {
+        title: "Beasts Slain",
+        prop: "beastsSlain",
+        func: numFormat
+      },
+      {
+        title: "Shutdowns",
+        prop: "shutdowns",
+        func: numFormat
+      }
+    ],
+    logins: [
+      {
+        title: "First Login",
+        prop: "firstLogin",
+        func: dateFormat
+      },
+      {
+        title: "Latest Login",
+        prop: "lastLogin",
+        func: dateFormat
+      }
+    ],
+    leaderboard: [{
+      key: 'points',
+      title: 'Points'
+    }, {
+      key: 'games_played',
+      title: 'Games Played'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }, {
+      key: 'kills',
+      title: 'Kills'
+    }, {
+      key: 'deaths',
+      title: 'Deaths'
+    }]
+  },
+  GNTM: {
+    stats: [
+      {
+        title: "Points",
+        prop: "points",
+        func: numFormat
+      },
+      {
+        title: "Victories",
+        prop: "victories",
+        func: numFormat
+      },
+      {
+        title: "Games Played",
+        prop: "gamesPlayed",
+        func: numFormat
+      },
+      {
+        title: "Kills",
+        prop: "kills",
+        func: numFormat
+      },
+      {
+        title: "Deaths",
+        prop: "deaths",
+        func: numFormat
+      },
+      {
+        title: "Gold earned",
+        prop: "goldEarned",
+        func: numFormat
+      },
+      {
+        title: "Beasts Slain",
+        prop: "beastsSlain",
+        func: numFormat
+      },
+      {
+        title: "Shutdowns",
+        prop: "shutdowns",
+        func: numFormat
+      }
+    ],
+    logins: [
+      {
+        title: "First Login",
+        prop: "firstLogin",
+        func: dateFormat
+      },
+      {
+        title: "Latest Login",
+        prop: "lastLogin",
+        func: dateFormat
+      }
+    ],
+    leaderboard: [{
+      key: 'points',
+      title: 'Points'
+    }, {
+      key: 'games_played',
+      title: 'Games Played'
+    }, {
+      key: 'victories',
+      title: 'Victories'
+    }, {
+      key: 'kills',
+      title: 'Kills'
+    }, {
+      key: 'deaths',
+      title: 'Deaths'
+    }]
+  },
   HB: {
     stats: [
       {
