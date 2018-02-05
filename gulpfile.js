@@ -228,6 +228,10 @@ function copySrc() {
   return gulp.src(["src/**"]).pipe(gulp.dest('temp/src'));
 }
 
+function copyGamemodeConfig() {
+  return gulp.src(["hive-gamemodes-config.js"]).pipe(gulp.dest('build'));
+}
+
 function copyWebcomponentsjs() {
   return gulp.src(["bower_components/webcomponentsjs/*.js"]).pipe(gulp.dest('build/bower_components/webcomponentsjs'));
 }
@@ -286,6 +290,7 @@ gulp.task('copyComponents', ["copyNodeModules", "copyBowerComponents"]);
 gulp.task('copyStatic', copySrc);
 gulp.task('copyImages', copyImages);
 gulp.task('copyBaseFiles', copyBaseFiles);
+gulp.task('copyGamemodeConfig', copyGamemodeConfig);
 
 gulp.task('copyWebcomponentsjs', copyWebcomponentsjs);
 gulp.task('copyWebanimationsjs', copyWebanimationsjs);
@@ -336,9 +341,9 @@ gulp.task('hiveGamemodeNames', async ()=> {
 gulp.task('hiveGamemodes', callback => runSequence(['hiveGamemodeNames', 'hiveGamemodeTabs-HiveProfileHtml'], callback))
 
 
-gulp.task('dev', callback => runSequence(["copyToTemp", "deleteBuild"], "hiveGamemodes", "copyFromTemp", ["copyWebcomponentsjs", "copyWebanimationsjs", "copyHiveApi"], ["deleteTemp", "deleteBuildTemp"], callback));
+gulp.task('dev', callback => runSequence(["copyToTemp", "deleteBuild"], "hiveGamemodes", "copyFromTemp", ["copyWebcomponentsjs", "copyWebanimationsjs", "copyGamemodeConfig", "copyHiveApi"], ["deleteTemp", "deleteBuildTemp"], callback));
 
-gulp.task('build', callback => runSequence(["copyToTemp", "deleteBuild"], "hiveGamemodes", "polymer", "copyBuildFromTemp", ["copyWebcomponentsjs", "copyWebanimationsjs", "copyHiveApi"], ["deleteTemp", "deleteBuildTemp"], callback));
+gulp.task('build', callback => runSequence(["copyToTemp", "deleteBuild"], "hiveGamemodes", "polymer", "copyBuildFromTemp", ["copyWebcomponentsjs", "copyWebanimationsjs", "copyGamemodeConfig", "copyHiveApi"], ["deleteTemp", "deleteBuildTemp"], callback));
 
 gulp.on('stop', () => { process.exit(0); });
 gulp.on('err', () => { process.exit(1); });

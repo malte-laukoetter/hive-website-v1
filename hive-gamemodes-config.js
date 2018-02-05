@@ -687,7 +687,7 @@ const gameModeConfigs = {
       }
     ],
     leaderboard: [{
-      key: 'points',
+      key: 'total_points',
       title: 'Points'
     }, {
       key: 'games_played',
@@ -759,7 +759,7 @@ const gameModeConfigs = {
       }
     ],
     leaderboard: [{
-      key: 'points',
+      key: 'total_points',
       title: 'Points'
     }, {
       key: 'games_played',
