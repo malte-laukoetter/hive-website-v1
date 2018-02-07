@@ -1854,7 +1854,7 @@ const gameModeConfigs = {
         prop: "detectivePoints",
         func: numFormat
       },
-      {
+    /*  {
         title: "Active Detective Stick",
         prop: "activeDetectiveStick",
         func: strFormat
@@ -1873,7 +1873,7 @@ const gameModeConfigs = {
         title: "Unlocked Flares",
         prop: "flareUpgrades",
         func: unlocks("TimvFlare")
-      },
+      },*/
       {
         title: "Detective Book",
         prop: "detectiveBook",
