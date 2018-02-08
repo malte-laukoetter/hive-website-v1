@@ -16,6 +16,7 @@
 <link rel="import" href="../bower_components/neon-animation/web-animations.html">
 <link rel="import" href="../bower_components/polymerfire/polymerfire.html">
 <link rel="import" href="../bower_components/iron-iconset/iron-iconset.html">
+<link rel="import" href="../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
 
 <dom-module id="hive-team-changes">
   <template>
@@ -96,7 +97,7 @@
     <firebase-messaging id="messaging" token="{{token}}" push-supported="{{pushSupported}}"></firebase-messaging>
     <firebase-document disabled="[[!token]]" path="teamChanges/notificationTokens/[[token]]" data="{{pushActive}}"></firebase-document>
 
-    <app-header-layout has-scrolling-region fullbleed>
+    <app-header-layout id="appheader" has-scrolling-region fullbleed>
      <app-header slot="header" condenses reveals effects="waterfall">
         <app-toolbar>
           <paper-icon-button icon="my-icons:menu" drawer-toggle on-tap="toggleDrawer"></paper-icon-button>
@@ -115,30 +116,26 @@
         </app-header>
       </app-toolbar>
       <div class="content">
-        <template is="dom-repeat" items="{{persistendData}}" as="dateChanges" sort="sortByDate" observe="date">
-          <div class="paper-material" elevation="1">
-            <h3>[[dateToDateString(dateChanges.date)]]</h3>
+        <iron-scroll-threshold lower-threshold="1000" on-lower-threshold="loadNext100" id="teamChangeScrollThreshold">
+          <template is="dom-repeat" items="{{persistendData}}" as="dateChanges" sort="sortByDate" observe="date">
+            <div class="paper-material" elevation="1">
+              <h3>[[dateToDateString(dateChanges.date)]]</h3>
 
-            <template is="dom-repeat" items="{{dateChanges.changetypes}}" as="type">
-              <h4>[[changeTypeToTitle(type)]]</h4>
+              <template is="dom-repeat" items="{{dateChanges.changetypes}}" as="type">
+                <h4>[[changeTypeToTitle(type)]]</h4>
 
-              <template is="dom-repeat" items="{{dateChanges.data}}" as="change" sort="sortByDate" observe="date">
-                <a class="chip" href="/player/[[uuidIfThere(change)]]" hidden$="[[!same(change.type, type)]]">
-                  <div>
-                    <img class="icon"  src="https://crafatar.com/avatars/[[change.uuid]]?overlay" alt="[[change.name]]">
-                    <span class="label">[[change.name]]</span>
-                  </div>
-                </a>
+                <template is="dom-repeat" items="{{dateChanges.data}}" as="change" sort="sortByDate" observe="date">
+                  <a class="chip" href="/player/[[uuidIfThere(change)]]" hidden$="[[!same(change.type, type)]]">
+                    <div>
+                      <img class="icon"  src="https://crafatar.com/avatars/[[change.uuid]]?overlay" alt="[[change.name]]">
+                      <span class="label">[[change.name]]</span>
+                    </div>
+                  </a>
+                </template>
               </template>
-            </template>
-          </div>
-        </template>
-
-        <template is="dom-if" if="[[viewLoadButton(nextStartKey, latestKey, online)]]">
-          <div class="overscroll">
-            <paper-button on-tap="loadNext100">Load More...</paper-button>
-          </div>
-        </template>
+            </div>
+          </template>
+        </iron-scroll-threshold>
       </div>
     </app-header-layout>
 
@@ -175,10 +172,6 @@
             type: Number,
             value: 100
           },
-          nextStartKey: {
-            type: Boolean,
-            value: false
-          },
           latestKey: {
             type: Number,
             value: 0
@@ -206,8 +199,9 @@
           return b.date - a.date;
       }
 
-      viewLoadButton(nextStartKey, latestKey, online) {
-        return online && !nextStartKey;
+      ready(){
+        super.ready();
+        this.$.teamChangeScrollThreshold.scrollTarget = this.$.appheader.$.contentContainer;
       }
 
       filterByDateAndType(date, type) {
@@ -293,29 +287,19 @@
         return readyData;
       }
 
-      ready() {
-        super.ready();
-
-        fetch(`https://lergin.de/api/hive/team`)
-            .then(res => res.json())
-            .then(res => {
-              res.forEach(a => this.push("data", a));
-              this.latestKey = 1;
-            });
-      }
-
       loadNext100() {
-        let nextStartKey = this.nextStartKey;
-
         fetch(`https://lergin.de/api/hive/team/${this.latestKey}`)
-            .then(res => res.json())
-            .then(res => {
-              if(res === []){
-                this.nextStartKey = true;
-              }
-              res.forEach(a => this.push("data", a));
-              this.latestKey++;
-            });
+          .then(res => res.json())
+          .then(res => {
+            this.latestKey++;
+            res.forEach(a => this.push("data", a));
+
+            if(res.length == 100){
+              this.$.teamChangeScrollThreshold.clearTriggers();
+            }else{
+              this.$.teamChangeScrollThreshold.toggleScrollListener(false)
+            }
+          });
       }
 
       uuidIfThere(data) {

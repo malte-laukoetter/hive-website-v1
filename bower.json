@@ -34,7 +34,7 @@
     "paper-listbox": "^2.0.0",
     "paper-menu-button": "^2.0.0",
     "app-datepicker": "motss/app-datepicker#^2.11.2",
-    "iron-scroll-threshold": "PolymerElements/iron-scroll-threshold#^2.0.0",
+    "iron-scroll-threshold": "^1.0.2",
     "web-animations-js": "web-animations/web-animations-js#2.2.4",
     "paper-toast": "^2.0.0"
   },
