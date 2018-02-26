@@ -26,8 +26,10 @@
   },
   "dependencies": {
     "babel-runtime": "^6.26.0",
+    "chai": "^4.1.2",
     "hive-api": "^1.4.0",
     "lz-string": "^1.4.4",
-    "mc-format": "^1.0.1"
+    "mc-format": "^1.0.1",
+    "mocha": "^5.0.1"
   }
 }

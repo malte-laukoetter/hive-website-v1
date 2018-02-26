@@ -1,13 +1,38 @@
 const numFormat = a => new Number(a || 0).toLocaleString();
-const strFormat = a => a ? a.toString().charAt(0).toUpperCase() + a.toString().slice(1).toLowerCase() : "";
+const strFormat = a => a ? a.split(/\s/g).map(a => a.toString().charAt(0).toUpperCase() + a.toString().slice(1).toLowerCase()).join(" ") : "";
 const dateFormat = a => new Date(a).toLocaleDateString();
-const boolFormat = a => strFormat(`${(a == undefined) ? "false" : a.toString()}`) + "​";
+const boolFormat = a => strFormat(`${(a == undefined) ? "false" : a.toString()}`);
 
 const secToDays = a => Math.floor(a / (60 * 60 * 24));
 const secToHours = a => Math.floor(a / (60 * 60));
 const secToMinutes = a => Math.floor(a / 60);
 
-const timeFormat = a => (secToDays(a) >= 1 ? `${secToDays(a)}d ` : '') + `${secToHours(a) - secToDays(a) * 24}h ${secToMinutes(a) - secToHours(a) * 60}m ${a - secToMinutes(a) * 60}s`;
+const timeFormat = a => {
+  if(!(a >= 0) || a === null){
+    return 'unknown';
+  }
+
+  let res = '';
+  
+  if (secToDays(a) >= 1){
+    res += `${secToDays(a)}d `;
+    a = a - secToDays(a) * 60 * 60 * 24;
+  }
+  
+  if (secToHours(a) >= 1 || res != ''){
+    res += `${secToHours(a)}h `
+    a = a - secToHours(a) * 60 * 60;
+  }
+  
+  if (secToMinutes(a) >= 1 || res != ''){
+    res += `${secToMinutes(a)}m `
+    a = a - secToMinutes(a) * 60;
+  }
+
+  res += `${a}s`
+
+  return res;
+}
 const subPropCount = a => b => b ? numFormat(b[a]) : 0;
 /**
  * creates the text for an unlock that has the amount stored in an enum onder the hive api libary
@@ -1911,6 +1936,11 @@ const gameModeConfigs = {
  */
 if (typeof window === 'undefined'){
   module.exports = {
-    gameModeConfigs: gameModeConfigs
+    gameModeConfigs: gameModeConfigs,
+    numFormat: numFormat,
+    strFormat: strFormat,
+    dateFormat: dateFormat,
+    boolFormat: boolFormat,
+    timeFormat: timeFormat,
   };
 }
