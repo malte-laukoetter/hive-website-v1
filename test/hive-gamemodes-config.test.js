@@ -32,16 +32,16 @@ describe("hive-gamemodes-config.js", () => {
       expect(timeFormat(0)).to.eql('0s');
     });
     it("-1 seconds", () => {
-      expect(timeFormat(-1)).to.eql('unknown');
+      expect(timeFormat(-1)).to.eql(false);
     });
     it("-1123882 seconds", () => {
-      expect(timeFormat(-1)).to.eql('unknown');
+      expect(timeFormat(-1)).to.eql(false);
     });
     it("undefined", () => {
-      expect(timeFormat(undefined)).to.eql('unknown');
+      expect(timeFormat(undefined)).to.eql(false);
     });
     it("null", () => {
-      expect(timeFormat(null)).to.eql('unknown');
+      expect(timeFormat(null)).to.eql(false);
     });
   });
 

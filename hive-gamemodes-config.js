@@ -9,7 +9,7 @@ const secToMinutes = a => Math.floor(a / 60);
 
 const timeFormat = a => {
   if(!(a >= 0) || a === null){
-    return 'unknown';
+    return false;
   }
 
   let res = '';
