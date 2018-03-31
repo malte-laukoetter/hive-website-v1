@@ -121,7 +121,13 @@ function buildPolymer() {
           // source files, but these are not included by default. For installation, see
           // the require statements at the beginning.
           .pipe(gulpif(/\.js$/, babel({
-            presets: ['env']}))) // Install gulp-uglify to use
+            presets: ['env'],
+            "plugins": [
+              ["transform-runtime", {
+                "polyfill": true,
+                "regenerator": true
+              }]
+            ]}))) // Install gulp-uglify to use
           .pipe(gulpif(/\.js$/, uglify())) // Install gulp-uglify to use
           .pipe(gulpif(/\.css$/, cssSlam())) // Install css-slam to use
           .pipe(gulpif(/\.html$/, htmlMinifier(htmlMinifierOptions))) // Install gulp-html-minifier to use
@@ -134,9 +140,15 @@ function buildPolymer() {
         // any dependency-only optimizations here as well.
         let dependenciesStream = polymerProject.dependencies()
           .pipe(dependenciesStreamSplitter.split())
-          .pipe(gulpif(/\.js$/, babel({
-            presets: ['env']
-          }))) // Install gulp-uglify to use
+          /*.pipe(gulpif(/\.js$/, babel({
+            presets: ['env'],
+            "plugins": [
+              ["transform-runtime", {
+                "polyfill": false,
+                "regenerator": true
+              }]
+            ]
+          }))) */// Install gulp-uglify to use
           .pipe(gulpif(/\.js$/, uglify())) // Install gulp-uglify to use
           .pipe(gulpif(/\.css$/, cssSlam())) // Install css-slam to use
           .pipe(gulpif(/\.html$/, htmlMinifier(htmlMinifierOptions))) // Install gulp-html-minifier to use
