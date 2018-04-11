@@ -1351,6 +1351,11 @@ const gameModeConfigs = {
         func: numFormat
       },
       {
+        title: "Highscore",
+        prop: "highscore",
+        func: numFormat
+      },
+      {
         title: "Tables Cleared",
         prop: "tablesCleared",
         func: numFormat
@@ -1380,6 +1385,9 @@ const gameModeConfigs = {
     }, {
       key: 'tablescleared',
       title: 'Tables Cleard'
+    }, {
+      key: 'highscore',
+      title: 'Highscore'
     }]
   },
   SGN: {
