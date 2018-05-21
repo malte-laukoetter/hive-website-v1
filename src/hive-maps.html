@@ -244,7 +244,7 @@
       ready(){
         super.ready();
 
-        fetch(`https://lergin.de/api/hive/maps`)
+        fetch(`https://api.lergin.de/hive/maps`)
             .then(res => res.json())
             .then(res => {
               this.liveData = res;

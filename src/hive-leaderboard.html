@@ -123,7 +123,7 @@
 
       ready(){
         super.ready();
-        fetch(`https://lergin.de/api/hive/leaderboard/${this.leaderboard}`)
+        fetch(`https://api.lergin.de/hive/leaderboard/${this.leaderboard}`)
         .then(res => res.json())
         .then(res => {
           this.liveData = res;
