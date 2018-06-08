@@ -1,7 +1,7 @@
 {
   "name": "Hive Stats and Leaderboards",
   "short_name": "Hive Stats",
-  "description": "Hive Mc Stats, Leaderboards, Maps, Team changes and many things more!",
+  "description": "Hive Stats, Leaderboards, Maps, Team changes and many things more!",
   "start_url": "/?utm=homescreen",
   "display": "standalone",
   "theme_color": "#4285f4",
