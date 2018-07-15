@@ -17,7 +17,7 @@
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 
 function generateTeamChangeNotificationPayload(data){
   const payload = {
@@ -126,13 +126,14 @@ function generateNewMapNotificationPayload(data){
 /**
  * Triggers when a change happends to the hive team and sends a notification.
  */
-exports.sendTeamChangeNotification = functions.database.ref('/teamChanges/data/{changeId}').onCreate(event => {
+exports.sendTeamChangeNotification = functions.database.ref('/teamChanges/data/{changeId}').onCreate((snap, context) => {
+  const data = snap.val();
+  
   // If un-follow we exit the function.
-  if (!event.data.val()) {
+  if (!data) {
     return console.log('No data :/');
   }
 
-  const data = event.data.val();
 
   // Get the list of device notification tokens.
   const getDeviceTokensPromise = admin.database().ref(`/teamChanges/notificationTokens`).once('value');
@@ -176,13 +177,13 @@ exports.sendTeamChangeNotification = functions.database.ref('/teamChanges/data/{
 /**
  * Triggers when a change happends to the hive team and sends a notification.
  */
-exports.sendNewMapNotification = functions.database.ref('/maps/data/{changeId}').onCreate(event => {
+exports.sendNewMapNotification = functions.database.ref('/maps/data/{changeId}').onCreate((snap, context) => {
   // If un-follow we exit the function.
-  if (!event.data.val()) {
+  if (!snap.val()) {
     return console.log('No data :/');
   }
 
-  const data = event.data.val();
+  const data = snap.val();
 
   // Get the list of device notification tokens.
   const getDeviceTokensPromise = admin.database().ref(`/maps/notificationTokens`).once('value');
@@ -226,16 +227,16 @@ exports.sendNewMapNotification = functions.database.ref('/maps/data/{changeId}')
 /**
  * Triggers when a new player is added to the daily stats update list
  */
-exports.removeWeeklyAndMonthlyForNewAddsToDaily = functions.database.ref('/playerStats/daily/{uuid}').onCreate(event => {
+exports.removeWeeklyAndMonthlyForNewAddsToDaily = functions.database.ref('/playerStats/daily/{uuid}').onCreate((snap, context) => {
   // Get the list of device notification tokens.
   const weeklyRefs = admin.database().ref('playerStats').child('weekly');
   const monthlyRefs = admin.database().ref('playerStats').child('monthly');
 
   for(let i = 0; i < 7; i++){
-    weeklyRefs.child(i).child(event.params.uuid).remove();
+    weeklyRefs.child(i).child(context.params.uuid).remove();
   }
 
   for(let i = 0; i < 30; i++){
-    monthlyRefs.child(i).child(event.params.uuid).remove();
+    monthlyRefs.child(i).child(context.params.uuid).remove();
   }
 });
