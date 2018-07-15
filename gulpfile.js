@@ -80,6 +80,7 @@ function buildPolymer() {
       "bower.json"
     ],
     "extraDependencies": [
+      "sitemap.xml",
       "manifest.json",
       "autotrack.js",
       "bower_components/app-storage/app-indexeddb-mirror/*.js",
