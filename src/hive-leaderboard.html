@@ -54,15 +54,15 @@
       <div class="content">
         <div role="listbox">
           <template is="dom-repeat" items="{{data}}" as="player" sort="sortByPlace">
-            <paper-icon-item>
-              <a href="/player/[[player.uuid]]" slot="item-icon">
-                <paper-avatar image-src="https://crafatar.com/avatars/[[player.uuid]]?overlay"></paper-avatar>
-              </a>
-              <paper-item-body two-line>
-                <div>[[player.name]]</div>
-                <div secondary>[[_formatNumber(player.value)]] [[propertyName]] ([[player._place]]. place)</div>
-              </paper-item-body>
-            </paper-icon-item>
+            <a href="/player/[[player.uuid]]" >
+              <paper-icon-item>
+                <paper-avatar slot="item-icon" image-src="https://crafatar.com/avatars/[[player.uuid]]?overlay"></paper-avatar>
+                <paper-item-body two-line>
+                  <div>[[player.name]]</div>
+                  <div secondary>[[_formatNumber(player.value)]] [[propertyName]] ([[player._place]]. place)</div>
+                </paper-item-body>
+              </paper-icon-item>
+            </a>
           </template>
         </div>
       </div>
