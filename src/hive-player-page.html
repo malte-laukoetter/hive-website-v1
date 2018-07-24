@@ -68,7 +68,13 @@
         </app-toolbar>
       </app-header>
       <div class="content">
-        <paper-input value="{{routeData.player}}" placeholder="Name or UUID" label="Search for a player" allowed-pattern="([a-zA-Z0-9_]{1,16}|[0-9a-f]{32})"></paper-input>
+        <div style="display: flex">
+          <paper-input style="flex-grow: 1" value="{{routeData.player}}" placeholder="Name or UUID" label="Search for a player" allowed-pattern="([a-zA-Z0-9_]{1,16}|[0-9a-f]{32})"></paper-input>
+          <template is="dom-if" if="[[swarm]]">
+            <a href="/player/[[swarm]]"><paper-button>To Swarm Infector</paper-button></a>
+          </template>
+        </div>
+
         <!-- images size: 1828x665 -->
         <template is="dom-if" if="[[loading(uuid, player)]]">
           LOADING...
@@ -128,12 +134,25 @@
           webShareEnabled: {
             type: Boolean,
             value: navigator.share
-          }
+          },
+          swarm: {
+            computed: "_swarmInfector(info)"
+          },
         };
       }
 
       reverse(a,b){
         return a.$key < b.$key ? 1 : -1;
+      }
+
+      _swarmInfector(info){
+        if(!info || !info.achievements) return
+
+        const achievement = info.achievements.find(a => a.id === 'THESWARM')
+
+        if(!achievement || !achievement.theSwarmFrom) return
+
+        return achievement.theSwarmFrom.requestUuid
       }
 
       static get observers() {
