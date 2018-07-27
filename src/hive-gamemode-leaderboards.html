@@ -276,9 +276,9 @@
             value: () => {
               let date = new Date();
 
-              if (date.getUTCHours() < 2) {
                 date.setDate(date.getDate() - 1)
-              }
+//              if (date.getUTCHours() < 2) {
+//              }
 
               return date.toISOString().substring(0, 10)
             }
@@ -288,9 +288,9 @@
             value: ()=> {
               let date = new Date();
 
-              if(date.getUTCHours() < 2){
+              //if(date.getUTCHours() < 2){
                 date.setDate(date.getDate()-1)
-              }
+              //}
 
               return date.toISOString().substring(0, 10)
             }
@@ -417,6 +417,8 @@
               }); 
 
               call(data);
+            }else{
+              call([])
             }            
           })
         }

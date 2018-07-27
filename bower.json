@@ -28,7 +28,7 @@
     "paper-avatar": "^2.0.1",
     "paper-tabs": "^2.0.0",
     "paper-card": "PolymerElements/paper-card#^2.0.0",
-    "vaadin-grid": "^4.0.0",
+    "vaadin-grid": "vaadin/vaadin-grid#^5.0.4",
     "iron-ajax": "^2.0.5",
     "paper-item": "^2.0.0",
     "paper-listbox": "^2.0.0",

@@ -95,7 +95,6 @@
     <page-title base-title="Team Changes"></page-title>
 
     <firebase-messaging id="messaging" token="{{token}}" push-supported="{{pushSupported}}"></firebase-messaging>
-    <firebase-document disabled="[[!token]]" path="teamChanges/notificationTokens/[[token]]" data="{{pushActive}}"></firebase-document>
 
     <app-header-layout id="appheader" has-scrolling-region fullbleed>
      <app-header slot="header" condenses reveals effects="waterfall">
@@ -103,7 +102,7 @@
           <paper-icon-button icon="my-icons:menu" drawer-toggle on-tap="toggleDrawer"></paper-icon-button>
           <div main-title>Team Changes</div>
           <paper-icon-button icon="my-icons:info" on-tap="openInfoDialog"></paper-icon-button>
-          <template is="dom-if" if="[[and(pushSupported, online)]]">
+          <template is="dom-if" if="[[online]]">
             <template is="dom-if" if="[[!exists(pushActive)]]">
               <paper-icon-button id="notification-subscribe" icon="my-icons:add-alert" on-tap="subscribeToTeamChangeNotifications"></paper-icon-button>
               <paper-tooltip for="notification-subscribe">get a notifications if there is a change to the team</paper-tooltip>
