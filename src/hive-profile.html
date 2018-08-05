@@ -142,7 +142,10 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-4">
+            <hive-achievements-card title="Global Achievements" achievements="[[preProcessAchievements]]"></hive-achievements-card>
+          </div>
+          <div class="col-md-4">
             <div class="card">
               <div class="header">
                 <h4 class="title">Achievements</h4>
@@ -156,14 +159,14 @@
 
                 <chart-js
                   type="pie"
-                  height="140"
+                  height="223"
                   data="[[_calcAchievementChartData(achievements)]]"
                   options="[[achievementChartOptions]]"
                 ></chart-js>
               </div>
             </div>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-4">
             <div class="card ">
               <div class="header">
                 <h4 class="title">Total Achievements</h4>
@@ -174,11 +177,13 @@
                   type="line"
                   options="[[medalChartOptions]]"
                   data="[[_calcAchievementLineChartData(achievements)]]"
-                  height="140"
+                  height="223"
                 ></chart-js>
               </div>
             </div>
           </div>
+        </div>
+        <div class="row">
           <div class="col-md-6">
             <div class="card">
               <div class="header">
@@ -302,7 +307,7 @@
 
       static get observers(){
         return [
-          '_preProcessAchievements(gameInfo.achievements)',
+          '_preProcessGlobalAchievements(info.achievements)',
           '_routeChanged(routeData.player)'
         ]
       }
@@ -331,6 +336,34 @@
         if (this.route.path == "") {
           this.set('route.path', `/${player}/stats`);
         }
+      }
+
+      
+      _preProcessGlobalAchievements(playerAchievements) {
+        if (!playerAchievements) {
+          this.preProcessAchievements = [];
+          return;
+        }
+
+        return hive.Server.achievements().then(achievements => {
+          playerAchievements.forEach(achie => {
+            let a = achievements.find(a => a.id == achie.id);
+
+            if (a == undefined) {
+              achie.name = achie.id;
+              achievements.push(achie)
+              console.debug("unknown achievmenet:", achie)
+              return;
+            }
+
+            a.progress = achie.progress;
+            a.unlockedAt = achie.unlockedAt;
+            a.unlocked = achie.unlocked;
+          });
+
+          this.preProcessAchievements = achievements;
+          return achievements;
+        });
       }
 
       _calcPointTokenChartData(tokens, points){
@@ -525,31 +558,6 @@
       }
       _textFormat(str){
         return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-      }
-      _preProcessAchievements(){
-        if(!this.gameInfo.achievements) return;
-
-        return hive.GameTypes.list.find(a => a.id == "HB").achievements().then(achievements => {
-
-
-          this.gameInfo.achievements.forEach(achie => {
-            let a = achievements.find(a => a.id == achie.id);
-
-            if(a == undefined){
-              achie.name = achie.id;
-              achievements.push(achie)
-              console.error("unknown achievmenet:", achie)
-              return;
-            }
-
-            a.progress = achie.progress;
-            a.unlockedAt = achie.unlockedAt;
-            a.unlocked = achie.unlocked;
-          });
-
-          this.preProcessAchievements = achievements;
-          return achievements;
-        });
       }
     }
 
