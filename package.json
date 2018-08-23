@@ -28,7 +28,7 @@
     "@vaadin/vaadin-grid": "^5.1.0-alpha3",
     "babel-runtime": "^6.26.0",
     "chai": "^4.1.2",
-    "hive-api": "^1.7.2",
+    "hive-api": "^1.8.1",
     "lz-string": "^1.4.4",
     "mc-format": "^1.1.0",
     "mocha": "^5.2.0"

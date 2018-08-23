@@ -17,7 +17,7 @@
         <img src="/images/[[_lowerCase(gamemode)]].png" alt="Title Image for [[_gamemodeName(gamemode)]]" />
         <h4>[[_gamemodeName(gamemode)]]</h4>
       </div>
-      <template is="dom-if" if="[[title.title]]">
+      <template is="dom-if" if="[[title]]">
         <div class="content">
           <div class="author">
             <h4 class="title">
@@ -71,7 +71,7 @@
 
       _title(info, gamemode){
         if(!info){
-          this.title = "";
+          this.title = undefined;
           return;
         }
 
