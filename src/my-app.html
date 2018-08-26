@@ -87,6 +87,7 @@
           <a name="tokens" href="/tokens">Token Leaderboard</a>
           <a name="kills" href="/kills">Kill Leaderboard</a>
           <a name="achievements" href="/achievements">Achievement Leaderboard</a>
+          <a name="hide" href="/hide">Hide Block Level Leaderboard</a>
           <a name="leaderboards" href="/leaderboards/">Advanced Gamemode Leaderboards</a>
           <span class="flex"></span>
           <a name="imprint" href="https://lergin.de/imprint">Imprint</a>
@@ -105,6 +106,7 @@
         <hive-leaderboards-tokens name="tokens"></hive-leaderboards-tokens>
         <hive-leaderboards-achievements name="achievements"></hive-leaderboards-achievements>
         <hive-leaderboards-kills name="kills"></hive-leaderboards-kills>
+        <hive-leaderboards-hive-blocklevels name="hide"></hive-leaderboards-hive-blocklevels>
         <hive-team-changes name="team"></hive-team-changes>
         <hive-maps name="maps"></hive-maps>
         <hive-player-page id="playerProfile" name="player" route="{{subroute}}"></hive-player-page>
@@ -175,6 +177,9 @@
             break;
           case 'achievements':
             resolvedPageUrl = this.resolveUrl('hive-leaderboards-achievements.html');
+            break;
+          case 'hide':
+            resolvedPageUrl = this.resolveUrl('hive-leaderboards-hive-blocklevels.html');
             break;
           case 'team':
             resolvedPageUrl = this.resolveUrl('hive-team-changes.html');
