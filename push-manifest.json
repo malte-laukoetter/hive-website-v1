@@ -23,6 +23,12 @@
       "weight": 1
     }
   },
+  "src/hive-leaderboards-hide-blocklevels.html": {
+    "src/hive-leaderboard.html": {
+      "type": "document",
+      "weight": 1
+    }
+  },
   "src/hive-leaderboards-kills.html": {
     "src/hive-leaderboard.html": {
       "type": "document",
@@ -72,6 +78,23 @@
   },
   "medals": {
     "src/hive-leaderboards-medal.html": {
+      "type": "document"
+    },
+    "src/hive-leaderboard.html": {
+      "type": "document"
+    },
+    "src/my-app.html": {
+      "type": "document"
+    },
+    "bower_components/webcomponentsjs/custom-elements-es5-adapter.js": {
+      "type": "script"
+    },
+    "bower_components/webcomponentsjs/webcomponents-loader.js": {
+      "type": "script"
+    }
+  },
+  "hide": {
+    "src/hive-leaderboards-hide-blocklevels.html": {
       "type": "document"
     },
     "src/hive-leaderboard.html": {
