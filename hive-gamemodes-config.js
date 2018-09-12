@@ -144,6 +144,11 @@ const gameModeConfigs = {
         title: "Teams Eliminated",
         prop: "teamsEliminated",
         func: numFormat
+      },
+      {
+        title: "Win Streak",
+        prop: "winStreak",
+        func: numFormat
       }
     ],
     logins: [
